@@ -5,6 +5,8 @@ import gunicorn
 
 import numpy as np
 import pandas as pd
+from scipy import interpolate
+import xlrd
 
 import dash
 from dash.dependencies import Input, Output, State
@@ -34,24 +36,27 @@ cache = Cache(server, config=CACHE_CONFIG)
 app.layout = create_layout(app)
 
 
-# @app.callback(
-#     Output('file_upload_dialog', 'children'),
-#     [Input('is_multi_layered', 'value')])
-# def update_file_upload_dialog(is_upload):
-#     if is_upload == 'true':
-#         return multi_layered_dialog
-#     else:
-#         return single_layered_dialog
-
-
-# @app.callback(
-#     Output('output-data-upload', 'children'),
-#     [Input('upload-data', 'contents')],
-#     [State('upload-data', 'filename'),
-#     State('upload-data', 'last_modified')])
-# def update_output(contents, file_name, last_modified):
-#     if contents is not None:
-#         return "File Name:{} at {}".format(file_name, last_modified)
+@app.callback(
+    Output('kh0s', 'children'),
+    [Input('upload-data', 'contents'), Input('div_num', 'value'), Input('x', 'children'), Input('diameter', 'value')],
+    [State('upload-data', 'filename'), State('upload-data', 'last_modified')])
+def update_output(contents, div_num, x, diameter, file_name, last_modified):
+    if contents is not None:
+        try:
+            content_type, content_string = contents.split(',')
+            decoded = base64.b64decode(content_string)
+            data = pd.read_excel(io.BytesIO(decoded))[['採掘深度', 'αβE0\n(採用値)']].values.astype(np.float64).T
+            data = np.array([data[0] * 1e3, data[1]])  # mm単位に変換
+            fitted1 = interpolate.interp1d(data[0], data[1])
+            E0s = fitted1(np.array(x))
+            kh0s = E0s * (float(diameter) / 10) ** (-3 / 4) / 1e6
+            print(x)
+        except Exception as e:
+            kh0s = np.ones(div_num + 1)
+            print(e)
+    else:
+        kh0s = np.ones(div_num + 1)
+    return kh0s
 
 
 @app.callback(
@@ -69,23 +74,13 @@ def update_stiff(diameter, material):
     return float(material) * np.pi * float(diameter) ** 4 / 64
 
 
-@app.callback(
-    Output('kh0s', 'children'),
-    [Input('diameter', 'value'), Input('div_num', 'value'), Input('n_num', 'value'), Input('alpha', 'value'), Input('reduction', 'value')])
-def update_kh0s(diameter, div_num, n_num, alpha, reduction):
-    # if multi_layered == 'true':
-    #     if contents is not None:
-    #         content_type, content_string = contents.split(',')
-    #         decoded = base64.b64decode(content_string)
-    #         df = pd.read_excel(io.BytesIO(decoded))
-    #         print(df)
-    #     kh0s = np.ones(div_num + 1)
-    # else:
-    #     kh0 = float(n_num) * float(alpha) * float(reduction) * 700 * (float(diameter) / 10) ** (-3 / 4) / 1e6
-    #     kh0s = np.ones(div_num + 1) * kh0
-    kh0 = float(n_num) * float(alpha) * float(reduction) * 700 * (float(diameter) / 10) ** (-3 / 4) / 1e6
-    kh0s = np.ones(div_num + 1) * kh0
-    return kh0s
+# @app.callback(
+#     Output('kh0s', 'children'),
+#     [Input('diameter', 'value'), Input('div_num', 'value'), Input('n_num', 'value'), Input('alpha', 'value'), Input('reduction', 'value')])
+# def update_kh0s(diameter, div_num, n_num, alpha, reduction):
+#     kh0 = float(n_num) * float(alpha) * float(reduction) * 700 * (float(diameter) / 10) ** (-3 / 4) / 1e6
+#     kh0s = np.ones(div_num + 1) * kh0
+#     return kh0s
 
 
 @app.callback(
@@ -101,15 +96,15 @@ def update_khs(y, kh0s, mode, dec_mode):
 
 @app.callback(
     Output('x', 'children'),
-    [Input('length', 'value'), Input('div_num', 'value')])
-def update_x(length, div_num):
-    return np.linspace(0, float(length) * 1e3, int(div_num))
+    [Input('length', 'value'), Input('div_num', 'value'), Input('level', 'value')])
+def update_x(length, div_num, level):
+    return np.linspace(-float(level) * 1e3, float(length) * 1e3 - float(level) * 1e3, int(div_num + 1))
 
 
 @app.callback(
     Output('y', 'children'),
-    [Input('mode', 'value'), Input('dec_mode', 'value'), Input('diameter', 'value'), Input('level', 'value'), Input('force', 'value'), Input('condition', 'value'), Input('div_num', 'value'), Input('div_size', 'children'), Input('stiff', 'children'), Input('kh0s', 'children')])
-def update_deformations(mode, dec_mode, diameter, _, force, condition, div_num, div_size, stiff, kh0s):
+    [Input('mode', 'value'), Input('dec_mode', 'value'), Input('diameter', 'value'), Input('force', 'value'), Input('condition', 'value'), Input('div_num', 'value'), Input('div_size', 'children'), Input('stiff', 'children'), Input('kh0s', 'children')])
+def update_deformations(mode, dec_mode, diameter, force, condition, div_num, div_size, stiff, kh0s):
     kh0s = np.array(kh0s)
     if mode == 'liner':
         y = deformation(diameter, div_size, div_num, force, stiff, kh0s, condition)

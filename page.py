@@ -84,37 +84,23 @@ def create_layout(app):
 
             html.H6("Ground Parameters"),
 
-            # dcc.RadioItems(
-            #     id='is_multi_layered',
-            #     options=[
-            #         {'label': 'Multi-layered', 'value': 'true'},
-            #         {'label': 'Single-layered', 'value': 'false'},
-            #     ],
-            #     value='false'
-            # ),
-
-            # html.Div(id='file_upload_dialog'),
-
-            html.Table(
-                [
-                    html.Tr([
-                        html.Td(rowSpan=2),
-                        html.Th('N'),
-                        html.Th('Alpha'),
-                        html.Th('Liquefaction reduction'),
-                    ]),
-                    html.Tr([
-                        html.Td(
-                            dcc.Input(id="n_num", value='10', type='text'),
-                        ),
-                        html.Td(
-                            dcc.Input(id="alpha", value='60', type='text'),
-                        ),
-                        html.Td(
-                            dcc.Input(id="reduction", value='0.350', type='text'),
-                        )
-                    ])
-                ], style={'width': '75%'}
+            dcc.Upload(
+                id='upload-data',
+                children=html.Div([
+                    'Drag and Drop or ',
+                    html.A('Select Files')
+                ]),
+                style={
+                    'width': '100%',
+                    'height': '60px',
+                    'lineHeight': '60px',
+                    'borderWidth': '1px',
+                    'borderStyle': 'dashed',
+                    'borderRadius': '5px',
+                    'textAlign': 'center',
+                    'margin': '10px'
+                },
+                multiple=False
             ),
 
             html.H6("Result"),
@@ -171,47 +157,3 @@ def create_layout(app):
 
     ], className="page")
 
-
-# single_layered_dialog = html.Table(
-#         [
-#             html.Tr([
-#                 html.Td(rowSpan=2),
-#                 html.Th('N'),
-#                 html.Th('Alpha'),
-#                 html.Th('Liquefaction reduction'),
-#             ]),
-#             html.Tr([
-#                 html.Td(
-#                     dcc.Input(id="n_num", value='10', type='text'),
-#                 ),
-#                 html.Td(
-#                     dcc.Input(id="alpha", value='60', type='text'),
-#                 ),
-#                 html.Td(
-#                     dcc.Input(id="reduction", value='0.350', type='text'),
-#                 )
-#             ])
-#         ], style={'width': '75%'}
-#     )
-
-
-# multi_layered_dialog = [dcc.Upload(
-#         id='upload-data',
-#         children=html.Div([
-#             'Drag and Drop or ',
-#             html.A('Select Files')
-#         ]),
-#         style={
-#             'width': '100%',
-#             'height': '60px',
-#             'lineHeight': '60px',
-#             'borderWidth': '1px',
-#             'borderStyle': 'dashed',
-#             'borderRadius': '5px',
-#             'textAlign': 'center',
-#             'margin': '10px'
-#         },
-#         multiple=False
-#     ),
-#         html.Div(id='output-data-upload')
-#     ]
