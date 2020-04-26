@@ -145,6 +145,7 @@ def create_layout(app):
 
             html.Div(id='div_size', style={'display': 'none'}),
             html.Div(id='stiff', style={'display': 'none'}),
+            html.Div(id='decrease', style={'display': 'none'}),
             html.Div(id='kh0s', style={'display': 'none'}),
             html.Div(id='khs', style={'display': 'none'}),
             html.Div(id='x', style={'display': 'none'}),

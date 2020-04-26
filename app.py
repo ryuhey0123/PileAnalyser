@@ -40,7 +40,7 @@ app.layout = create_layout(app)
     Output('kh0s', 'children'),
     [Input('upload-data', 'contents'), Input('div_num', 'value'), Input('x', 'children'), Input('diameter', 'value')],
     [State('upload-data', 'filename'), State('upload-data', 'last_modified')])
-def update_output(contents, div_num, x, diameter, file_name, last_modified):
+def update_kh0s(contents, div_num, x, diameter, file_name, last_modified):
     if contents is not None:
         try:
             content_type, content_string = contents.split(',')
@@ -50,7 +50,6 @@ def update_output(contents, div_num, x, diameter, file_name, last_modified):
             fitted1 = interpolate.interp1d(data[0], data[1])
             E0s = fitted1(np.array(x))
             kh0s = E0s * (float(diameter) / 10) ** (-3 / 4) / 1e6
-            print(x)
         except Exception as e:
             kh0s = np.ones(div_num + 1)
             print(e)
@@ -84,14 +83,17 @@ def update_stiff(diameter, material):
 
 
 @app.callback(
+    Output('decrease', 'children'),
+    [Input('y', 'children'), Input('mode', 'value'), Input('dec_mode', 'value')])
+def update_decrease(y, mode, dec_mode):
+    return reduced(y, mode, dec_mode)
+
+
+@app.callback(
     Output('khs', 'children'),
-    [Input('y', 'children'), Input('kh0s', 'children'), Input('mode', 'value'), Input('dec_mode', 'value')])
-def update_khs(y, kh0s, mode, dec_mode):
-    if mode == 'liner':
-        khs = kh0s
-    else:
-        khs = reduced_khs(y, kh0s, dec_mode)
-    return khs
+    [Input('kh0s', 'children'), Input('decrease', 'children')])
+def update_khs(kh0s, dec):
+    return np.array(kh0s) * dec
 
 
 @app.callback(
@@ -109,7 +111,7 @@ def update_deformations(mode, dec_mode, diameter, force, condition, div_num, div
     if mode == 'liner':
         y = deformation(diameter, div_size, div_num, force, stiff, kh0s, condition)
     else:
-        y = deformation_by_non_liner(diameter, div_size, div_num, force, stiff, kh0s, condition, dec_mode)
+        y = deformation_by_non_liner(diameter, div_size, div_num, force, stiff, kh0s, condition, mode, dec_mode)
     return y
 
 
@@ -206,25 +208,26 @@ def update_max_shear(q):
 
 @app.callback(
     Output('subplot', 'figure'),
-    [Input('x', 'children'), Input('kh0s', 'children'), Input('khs', 'children'), Input('y', 'children'), Input('t', 'children'), Input('m', 'children'), Input('q', 'children')])
-def update_subplot(x, kh0s, khs, y, t, m, q):
+    [Input('x', 'children'), Input('decrease', 'children'), Input('khs', 'children'), Input('y', 'children'), Input('t', 'children'), Input('m', 'children'), Input('q', 'children')])
+def update_subplot(x, dec, khs, y, t, m, q):
     x = np.array(x) * 1e-3
-    _ = np.array(kh0s) * 1e6
+    dec = np.array(dec)
     khs = np.array(khs) * 1e6
     y = np.array(y)[2:-3]
     t = np.array(t)[2:-3] * 1e3
     m = np.array(m)[2:-3] * 1e-6
     q = np.array(q)[2:-3] * 1e-3
     fig = make_subplots(
-        rows=1, cols=5,
-        subplot_titles=("kh", "Deformation", "Degree", "Moment", "Shear"),
+        rows=1, cols=6,
+        subplot_titles=("Decrease", "kh", "Deformation", "Degree", "Moment", "Shear"),
         shared_yaxes=True)
     # fig.add_trace(go.Scatter(x=kh0s, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=1)
-    fig.add_trace(go.Scatter(x=khs, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=1)
-    fig.add_trace(go.Scatter(x=y, y=x, fill='tozerox', line=dict(color="#2196F3")), row=1, col=2)
-    fig.add_trace(go.Scatter(x=t, y=x, fill='tozerox', line=dict(color="#FFC107")), row=1, col=3)
-    fig.add_trace(go.Scatter(x=m, y=x, fill='tozerox', line=dict(color="#E91E63")), row=1, col=4)
-    fig.add_trace(go.Scatter(x=q, y=x, fill='tozerox', line=dict(color="#4CAF50")), row=1, col=5)
+    fig.add_trace(go.Scatter(x=dec, y=x, fill='tozerox', line=dict(color="#9C27B0")),row=1, col=1)
+    fig.add_trace(go.Scatter(x=khs, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=2)
+    fig.add_trace(go.Scatter(x=y, y=x, fill='tozerox', line=dict(color="#2196F3")), row=1, col=3)
+    fig.add_trace(go.Scatter(x=t, y=x, fill='tozerox', line=dict(color="#FFC107")), row=1, col=4)
+    fig.add_trace(go.Scatter(x=m, y=x, fill='tozerox', line=dict(color="#E91E63")), row=1, col=5)
+    fig.add_trace(go.Scatter(x=q, y=x, fill='tozerox', line=dict(color="#4CAF50")), row=1, col=6)
     fig['layout'].update(
         autosize=True,
         # height=GRAPH_HEIGHT,
@@ -270,26 +273,41 @@ def deformation(diameter, div_size, div_num, force, stiff, khs, condition):
 
 
 @cache.memoize()
-def deformation_by_non_liner(diameter, div_size, div_num, force, stiff, kh0s, condition, dec_mode):
+def deformation_by_non_liner(diameter, div_size, div_num, force, stiff, kh0s, condition, mode, dec_mode):
     err = np.ones(int(div_num) + 5) * 10
     y = deformation(diameter, div_size, div_num, force, stiff, kh0s, condition)
     while np.any(err > 0.1):
         y0 = y
-        khs_dec = reduced_khs(y, kh0s, dec_mode)
+        dec = reduced(y, mode, dec_mode)
+        khs_dec = kh0s * dec
         y = deformation(diameter, div_size, div_num, force, stiff, khs_dec, condition)
         err = abs(y - y0)
     return y
 
 
+# @cache.memoize()
+# def reduced_khs(y, kh0s, dec_mode):
+#     y = np.array(y)
+#     kh0s = np.array(kh0s)
+#     if dec_mode == 'multi':
+#         dec = np.where(abs(y) > 10, (abs(y) / 10)**(-1/2), 1.0)[2:-2]
+#     else:
+#         dec = (abs(y[2]) / 10)**(-1/2) if abs(y[2]) > 10 else 1.0
+#     return kh0s * dec
+
+
 @cache.memoize()
-def reduced_khs(y, kh0s, dec_mode):
+def reduced(y, mode, dec_mode):
     y = np.array(y)
-    kh0s = np.array(kh0s)
-    if dec_mode == 'multi':
-        dec = np.where(abs(y) > 10, (abs(y) / 10)**(-1/2), 1.0)[2:-2]
+    if mode == 'liner':
+        dec = np.ones_like(y)[2:-2]
     else:
-        dec = (abs(y[2]) / 10)**(-1/2) if abs(y[2]) > 10 else 1.0
-    return kh0s * dec
+        if dec_mode == 'multi':
+            dec = np.where(abs(y) > 10, (abs(y) / 10)**(-1/2), 1.0)[2:-2]
+        else:
+            dec = np.ones_like(y)[2:-2]
+            dec = dec * (abs(y[2]) / 10)**(-1/2) if abs(y[2]) > 10 else 1.0
+    return dec
 
 
 @cache.memoize()
