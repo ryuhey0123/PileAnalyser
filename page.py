@@ -2,14 +2,17 @@ import dash_core_components as dcc
 import dash_html_components as html
 
 
+# @formatter:off
+
+
 def create_layout(app):
     return html.Div([
 
         html.Section([
 
-            html.H2("Analysis of piles"),
+            html.H3("Analysis of piles"),
 
-            html.H5("Settings"),
+            html.H6("Settings"),
 
             html.Table([
                 html.Tr([
@@ -62,7 +65,7 @@ def create_layout(app):
                 ])
             ], style={'width': '100%'}),
 
-            html.H5("Pile Parameters"),
+            html.H6("Pile Parameters"),
 
             html.Table([
                 html.Tr([
@@ -72,48 +75,76 @@ def create_layout(app):
                     html.Th('Force (kN)')
                 ]),
                 html.Tr([
-                    html.Td(
-                        dcc.Input(id="diameter", value='1000', type='number',
-                            debounce=True, min=1, step=1),
-                    ),
-                    html.Td(
-                        dcc.Input(id="length", value='20.0', type='number',
-                            debounce=False,
-                            min=1.0, step=0.5),
-                    ),
-                    html.Td(
-                        dcc.Input(id="level", value='-2.5', type='number',
-                            debounce=False,
-                            step=0.5),
-                    ),
-                    html.Td(
-                        dcc.Input(id="force", value='500', type='number',
-                            debounce=False,
-                            min=10.0, step=10.0),
-                    )
+                    html.Td(dcc.Input(id="diameter", value='1000', type='number',debounce=True, min=1, step=1)),
+                    html.Td(dcc.Input(id="length", value='20.0', type='number', debounce=False, min=1.0, step=0.5)),
+                    html.Td(dcc.Input(id="level", value='-2.5', type='number', debounce=False, step=0.5)),
+                    html.Td(dcc.Input(id="force", value='500', type='number', debounce=False, min=10.0, step=10.0))
                 ])
             ], style={'width': '100%'}),
 
-            html.H5("Ground Parameters"),
+            html.H6("Ground Parameters"),
+
+            # dcc.RadioItems(
+            #     id='is_multi_layered',
+            #     options=[
+            #         {'label': 'Multi-layered', 'value': 'true'},
+            #         {'label': 'Single-layered', 'value': 'false'},
+            #     ],
+            #     value='false'
+            # ),
+
+            # html.Div(id='file_upload_dialog'),
+
+            html.Table(
+                [
+                    html.Tr([
+                        html.Td(rowSpan=2),
+                        html.Th('N'),
+                        html.Th('Alpha'),
+                        html.Th('Liquefaction reduction'),
+                    ]),
+                    html.Tr([
+                        html.Td(
+                            dcc.Input(id="n_num", value='10', type='text'),
+                        ),
+                        html.Td(
+                            dcc.Input(id="alpha", value='60', type='text'),
+                        ),
+                        html.Td(
+                            dcc.Input(id="reduction", value='0.350', type='text'),
+                        )
+                    ])
+                ], style={'width': '75%'}
+            ),
+
+            html.H6("Result"),
 
             html.Table([
                 html.Tr([
-                    html.Th('N'),
-                    html.Th('Alpha'),
-                    html.Th('Liquefaction reduction'),
+                    html.Th('', style={"width": "80px"}),
+                    html.Th([html.Div('kh'), html.Div('kN/m3', className='unit')]),
+                    html.Th([html.Div('Deformation'), html.Div('mm', className='unit')]),
+                    html.Th([html.Div('Degree'), html.Div('rad', className='unit')]),
+                    html.Th([html.Div('Moment'), html.Div('kNm', className='unit')]),
+                    html.Th([html.Div('Shear'), html.Div('kN', className='unit')]),
                 ]),
                 html.Tr([
-                    html.Td(
-                        dcc.Input(id="n_num", value='10', type='text'),
-                    ),
-                    html.Td(
-                        dcc.Input(id="alpha", value='60', type='text'),
-                    ),
-                    html.Td(
-                        dcc.Input(id="reduction", value='0.350', type='text'),
-                    )
-                ])
-            ], style={'width': '75%'}),
+                    html.Th('MAX'),
+                    html.Td(id='max_kh'),
+                    html.Td(id='max_y'),
+                    html.Td(id='max_t'),
+                    html.Td(id='max_m'),
+                    html.Td(id='max_q', style={"padding": "2px 5px"})
+                ]),
+                html.Tr([
+                    html.Th('MIN'),
+                    html.Td(id='min_kh'),
+                    html.Td(id='min_y'),
+                    html.Td(id='min_t'),
+                    html.Td(id='min_m'),
+                    html.Td(id='min_q', style={"padding": "2px 5px"})
+                ]),
+            ], style={'width': '100%'}, className='result'),
 
             dcc.Graph(id='subplot'),
 
@@ -123,7 +154,7 @@ def create_layout(app):
                 min=100,
                 max=500,
                 marks={i * 100: str(i * 100) for i in range(1, 6)},
-                value=300,
+                value=100,
             ),
 
             html.Div(id='div_size', style={'display': 'none'}),
@@ -136,6 +167,51 @@ def create_layout(app):
             html.Div(id='m', style={'display': 'none'}),
             html.Div(id='q', style={'display': 'none'})
 
-        ], className="sheet padding-10mm")
+        ])
 
     ], className="page")
+
+
+# single_layered_dialog = html.Table(
+#         [
+#             html.Tr([
+#                 html.Td(rowSpan=2),
+#                 html.Th('N'),
+#                 html.Th('Alpha'),
+#                 html.Th('Liquefaction reduction'),
+#             ]),
+#             html.Tr([
+#                 html.Td(
+#                     dcc.Input(id="n_num", value='10', type='text'),
+#                 ),
+#                 html.Td(
+#                     dcc.Input(id="alpha", value='60', type='text'),
+#                 ),
+#                 html.Td(
+#                     dcc.Input(id="reduction", value='0.350', type='text'),
+#                 )
+#             ])
+#         ], style={'width': '75%'}
+#     )
+
+
+# multi_layered_dialog = [dcc.Upload(
+#         id='upload-data',
+#         children=html.Div([
+#             'Drag and Drop or ',
+#             html.A('Select Files')
+#         ]),
+#         style={
+#             'width': '100%',
+#             'height': '60px',
+#             'lineHeight': '60px',
+#             'borderWidth': '1px',
+#             'borderStyle': 'dashed',
+#             'borderRadius': '5px',
+#             'textAlign': 'center',
+#             'margin': '10px'
+#         },
+#         multiple=False
+#     ),
+#         html.Div(id='output-data-upload')
+#     ]

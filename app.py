@@ -1,18 +1,22 @@
+import base64
+import io
 import os
 import gunicorn
 
+import numpy as np
+import pandas as pd
+
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
 from flask_caching import Cache
 
-from page import create_layout
-from utils import *
+from page import *
 
-GRAPH_WIDTH = 750
-GRAPH_HEIGHT = 540
+# GRAPH_WIDTH = 700
+# GRAPH_HEIGHT = 540
 
 CACHE_CONFIG = {
     "DEBUG": True,           # some Flask specific configs
@@ -21,12 +25,33 @@ CACHE_CONFIG = {
 }
 
 app = dash.Dash(__name__)
+# app.config.suppress_callback_exceptions = True
 app.title = '杭の解析'
 server = app.server
 
 cache = Cache(server, config=CACHE_CONFIG)
 
 app.layout = create_layout(app)
+
+
+# @app.callback(
+#     Output('file_upload_dialog', 'children'),
+#     [Input('is_multi_layered', 'value')])
+# def update_file_upload_dialog(is_upload):
+#     if is_upload == 'true':
+#         return multi_layered_dialog
+#     else:
+#         return single_layered_dialog
+
+
+# @app.callback(
+#     Output('output-data-upload', 'children'),
+#     [Input('upload-data', 'contents')],
+#     [State('upload-data', 'filename'),
+#     State('upload-data', 'last_modified')])
+# def update_output(contents, file_name, last_modified):
+#     if contents is not None:
+#         return "File Name:{} at {}".format(file_name, last_modified)
 
 
 @app.callback(
@@ -48,10 +73,18 @@ def update_stiff(diameter, material):
     Output('kh0s', 'children'),
     [Input('diameter', 'value'), Input('div_num', 'value'), Input('n_num', 'value'), Input('alpha', 'value'), Input('reduction', 'value')])
 def update_kh0s(diameter, div_num, n_num, alpha, reduction):
-    # debug ----------------------------------------------------------------
+    # if multi_layered == 'true':
+    #     if contents is not None:
+    #         content_type, content_string = contents.split(',')
+    #         decoded = base64.b64decode(content_string)
+    #         df = pd.read_excel(io.BytesIO(decoded))
+    #         print(df)
+    #     kh0s = np.ones(div_num + 1)
+    # else:
+    #     kh0 = float(n_num) * float(alpha) * float(reduction) * 700 * (float(diameter) / 10) ** (-3 / 4) / 1e6
+    #     kh0s = np.ones(div_num + 1) * kh0
     kh0 = float(n_num) * float(alpha) * float(reduction) * 700 * (float(diameter) / 10) ** (-3 / 4) / 1e6
     kh0s = np.ones(div_num + 1) * kh0
-    # ----------------------------------------------------------------------
     return kh0s
 
 
@@ -107,11 +140,81 @@ def update_shears(q0, m, div_size):
 
 
 @app.callback(
+    Output('max_kh', 'children'),
+    [Input('khs', 'children')])
+def update_max_kh(khs):
+    return "{:.0f}".format(max(khs) * 1e6)
+
+
+@app.callback(
+    Output('min_kh', 'children'),
+    [Input('khs', 'children')])
+def update_min_kh(khs):
+    return "{:.0f}".format(min(khs) * 1e6)
+
+
+@app.callback(
+    Output('max_y', 'children'),
+    [Input('y', 'children')])
+def update_max_deformation(y):
+    return "{:.2f}".format(max(y))
+
+
+@app.callback(
+    Output('min_y', 'children'),
+    [Input('y', 'children')])
+def update_min_deformation(y):
+    return "{:.2f}".format(min(y))
+
+
+@app.callback(
+    Output('max_t', 'children'),
+    [Input('t', 'children')])
+def update_max_theta(t):
+    return "{:.3E}".format(max(t))
+
+
+@app.callback(
+    Output('min_t', 'children'),
+    [Input('t', 'children')])
+def update_min_theta(t):
+    return "{:.3E}".format(min(t))
+
+
+@app.callback(
+    Output('max_m', 'children'),
+    [Input('m', 'children')])
+def update_max_moment(m):
+    return "{:.1f}".format(max(m) / 1e6)
+
+
+@app.callback(
+    Output('min_m', 'children'),
+    [Input('m', 'children')])
+def update_min_moment(m):
+    return "{:.1f}".format(min(m) / 1e6)
+
+
+@app.callback(
+    Output('max_q', 'children'),
+    [Input('q', 'children')])
+def update_max_shear(q):
+    return "{:.1f}".format(max(q) / 1e3)
+
+
+@app.callback(
+    Output('min_q', 'children'),
+    [Input('q', 'children')])
+def update_max_shear(q):
+    return "{:.1f}".format(min(q) / 1e3)
+
+
+@app.callback(
     Output('subplot', 'figure'),
     [Input('x', 'children'), Input('kh0s', 'children'), Input('khs', 'children'), Input('y', 'children'), Input('t', 'children'), Input('m', 'children'), Input('q', 'children')])
 def update_subplot(x, kh0s, khs, y, t, m, q):
     x = np.array(x) * 1e-3
-    kh0s = np.array(kh0s) * 1e6
+    _ = np.array(kh0s) * 1e6
     khs = np.array(khs) * 1e6
     y = np.array(y)[2:-3]
     t = np.array(t)[2:-3] * 1e3
@@ -119,7 +222,7 @@ def update_subplot(x, kh0s, khs, y, t, m, q):
     q = np.array(q)[2:-3] * 1e-3
     fig = make_subplots(
         rows=1, cols=5,
-        subplot_titles=("Kh(kN/m3)", "Deformation(mm)", "Degree(10-3 rad)", "Moment(kNm)", "Shear(kN)"),
+        subplot_titles=("kh", "Deformation", "Degree", "Moment", "Shear"),
         shared_yaxes=True)
     # fig.add_trace(go.Scatter(x=kh0s, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=1)
     fig.add_trace(go.Scatter(x=khs, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=1)
@@ -127,8 +230,18 @@ def update_subplot(x, kh0s, khs, y, t, m, q):
     fig.add_trace(go.Scatter(x=t, y=x, fill='tozerox', line=dict(color="#FFC107")), row=1, col=3)
     fig.add_trace(go.Scatter(x=m, y=x, fill='tozerox', line=dict(color="#E91E63")), row=1, col=4)
     fig.add_trace(go.Scatter(x=q, y=x, fill='tozerox', line=dict(color="#4CAF50")), row=1, col=5)
-    fig['layout'].update(width=GRAPH_WIDTH, height=GRAPH_HEIGHT, showlegend=False)
-    fig['layout']['yaxis'].update(autorange='reversed')
+    fig['layout'].update(
+        autosize=True,
+        # height=GRAPH_HEIGHT,
+        margin=dict(l=10, r=10, b=50, t=50),
+        showlegend=False,
+        yaxis=dict(autorange='reversed')
+    )
+    for i in fig['layout']['annotations']:
+        i['font'] = dict(
+            family="'Open Sans', 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+            size=13
+        )
     return fig
 
 
