@@ -27,7 +27,6 @@ CACHE_CONFIG = {
 }
 
 app = dash.Dash(__name__)
-# app.config.suppress_callback_exceptions = True
 app.title = '杭の解析'
 server = app.server
 
@@ -43,18 +42,12 @@ app.layout = create_layout(app)
 def update_kh0s(contents, div_num, x, diameter, file_name, last_modified):
     if contents is not None:
         try:
-            content_type, content_string = contents.split(',')
-            decoded = base64.b64decode(content_string)
-            data = pd.read_excel(io.BytesIO(decoded))[['採掘深度', 'αβE0\n(採用値)']].values.astype(np.float64).T
-            data = np.array([data[0] * 1e3, data[1]])  # mm単位に変換
-            fitted1 = interpolate.interp1d(data[0], data[1])
-            E0s = fitted1(np.array(x))
-            kh0s = E0s * (float(diameter) / 10) ** (-3 / 4) / 1e6
+            kh0s = calc_kh0s_by_xlsx(contents, x, diameter)
         except Exception as e:
             kh0s = np.ones(div_num + 1)
             print(e)
     else:
-        kh0s = np.ones(div_num + 1)
+        kh0s = np.ones(div_num + 1) / 1e3
     return kh0s
 
 
@@ -71,15 +64,6 @@ def update_div_size(length, div_num):
     [Input('diameter', 'value'), Input('material', 'value')])
 def update_stiff(diameter, material):
     return float(material) * np.pi * float(diameter) ** 4 / 64
-
-
-# @app.callback(
-#     Output('kh0s', 'children'),
-#     [Input('diameter', 'value'), Input('div_num', 'value'), Input('n_num', 'value'), Input('alpha', 'value'), Input('reduction', 'value')])
-# def update_kh0s(diameter, div_num, n_num, alpha, reduction):
-#     kh0 = float(n_num) * float(alpha) * float(reduction) * 700 * (float(diameter) / 10) ** (-3 / 4) / 1e6
-#     kh0s = np.ones(div_num + 1) * kh0
-#     return kh0s
 
 
 @app.callback(
@@ -208,26 +192,57 @@ def update_max_shear(q):
 
 @app.callback(
     Output('subplot', 'figure'),
-    [Input('x', 'children'), Input('decrease', 'children'), Input('khs', 'children'), Input('y', 'children'), Input('t', 'children'), Input('m', 'children'), Input('q', 'children')])
-def update_subplot(x, dec, khs, y, t, m, q):
+    [
+        Input('x', 'children'),
+        Input('decrease', 'children'),
+        Input('kh0s', 'children'),
+        Input('y', 'children'),
+        Input('t', 'children'),
+        Input('m', 'children'),
+        Input('q', 'children'),
+        Input('diameter', 'value'),
+        Input('length', 'value'),
+        Input('level', 'value')
+    ])
+def update_subplot(x, dec, kh0s, y, t, m, q, d, length, level):
     x = np.array(x) * 1e-3
     dec = np.array(dec)
-    khs = np.array(khs) * 1e6
+    kh0s = np.array(kh0s) * 1e6
     y = np.array(y)[2:-3]
     t = np.array(t)[2:-3] * 1e3
     m = np.array(m)[2:-3] * 1e-6
     q = np.array(q)[2:-3] * 1e-3
+    d = float(d)
+    length = float(length)
+    level = float(level)
     fig = make_subplots(
         rows=1, cols=6,
-        subplot_titles=("Decrease", "kh", "Deformation", "Degree", "Moment", "Shear"),
+        subplot_titles=("Decrease", "kh0", "Deformation", "Degree", "Moment", "Shear"),
         shared_yaxes=True)
     # fig.add_trace(go.Scatter(x=kh0s, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=1)
     fig.add_trace(go.Scatter(x=dec, y=x, fill='tozerox', line=dict(color="#9C27B0")),row=1, col=1)
-    fig.add_trace(go.Scatter(x=khs, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=2)
+    fig.add_trace(go.Scatter(x=kh0s, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=2)
     fig.add_trace(go.Scatter(x=y, y=x, fill='tozerox', line=dict(color="#2196F3")), row=1, col=3)
     fig.add_trace(go.Scatter(x=t, y=x, fill='tozerox', line=dict(color="#FFC107")), row=1, col=4)
     fig.add_trace(go.Scatter(x=m, y=x, fill='tozerox', line=dict(color="#E91E63")), row=1, col=5)
     fig.add_trace(go.Scatter(x=q, y=x, fill='tozerox', line=dict(color="#4CAF50")), row=1, col=6)
+
+    # margin = 100
+    # fig.add_scatter(
+    #     x=[
+    #         max(kh0s) - d / 10 - margin,
+    #         max(kh0s) - margin,
+    #         max(kh0s) - margin,
+    #         max(kh0s) - d / 10 - margin,
+    #         max(kh0s) - d / 10 - margin,
+    #     ], y=[
+    #         -level,
+    #         -level,
+    #         length - level,
+    #         length - level,
+    #         -level
+    #     ], mode="lines", row=1, col=2)
+
     fig['layout'].update(
         autosize=True,
         # height=GRAPH_HEIGHT,
@@ -241,6 +256,18 @@ def update_subplot(x, dec, khs, y, t, m, q):
             size=13
         )
     return fig
+
+
+@cache.memoize()
+def calc_kh0s_by_xlsx(contents, x, diameter):
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+    data = pd.read_excel(io.BytesIO(decoded))[
+        ['採掘深度', 'αβE0\n(採用値)']].values.astype(np.float64).T
+    data = np.array([data[0] * 1e3, data[1]])
+    fitted1 = interpolate.interp1d(data[0], data[1])
+    kh0s = fitted1(np.array(x)) * (float(diameter) / 10) ** (-3 / 4) / 1e6
+    return kh0s
 
 
 @cache.memoize()
@@ -283,17 +310,6 @@ def deformation_by_non_liner(diameter, div_size, div_num, force, stiff, kh0s, co
         y = deformation(diameter, div_size, div_num, force, stiff, khs_dec, condition)
         err = abs(y - y0)
     return y
-
-
-# @cache.memoize()
-# def reduced_khs(y, kh0s, dec_mode):
-#     y = np.array(y)
-#     kh0s = np.array(kh0s)
-#     if dec_mode == 'multi':
-#         dec = np.where(abs(y) > 10, (abs(y) / 10)**(-1/2), 1.0)[2:-2]
-#     else:
-#         dec = (abs(y[2]) / 10)**(-1/2) if abs(y[2]) > 10 else 1.0
-#     return kh0s * dec
 
 
 @cache.memoize()
