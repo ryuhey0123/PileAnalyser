@@ -5,13 +5,25 @@ from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 
+from flask_caching import Cache
+
 from page import create_layout
 from utils import *
 
-GRAPH_HEIGHT = 750
+GRAPH_WIDTH = 750
+GRAPH_HEIGHT = 540
+
+CACHE_CONFIG = {
+    "DEBUG": True,           # some Flask specific configs
+    "CACHE_TYPE": "simple",  # Flask-Caching related configs
+    "CACHE_DEFAULT_TIMEOUT": 300
+}
 
 app = dash.Dash(__name__)
+app.title = '杭の解析'
 server = app.server
+
+cache = Cache(server, config=CACHE_CONFIG)
 
 app.layout = create_layout(app)
 
@@ -101,12 +113,12 @@ def update_subplot(x, kh0s, khs, y, t, m, q):
     kh0s = np.array(kh0s) * 1e6
     khs = np.array(khs) * 1e6
     y = np.array(y)[2:-3]
-    t = np.array(t)[2:-3]
+    t = np.array(t)[2:-3] * 1e3
     m = np.array(m)[2:-3] * 1e-6
     q = np.array(q)[2:-3] * 1e-3
     fig = make_subplots(
         rows=1, cols=5,
-        subplot_titles=("Kh(kN/m3)", "Deformation(mm)", "Degree(rad)", "Moment(kNm)", "Shear(kN)"),
+        subplot_titles=("Kh(kN/m3)", "Deformation(mm)", "Degree(10-3 rad)", "Moment(kNm)", "Shear(kN)"),
         shared_yaxes=True)
     # fig.add_trace(go.Scatter(x=kh0s, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=1)
     fig.add_trace(go.Scatter(x=khs, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=1)
@@ -114,7 +126,7 @@ def update_subplot(x, kh0s, khs, y, t, m, q):
     fig.add_trace(go.Scatter(x=t, y=x, fill='tozerox', line=dict(color="#FFC107")), row=1, col=3)
     fig.add_trace(go.Scatter(x=m, y=x, fill='tozerox', line=dict(color="#E91E63")), row=1, col=4)
     fig.add_trace(go.Scatter(x=q, y=x, fill='tozerox', line=dict(color="#4CAF50")), row=1, col=5)
-    fig['layout'].update(height=GRAPH_HEIGHT, showlegend=False)
+    fig['layout'].update(width=GRAPH_WIDTH, height=GRAPH_HEIGHT, showlegend=False)
     fig['layout']['yaxis'].update(autorange='reversed')
     return fig
 
