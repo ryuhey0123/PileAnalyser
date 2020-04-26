@@ -212,9 +212,9 @@ def update_subplot(x, dec, kh0s, y, t, m, q, d, length, level):
     t = np.array(t)[2:-3] * 1e3
     m = np.array(m)[2:-3] * 1e-6
     q = np.array(q)[2:-3] * 1e-3
-    d = float(d)
-    length = float(length)
-    level = float(level)
+    # d = float(d)
+    # length = float(length)
+    # level = float(level)
     fig = make_subplots(
         rows=1, cols=6,
         subplot_titles=("Decrease", "kh0", "Deformation", "Degree", "Moment", "Shear"),
