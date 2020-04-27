@@ -54,7 +54,7 @@ herokuにデプロイしていますが、非常に遅いのでローカルで�
 
 線形地盤における基本方程式は、
 
-![](./assets/tex/texclip20200427102410.png)
+<div align="center"><img src="./assets/tex/texclip20200427102410.png"></div>
 
 である。ここで、![](./assets/tex/texclip20200427102932.png) は水平地盤反力係数。
 初期値が不明なため、差分法を用いて解析を行う。差分法による表現は下記となる。
