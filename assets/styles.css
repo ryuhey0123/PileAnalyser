@@ -36,14 +36,16 @@ table.result {
 }
 
 table.result th {
-  background-color:  #ddd;
-  border: solid 1px;
+  background-color:  #607D8B;
+  border: solid 2px;
   text-align: center;
+  color: white;
   padding: 0;
 }
 
 table.result td {
-  border: solid 1px;
+background-color: #CFD8DC;
+  border: solid white 2px;
   padding: 2px 5px;
   text-align: right;
 }

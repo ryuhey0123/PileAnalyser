@@ -37,17 +37,18 @@ app.layout = create_layout(app)
 
 @app.callback(
     Output('kh0s', 'children'),
-    [Input('upload-data', 'contents'), Input('div_num', 'value'), Input('x', 'children'), Input('diameter', 'value')],
+    [Input('upload-data', 'contents'), Input('x', 'children'), Input('diameter', 'value')],
     [State('upload-data', 'filename'), State('upload-data', 'last_modified')])
-def update_kh0s(contents, div_num, x, diameter, file_name, last_modified):
+def update_kh0s(contents, x, diameter, *args):
     if contents is not None:
         try:
-            kh0s = calc_kh0s_by_xlsx(contents, x, diameter)
+            df = decode_upload_file(contents)
         except Exception as e:
-            kh0s = np.ones(div_num + 1)
+            df = pd.read_excel('sample.xlsx')
             print(e)
     else:
-        kh0s = np.ones(div_num + 1) / 1e3
+        df = pd.read_excel('sample.xlsx')
+    kh0s = kh0s_by_df(df, x, diameter)
     return kh0s
 
 
@@ -77,7 +78,7 @@ def update_decrease(y, mode, dec_mode):
     Output('khs', 'children'),
     [Input('kh0s', 'children'), Input('decrease', 'children')])
 def update_khs(kh0s, dec):
-    return np.array(kh0s) * dec
+    return np.array(kh0s) * np.array(dec)
 
 
 @app.callback(
@@ -199,12 +200,9 @@ def update_max_shear(q):
         Input('y', 'children'),
         Input('t', 'children'),
         Input('m', 'children'),
-        Input('q', 'children'),
-        Input('diameter', 'value'),
-        Input('length', 'value'),
-        Input('level', 'value')
+        Input('q', 'children')
     ])
-def update_subplot(x, dec, kh0s, y, t, m, q, d, length, level):
+def update_subplot(x, dec, kh0s, y, t, m, q):
     x = np.array(x) * 1e-3
     dec = np.array(dec)
     kh0s = np.array(kh0s) * 1e6
@@ -212,36 +210,16 @@ def update_subplot(x, dec, kh0s, y, t, m, q, d, length, level):
     t = np.array(t)[2:-3] * 1e3
     m = np.array(m)[2:-3] * 1e-6
     q = np.array(q)[2:-3] * 1e-3
-    # d = float(d)
-    # length = float(length)
-    # level = float(level)
     fig = make_subplots(
         rows=1, cols=6,
         subplot_titles=("Decrease", "kh0", "Deformation", "Degree", "Moment", "Shear"),
         shared_yaxes=True)
-    # fig.add_trace(go.Scatter(x=kh0s, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=1)
-    fig.add_trace(go.Scatter(x=dec, y=x, fill='tozerox', line=dict(color="#9C27B0")),row=1, col=1)
+    fig.add_trace(go.Scatter(x=dec, y=x, fill='tozerox', line=dict(color="#795548")),row=1, col=1)
     fig.add_trace(go.Scatter(x=kh0s, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=2)
     fig.add_trace(go.Scatter(x=y, y=x, fill='tozerox', line=dict(color="#2196F3")), row=1, col=3)
     fig.add_trace(go.Scatter(x=t, y=x, fill='tozerox', line=dict(color="#FFC107")), row=1, col=4)
     fig.add_trace(go.Scatter(x=m, y=x, fill='tozerox', line=dict(color="#E91E63")), row=1, col=5)
     fig.add_trace(go.Scatter(x=q, y=x, fill='tozerox', line=dict(color="#4CAF50")), row=1, col=6)
-
-    # margin = 100
-    # fig.add_scatter(
-    #     x=[
-    #         max(kh0s) - d / 10 - margin,
-    #         max(kh0s) - margin,
-    #         max(kh0s) - margin,
-    #         max(kh0s) - d / 10 - margin,
-    #         max(kh0s) - d / 10 - margin,
-    #     ], y=[
-    #         -level,
-    #         -level,
-    #         length - level,
-    #         length - level,
-    #         -level
-    #     ], mode="lines", row=1, col=2)
 
     fig['layout'].update(
         autosize=True,
@@ -259,11 +237,16 @@ def update_subplot(x, dec, kh0s, y, t, m, q, d, length, level):
 
 
 @cache.memoize()
-def calc_kh0s_by_xlsx(contents, x, diameter):
+def decode_upload_file(contents):
     content_type, content_string = contents.split(',')
     decoded = base64.b64decode(content_string)
-    data = pd.read_excel(io.BytesIO(decoded))[
-        ['採掘深度', 'αβE0\n(採用値)']].values.astype(np.float64).T
+    df = pd.read_excel(io.BytesIO(decoded))
+    return df
+
+
+@cache.memoize()
+def kh0s_by_df(df, x, diameter):
+    data = df[['採掘深度', 'αβE0\n(採用値)']].values.astype(np.float64).T
     data = np.array([data[0] * 1e3, data[1]])
     fitted1 = interpolate.interp1d(data[0], data[1])
     kh0s = fitted1(np.array(x)) * (float(diameter) / 10) ** (-3 / 4) / 1e6

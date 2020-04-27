@@ -86,10 +86,7 @@ def create_layout(app):
 
             dcc.Upload(
                 id='upload-data',
-                children=html.Div([
-                    'Drag and Drop or ',
-                    html.A('Select Files')
-                ]),
+                children=html.Div(['Drag and Drop or ', html.A('Select Files')]),
                 style={
                     'width': '100%',
                     'height': '60px',
@@ -152,7 +149,7 @@ def create_layout(app):
             html.Div(id='y', style={'display': 'none'}),
             html.Div(id='t', style={'display': 'none'}),
             html.Div(id='m', style={'display': 'none'}),
-            html.Div(id='q', style={'display': 'none'})
+            html.Div(id='q', style={'display': 'none'}),
 
         ])
 
