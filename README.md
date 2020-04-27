@@ -59,23 +59,23 @@ herokuにデプロイしていますが、非常に遅いのでローカルで�
 である。ここで、![](./assets/tex/texclip20200427102932.png) は水平地盤反力係数。
 初期値が不明なため、差分法を用いて解析を行う。差分法による表現は下記となる。
 
-![](./assets/tex/texclip20200427102327.png)
+<div align="center"><img src="./assets/tex/texclip20200427102327.png"></div>
 
 境界条件は、まず杭頭について、
 
-![](./assets/tex/texclip20200427102445.png)
+<div align="center"><img src="./assets/tex/texclip20200427102445.png"></div>
 
 また、杭頭の回転剛性 ![](./assets/tex/texclip20200427102535.png) を用いて、
 
-![](./assets/tex/texclip20200427102610.png)
+<div align="center"><img src="./assets/tex/texclip20200427102610.png"></div>
 
 杭脚についての境界条件は、ローラー支点を仮定して、
 
-![](./assets/tex/texclip20200427102714.png)
+<div align="center"><img src="./assets/tex/texclip20200427102714.png"></div>
 
 以上より、一般化された行列として下記を組み立てることができる。
 
-![](./assets/tex/texclip20200427102750.png)
+<div align="center"><img src="./assets/tex/texclip20200427102750.png"></div>
 
 あとは両辺に左から逆行列を乗ずることによって、連立方程式をとけば良い。地盤の多層状態を考慮する場合は、![](./assets/tex/texclip20200427102820.png) についてデータを与えれば良いし、地盤の非線形性を考慮する場合は、$k_h(x)$ に $y^{-1/2}$ を乗じて収斂計算を行えば良い。
 
