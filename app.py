@@ -15,7 +15,8 @@ from plotly.subplots import make_subplots
 
 from flask_caching import Cache
 
-from page import *
+# from page import *
+from page_jpn import *
 
 # GRAPH_WIDTH = 700
 # GRAPH_HEIGHT = 540
