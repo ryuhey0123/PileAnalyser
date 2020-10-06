@@ -73,7 +73,7 @@ def update_stiff(diameter, material):
     Output('decrease', 'children'),
     [Input('y', 'children'), Input('mode', 'value'), Input('dec_mode', 'value')])
 def update_decrease(y, mode, dec_mode):
-    return reduced(y, mode, dec_mode)
+    return utils.reduced(y, mode, dec_mode)
 
 
 @app.callback(
@@ -94,7 +94,15 @@ def update_x(length, div_num, level):
     Output('y', 'children'),
     [Input('mode', 'value'), Input('dec_mode', 'value'), Input('diameter', 'value'), Input('force', 'value'), Input('condition', 'value'), Input('div_num', 'value'), Input('div_size', 'children'), Input('stiff', 'children'), Input('kh0s', 'children')])
 def update_deformations(mode, dec_mode, diameter, force, condition, div_num, div_size, stiff, kh0s):
+
+    diameter = float(diameter)
+    force = float(force)
+    condition = str(condition)
+    div_num = int(div_num)
+    div_size = float(div_size)
+    stiff = float(stiff)
     kh0s = np.array(kh0s)
+
     if mode == 'liner':
         y = utils.deformation_analysis_by_FDM(diameter, div_size, div_num, force, stiff, kh0s, condition)
     else:
@@ -295,17 +303,17 @@ def kh0s_by_df(df, x, diameter):
 #     return y
 
 
-def reduced(y, mode, dec_mode):
-    y = np.array(y)
-    if mode == 'liner':
-        dec = np.ones_like(y)[2:-2]
-    else:
-        if dec_mode == 'multi':
-            dec = np.where(abs(y) > 10, (abs(y) / 10)**(-1/2), 1.0)[2:-2]
-        else:
-            dec = np.ones_like(y)[2:-2]
-            dec = dec * (abs(y[2]) / 10)**(-1/2) if abs(y[2]) > 10 else 1.0
-    return dec
+# def reduced(y, mode, dec_mode):
+#     y = np.array(y)
+#     if mode == 'liner':
+#         dec = np.ones_like(y)[2:-2]
+#     else:
+#         if dec_mode == 'multi':
+#             dec = np.where(abs(y) > 10, (abs(y) / 10)**(-1/2), 1.0)[2:-2]
+#         else:
+#             dec = np.ones_like(y)[2:-2]
+#             dec = dec * (abs(y[2]) / 10)**(-1/2) if abs(y[2]) > 10 else 1.0
+#     return dec
 
 
 @cache.memoize()
