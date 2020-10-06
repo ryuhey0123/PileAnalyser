@@ -17,6 +17,7 @@ from flask_caching import Cache
 
 # from page import *
 from page_jpn import *
+import utils
 
 # GRAPH_WIDTH = 700
 # GRAPH_HEIGHT = 540
@@ -95,9 +96,9 @@ def update_x(length, div_num, level):
 def update_deformations(mode, dec_mode, diameter, force, condition, div_num, div_size, stiff, kh0s):
     kh0s = np.array(kh0s)
     if mode == 'liner':
-        y = deformation(diameter, div_size, div_num, force, stiff, kh0s, condition)
+        y = utils.deformation_analysis_by_FDM(diameter, div_size, div_num, force, stiff, kh0s, condition)
     else:
-        y = deformation_by_non_liner(diameter, div_size, div_num, force, stiff, kh0s, condition, mode, dec_mode)
+        y = utils.deformation_analysis_by_FDM_converge(diameter, div_size, div_num, force, stiff, kh0s, condition, mode, dec_mode)
     return y
 
 
@@ -254,49 +255,46 @@ def kh0s_by_df(df, x, diameter):
     return kh0s
 
 
-@cache.memoize()
-def deformation(diameter, div_size, div_num, force, stiff, khs, condition):
-    k0 = np.inf if condition == "fix" else 1.0e-10
-    # 式が見やすいように整理
-    b, n, h, ei = float(diameter), int(div_num), float(div_size), float(stiff)
-    p = float(force) * 1e3
-    # 事前計算（stiff = EI）
-    c1s = 6 + h ** 4 * np.array(khs) * b / ei
-    c2 = ei / k0
-    c3 = -2 * p * h ** 3 / ei
-
-    # 左辺のマトリクスを作成
-    left = np.zeros((n + 5, n + 5))
-    # 境界条件を入力
-    left[0, 0:5] = [-1, 2, 0, -2, 1]
-    left[1, 0:5] = [0, c2 - h, -2 * c2, c2 + h, 0]
-    left[-1, -5:] = [-1, 2, 0, -2, 1]
-    left[-2, -5:] = [0, 1, -2, 1, 0]
-    # その他の行に一般式を入れ込んでいく
-    for i in range(2, n + 3):
-        left[i, i - 2:i + 3] = [1, -4, c1s[i - 2], -4, 1]
-
-    # 右辺のマトリクスを作成
-    right = np.zeros(n + 5)
-    right[0] = c3
-
-    return -np.linalg.solve(left, right)
-
-
-@cache.memoize()
-def deformation_by_non_liner(diameter, div_size, div_num, force, stiff, kh0s, condition, mode, dec_mode):
-    err = np.ones(int(div_num) + 5) * 10
-    y = deformation(diameter, div_size, div_num, force, stiff, kh0s, condition)
-    while np.any(err > 0.1):
-        y0 = y
-        dec = reduced(y, mode, dec_mode)
-        khs_dec = kh0s * dec
-        y = deformation(diameter, div_size, div_num, force, stiff, khs_dec, condition)
-        err = abs(y - y0)
-    return y
+# def deformation(diameter, div_size, div_num, force, stiff, khs, condition):
+    # k0 = np.inf if condition == "fix" else 1.0e-10
+    # # 式が見やすいように整理
+    # b, n, h, ei = float(diameter), int(div_num), float(div_size), float(stiff)
+    # p = float(force) * 1e3
+    # # 事前計算（stiff = EI）
+    # c1s = 6 + h ** 4 * np.array(khs) * b / ei
+    # c2 = ei / k0
+    # c3 = -2 * p * h ** 3 / ei
+    #
+    # # 左辺のマトリクスを作成
+    # left = np.zeros((n + 5, n + 5))
+    # # 境界条件を入力
+    # left[0, 0:5] = [-1, 2, 0, -2, 1]
+    # left[1, 0:5] = [0, c2 - h, -2 * c2, c2 + h, 0]
+    # left[-1, -5:] = [-1, 2, 0, -2, 1]
+    # left[-2, -5:] = [0, 1, -2, 1, 0]
+    # # その他の行に一般式を入れ込んでいく
+    # for i in range(2, n + 3):
+    #     left[i, i - 2:i + 3] = [1, -4, c1s[i - 2], -4, 1]
+    #
+    # # 右辺のマトリクスを作成
+    # right = np.zeros(n + 5)
+    # right[0] = c3
+    #
+    # return -np.linalg.solve(left, right)
 
 
-@cache.memoize()
+# def deformation_by_non_liner(diameter, div_size, div_num, force, stiff, kh0s, condition, mode, dec_mode):
+#     err = np.ones(int(div_num) + 5) * 10
+#     y = utils.deformation_analysis_by_FDM(diameter, div_size, div_num, force, stiff, kh0s, condition)
+#     while np.any(err > 0.1):
+#         y0 = y
+#         dec = reduced(y, mode, dec_mode)
+#         khs_dec = kh0s * dec
+#         y = utils.deformation_analysis_by_FDM(diameter, div_size, div_num, force, stiff, khs_dec, condition)
+#         err = abs(y - y0)
+#     return y
+
+
 def reduced(y, mode, dec_mode):
     y = np.array(y)
     if mode == 'liner':
