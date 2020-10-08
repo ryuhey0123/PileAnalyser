@@ -39,19 +39,17 @@ class Pile:
         return sec1 - sec2
 
 
+@stop_watch
 @njit
 def deformation_analysis_by_FDM(diameter: float, div_size: float, div_num: int, force: float, stiffness: float, khs: np.ndarray, condition: str) -> np.ndarray:
     """ 差分法によって変形を算出する """
-
-    # 杭頭境界条件を設定
-    k0 = np.inf if condition == "fix" else 10e-10
-
-    # 式が見やすいように整理
-    b, n, h, ei = diameter, div_num, div_size, stiffness
+    k0 = np.inf if condition == "fix" else 10e-10  # 杭頭境界条件を設定
+    b, n, h, ei = diameter, div_num, div_size, stiffness  # 式が見やすいように整理
 
     left = _left_matrix(n, h, ei, k0, khs, b)  # 左辺のマトリクスを作成
     right = _right_matrix(n, force, h, ei)  # 右辺のマトリクスを作成
-    ans = _linalg_solve(left, right)  # 連立方程式を解く
+
+    ans = -np.linalg.solve(left, right)  # 連立方程式を解く
 
     return ans
 
@@ -84,11 +82,16 @@ def reduced(y: np.ndarray, mode: str, dec_mode: str) -> np.ndarray:
 @njit
 def _left_matrix(n, h, ei, k0, khs, b):
     left = np.zeros((n + 5, n + 5))
-    left = _left_matrix_add_head_row(left, h, ei, k0)
-    # khs = np.array(khs)
+    # head row
+    left[0, 0:5] = [-1, 2, 0, -2, 1]
+    left[1, 0:5] = [0, ei / k0 - h, -2 * ei / k0, ei / k0 + h, 0]
+    # general row
     c1s = 6 + h ** 4 * khs * b / ei
-    left = _left_matrix_add_general_row(left, n, c1s)
-    left = _left_matrix_add_tail_row(left)
+    for i in range(2, n + 3):
+        left[i, i - 2:i + 3] = [1, -4, c1s[i - 2], -4, 1]
+    # tail row
+    left[-1, -5:] = [-1, 2, 0, -2, 1]
+    left[-2, -5:] = [0, 1, -2, 1, 0]
     return left
 
 
@@ -97,31 +100,3 @@ def _right_matrix(n, force, h, ei):
     right = np.zeros(n + 5)
     right[0] = -2 * force * 1e3 * h ** 3 / ei
     return right
-
-
-@njit
-def _left_matrix_add_head_row(left, h, ei, k0):
-    c2 = ei / k0
-    left[0, 0:5] = [-1, 2, 0, -2, 1]
-    left[1, 0:5] = [0, c2 - h, -2 * c2, c2 + h, 0]
-    return left
-
-
-@njit
-def _left_matrix_add_general_row(left, n, c1s):
-    for i in range(2, n + 3):
-        left[i, i - 2:i + 3] = [1, -4, c1s[i - 2], -4, 1]
-    return left
-
-
-@njit
-def _left_matrix_add_tail_row(left):
-    left[-1, -5:] = [-1, 2, 0, -2, 1]
-    left[-2, -5:] = [0, 1, -2, 1, 0]
-    return left
-
-
-@njit
-def _linalg_solve(left, right):
-    ans = -np.linalg.solve(left, right)
-    return ans

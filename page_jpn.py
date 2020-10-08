@@ -10,9 +10,8 @@ def create_layout(app):
 
         html.Section([
 
-            html.H3("杭の設計"),
-
-            html.H6("解析設定"),
+            html.H3("多層地盤中の杭の応力解析"),
+            html.Br(),
 
             html.Table([
                 html.Tr([
@@ -65,20 +64,22 @@ def create_layout(app):
                 ])
             ], style={'width': '100%'}),
 
-            html.H6("杭諸元"),
+            html.Br(),
 
             html.Table([
                 html.Tr([
                     html.Th('杭径 (mm)'),
                     html.Th('杭長 (m)'),
                     html.Th('杭天端 (m)'),
-                    html.Th('入力水平力 (kN)')
+                    html.Th('入力水平力 (kN)'),
+                    html.Th('')
                 ]),
                 html.Tr([
-                    html.Td(dcc.Input(id="diameter", value='1000', type='number',debounce=True, min=1, step=1)),
-                    html.Td(dcc.Input(id="length", value='20.0', type='number', debounce=False, min=1.0, step=0.5)),
-                    html.Td(dcc.Input(id="level", value='-2.5', type='number', debounce=False, step=0.5)),
-                    html.Td(dcc.Input(id="force", value='500', type='number', debounce=False, min=10.0, step=10.0))
+                    html.Td(dcc.Input(id="diameter", value='1000', type='number',debounce=True, min=1, step=1, style={'width': '90%'})),
+                    html.Td(dcc.Input(id="length", value='20.0', type='number', debounce=False, min=1.0, step=0.5, style={'width': '90%'})),
+                    html.Td(dcc.Input(id="level", value='-2.5', type='number', debounce=False, step=0.5, style={'width': '90%'})),
+                    html.Td(dcc.Input(id="force", value='500', type='number', debounce=False, min=10.0, step=10.0, style={'width': '90%'})),
+                    html.Th(html.Button(id='submit-button-state', n_clicks=0, children='Submit'))
                 ])
             ], style={'width': '100%'}),
 
@@ -100,7 +101,7 @@ def create_layout(app):
                 multiple=False
             ),
 
-            html.H6("解析結果"),
+            html.Br(),
 
             html.Table([
                 html.Tr([
