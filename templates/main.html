@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="static/css/style.css">
+</head>
+<body>
+
+<div class="page">
+
+  <h3>多層地盤中の杭の非線形解析</h3>
+
+  <form method="POST" action="/">
+
+    <table style="width: 100%">
+      <tr>
+        <th>解析モード</th>
+        <th>低減方法</th>
+        <th>杭頭条件</th>
+        <th>材質</th>
+      </tr>
+      <tr>
+        <td>
+          <label><input type="radio" name="mode" value="non_liner" {{ "checked" if mode=="non_liner" }} >非線形</label>
+          <label><input type="radio" name="mode" value="liner" {{ "checked" if mode=="liner" }} >線形</label>
+        </td>
+        <td>
+          <label><input type="radio" name="dec_mode" value="multi" {{ "checked" if dec_mode=="multi" }}>多層地盤</label>
+          <label><input type="radio" name="dec_mode" value="single" {{ "checked" if dec_mode=="single" }}>単層地盤</label>
+        </td>
+        <td>
+          <label><input type="radio" name="condition" value="fix" {{ "checked" if condition=="fix" }}>固定</label>
+          <label><input type="radio" name="condition" value="pin" {{ "checked" if condition=="pin" }}>ピン</label>
+        </td>
+        <td>
+          <label><input type="radio" name="material" value="concrete" {{ "checked" if material=="concrete" }}>コンクリート</label>
+          <label><input type="radio" name="material" value="steel" {{ "checked" if material=="steel" }}>鉄</label>
+        </td>
+      </tr>
+    </table>
+    <br>
+
+    <table style="width: 100%">
+      <tr>
+        <th>杭径 (mm)</th>
+        <th>杭長 (m)</th>
+        <th>杭天端 (m)</th>
+        <th>入力水平力 (kN)</th>
+      </tr>
+      <tr>
+        <td>
+          <input type="number" name="diameter" value="{{ diameter }}">
+        </td>
+        <td>
+          <input type="number" name="length" step="0.1" value="{{ length }}">
+        </td>
+        <td>
+          <input type="number" name="level" step="0.1" value="{{ level }}">
+        </td>
+        <td>
+          <input type="number" name="force" value="{{ force }}">
+        </td>
+      </tr>
+    </table>
+    <br>
+
+    <button type="submit">Submit</button>
+  </form>
+  <br>
+
+  <table style="width: 100%" class="result">
+    <tr>
+      <th></th>
+      <th>
+        <div>kh</div>
+        <div class="unit">kN/m3</div>
+      </th>
+      <th>
+        <div>変形</div>
+        <div class="unit">mm</div>
+      </th>
+      <th>
+        <div>変形角</div>
+        <div class="unit">rad</div>
+      </th>
+      <th>
+        <div>曲げモーメント</div>
+        <div class="unit">kNm</div>
+      </th>
+      <th>
+        <div>せん断力</div>
+        <div class="unit">kN</div>
+      </th>
+    </tr>
+    <tr>
+      <th>MAX</th>
+      <td>{{ kh[0] }}</td>
+      <td>{{ deformation[0] }}</td>
+      <td>{{ degree[0] }}</td>
+      <td>{{ moment[0] }}</td>
+      <td>{{ shear[0] }}</td>
+    </tr>
+    <tr>
+      <th>MIN</th>
+      <td>{{ kh[1] }}</td>
+      <td>{{ deformation[1] }}</td>
+      <td>{{ degree[1] }}</td>
+      <td>{{ moment[1] }}</td>
+      <td>{{ shear[1] }}</td>
+    </tr>
+  </table>
+
+  {{ fig | safe }}
+
+</div>
+
+</body>
+</html>
