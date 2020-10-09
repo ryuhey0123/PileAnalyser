@@ -34,6 +34,16 @@ init_result_values = {
     'shear': [0, 0],
 }
 
+soil_data = {
+    "depth": [],
+    "nValue": [],
+    "soil": [],
+    "reductions": [],
+    "adopted_reductions": [],
+    "alpha": [],
+    "E0": []
+}
+
 
 # interface
 
@@ -45,8 +55,11 @@ def init_page():
 @app.route("/", methods=["POST"])
 def main_page():
 
-    inputs = request.form
-    results = calculations.get_results(**inputs)  # TODO: API
+    inputs = request.form.to_dict()
+    inputs['soil_data'] = soil_data
+    print(inputs)
+
+    results = calculations.get_results(**inputs)
     summary = update_summary(results)
     fig = update_figure(results)
 
@@ -59,12 +72,12 @@ def main_page():
 def upload():
 
     files = request.files
-    print(files)
+    soil_data = decode_upload_file(files['uploadFile'])
 
     return render_template("main.html", fig="", **init_form_values, **init_result_values)
 
 
-def update_kh0s(contents, x, diameter, *args):
+def update_kh0s(contents, x, diameter):
     if contents is not None:
         try:
             df = decode_upload_file(contents)
@@ -77,11 +90,17 @@ def update_kh0s(contents, x, diameter, *args):
     return kh0s
 
 
-def decode_upload_file(contents):
-    content_type, content_string = contents.split(',')
-    decoded = base64.b64decode(content_string)
-    df = pd.read_excel(io.BytesIO(decoded))
-    return df
+def decode_upload_file(file):
+    df = pd.read_excel(file)
+    return dict(
+        depth=df['深度'],
+        nValue=df['N値'],
+        soil=df['土質'],
+        reductions=df['低減係数'],
+        adopted_reductions=df['採用低減係数'],
+        alpha=df['alpha'],
+        E0=df['E0']
+    )
 
 
 def kh0s_by_df(df, x, diameter):
