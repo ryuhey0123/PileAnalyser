@@ -1,7 +1,12 @@
+import base64
+import io
+
 import numpy as np
+import pandas as pd
 from flask import *
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
+from scipy import interpolate
 
 import calculations
 
@@ -11,7 +16,7 @@ app = Flask(__name__)
 # initial values
 
 init_form_values = {
-    'mode': 'non_liner',
+    'mode': 'liner',
     'dec_mode': 'multi',
     'condition': 'fix',
     'material': 'concrete',
@@ -46,6 +51,45 @@ def main_page():
     fig = update_figure(results)
 
     return render_template("main.html", fig=fig, **inputs, **summary)
+
+
+# file upload
+
+@app.route("/upload", methods=["POST"])
+def upload():
+
+    files = request.files
+    print(files)
+
+    return render_template("main.html", fig="", **init_form_values, **init_result_values)
+
+
+def update_kh0s(contents, x, diameter, *args):
+    if contents is not None:
+        try:
+            df = decode_upload_file(contents)
+        except Exception as e:
+            df = pd.read_excel('sample.xlsx')
+            print(e)
+    else:
+        df = pd.read_excel('sample.xlsx')
+    kh0s = kh0s_by_df(df, x, diameter)
+    return kh0s
+
+
+def decode_upload_file(contents):
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+    df = pd.read_excel(io.BytesIO(decoded))
+    return df
+
+
+def kh0s_by_df(df, x, diameter):
+    data = df[['採掘深度', 'αβE0\n(採用値)']].values.astype(np.float64).T
+    data = np.array([data[0] * 1e3, data[1]])
+    fitted1 = interpolate.interp1d(data[0], data[1])
+    kh0s = fitted1(np.array(x)) * (float(diameter) / 10) ** (-3 / 4) / 1e6
+    return kh0s
 
 
 # formatters

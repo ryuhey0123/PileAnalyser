@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
 </head>
 <body>
 
@@ -20,12 +20,12 @@
       </tr>
       <tr>
         <td>
-          <label><input type="radio" name="mode" value="non_liner" {{ "checked" if mode=="non_liner" }} >非線形</label>
+          <label><input type="radio" name="mode" value="non_liner" disabled {{ "checked" if mode=="non_liner" }} >非線形</label>
           <label><input type="radio" name="mode" value="liner" {{ "checked" if mode=="liner" }} >線形</label>
         </td>
         <td>
           <label><input type="radio" name="dec_mode" value="multi" {{ "checked" if dec_mode=="multi" }}>多層地盤</label>
-          <label><input type="radio" name="dec_mode" value="single" {{ "checked" if dec_mode=="single" }}>単層地盤</label>
+          <label><input type="radio" name="dec_mode" value="single" disabled {{ "checked" if dec_mode=="single" }}>単層地盤</label>
         </td>
         <td>
           <label><input type="radio" name="condition" value="fix" {{ "checked" if condition=="fix" }}>固定</label>
@@ -59,13 +59,24 @@
         <td>
           <input type="number" name="force" value="{{ force }}">
         </td>
+        <td>
+          <button type="submit">solve</button>
+        </td>
       </tr>
     </table>
-    <br>
 
-    <button type="submit">Submit</button>
   </form>
   <br>
+
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <div class="upload_area" aria-disabled="false">
+      <input type="file" name="uploadFile">
+      <input type="submit" value="submit">
+    </div>
+  </form>
+  <br>
+
+  <div hidden>{{ ground_data }}</div>
 
   <table style="width: 100%" class="result">
     <tr>
