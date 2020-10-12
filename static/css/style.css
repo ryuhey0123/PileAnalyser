@@ -50,6 +50,41 @@ background-color: #CFD8DC;
   text-align: right;
 }
 
+table.input input {
+    border: 0px solid #000;
+    margin: 0;
+    background: transparent;
+    height: initial;
+    border-radius: initial;
+    width: 100%;
+}
+
+table.input th {
+    padding: 6px 10px;
+    border-right:1px solid #000;
+    border-bottom:1px solid #000;
+}
+
+table.input tr td {
+    border-right:1px solid #000;
+    border-bottom:1px solid #000;
+}
+
+table.input {
+    background: #fff none repeat scroll 0 0;
+    border-left: 1px solid #000;
+    border-top: 1px solid #000;
+    width: 100%;
+}
+
+table.input tr:nth-child(even){
+    background:#ccc;
+}
+
+table.input tr:nth-child(odd){
+    background:#eee;
+}
+
 div.unit {
   font-weight: normal;
 }

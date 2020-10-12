@@ -1,16 +1,13 @@
-import base64
-import io
-
 import numpy as np
 import pandas as pd
 from flask import *
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
-from scipy import interpolate
 
 import calculations
 
 app = Flask(__name__)
+app.secret_key = "hogehoge"
 
 
 # initial values
@@ -34,14 +31,14 @@ init_result_values = {
     'shear': [0, 0],
 }
 
-soil_data = {
-    "depth": [],
-    "nValue": [],
-    "soil": [],
-    "reductions": [],
-    "adopted_reductions": [],
-    "alpha": [],
-    "E0": []
+init_soil_data = {
+    'depth': [1.15, 2.15, 3.15, 4.15, 5.15, 6.15, 7.15, 8.15, 9.15, 10.15, 11.15, 12.15, 13.15, 14.15, 15.15, 16.15, 17.15, 18.15, 19.15, 20.15, 21.15, 22.15, 23.1],
+    'nValue': [15.0, 1.9, 3.9, 2.0, 1.9, 3.9, 4.8, 5.0, 3.0, 4.5, 5.8, 2.5, 11.0, 105.9, 225.0, 163.6, 49.0, 90.0, 257.1, 180.0, 450.0, 128.6, 600.0],
+    'soil': ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
+    'alpha': [80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80],
+    'reductions': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    'adopted_reductions': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    'E0': [10500.0, 1330.0, 2730.0, 1400.0, 1330.0, 2730.0, 3360.0, 3500.0, 2100.0, 3150.0, 4060.0, 1750.0, 7700.0, 74130.0, 157500.0, 114520.0, 34300.0, 63000.0, 179970.00000000003, 126000.0, 315000.0, 90020.0, 420000.0],
 }
 
 
@@ -49,6 +46,7 @@ soil_data = {
 
 @app.route("/", methods=["GET"])
 def init_page():
+    session['soil_data'] = init_soil_data
     return render_template("main.html", fig="", **init_form_values, **init_result_values)
 
 
@@ -56,8 +54,7 @@ def init_page():
 def main_page():
 
     inputs = request.form.to_dict()
-    inputs['soil_data'] = soil_data
-    print(inputs)
+    inputs['soil_data'] = session['soil_data']
 
     results = calculations.get_results(**inputs)
     summary = update_summary(results)
@@ -74,41 +71,38 @@ def upload():
     files = request.files
     soil_data = decode_upload_file(files['uploadFile'])
 
-    return render_template("main.html", fig="", **init_form_values, **init_result_values)
+    session['soil_data'] = soil_data
+    soil_table = make_soil_data_table(soil_data)
+
+    return render_template("main.html", fig="", **init_form_values, **init_result_values, soil_table=soil_table)
 
 
-def update_kh0s(contents, x, diameter):
-    if contents is not None:
-        try:
-            df = decode_upload_file(contents)
-        except Exception as e:
-            df = pd.read_excel('sample.xlsx')
-            print(e)
-    else:
-        df = pd.read_excel('sample.xlsx')
-    kh0s = kh0s_by_df(df, x, diameter)
-    return kh0s
+def make_soil_data_table(soil_data: dict):
+
+    td = {}
+    for key, value in soil_data.items():
+        data = list(map(lambda i: '<td><input type="text" value="{}"></td>'.format(i), value))
+        td[key] = data
+
+    html = ""
+    for i in range(len(td['depth'])):
+        row = "<tr>" + td['depth'][i] + td['nValue'][i] + td['soil'][i] + td['alpha'][i] + td['reductions'][i] + td['adopted_reductions'][i] + td['E0'][i] + "</tr>"
+        html += row
+
+    return html
 
 
 def decode_upload_file(file):
     df = pd.read_excel(file)
     return dict(
-        depth=df['深度'],
-        nValue=df['N値'],
-        soil=df['土質'],
-        reductions=df['低減係数'],
-        adopted_reductions=df['採用低減係数'],
-        alpha=df['alpha'],
-        E0=df['E0']
+        depth=df['深度'].values.tolist(),
+        nValue=df['N値'].values.tolist(),
+        soil=df['土質'].values.tolist(),
+        reductions=df['低減係数'].values.tolist(),
+        adopted_reductions=df['採用低減係数'].values.tolist(),
+        alpha=df['alpha'].values.tolist(),
+        E0=df['E0'].values.tolist()
     )
-
-
-def kh0s_by_df(df, x, diameter):
-    data = df[['採掘深度', 'αβE0\n(採用値)']].values.astype(np.float64).T
-    data = np.array([data[0] * 1e3, data[1]])
-    fitted1 = interpolate.interp1d(data[0], data[1])
-    kh0s = fitted1(np.array(x)) * (float(diameter) / 10) ** (-3 / 4) / 1e6
-    return kh0s
 
 
 # formatters
@@ -142,7 +136,7 @@ def update_figure(results):
         subplot_titles=("Decrease", "kh0", "Deformation", "Degree", "Moment", "Shear"),
         shared_yaxes=True)
 
-    fig.add_trace(go.Scatter(x=dec, y=x, fill='tozerox', line=dict(color="#795548")),row=1, col=1)
+    fig.add_trace(go.Scatter(x=dec, y=x, fill='tozerox', line=dict(color="#795548")), row=1, col=1)
     fig.add_trace(go.Scatter(x=kh0s, y=x, fill='tozerox', line=dict(color="#9C27B0")), row=1, col=2)
     fig.add_trace(go.Scatter(x=y, y=x, fill='tozerox', line=dict(color="#2196F3")), row=1, col=3)
     fig.add_trace(go.Scatter(x=t, y=x, fill='tozerox', line=dict(color="#FFC107")), row=1, col=4)
