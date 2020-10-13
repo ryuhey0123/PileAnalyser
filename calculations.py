@@ -7,7 +7,7 @@ _YOUNG_MODULES = {
 }
 
 
-def get_results(mode, condition, material, diameter, length, level, force, **kwargs) -> dict:
+def get_results(mode, condition, material, diameter, length, level, force, soil_data) -> dict:
 
     diameter = float(diameter)  # mm
     length = float(length) * 1e3  # to mm
@@ -22,7 +22,7 @@ def get_results(mode, condition, material, diameter, length, level, force, **kwa
 
     x = np.linspace(-level, length - level, div_num + 1)
 
-    kh0s = kh_by_soil_data(diameter, x, kwargs.get('soil_data'))
+    kh0s = kh_by_soil_data(diameter, x, soil_data)
 
     # solve y
     if mode == 'liner':
@@ -44,7 +44,7 @@ def get_results(mode, condition, material, diameter, length, level, force, **kwa
         dec=dec,
         kh0s=kh0s * 1e6,
         y=y[2:-3],
-        t=t[2:-3],
+        t=t[2:-3] * 1e3,
         m=m[2:-3] / 1e6,
         q=q[2:-3] / 1e3
     )
@@ -59,7 +59,7 @@ def kh_by_soil_data(diameter: float, x: np.ndarray, soil_data: dict):
 
     kh = alpha * beta * E0 * (diameter / 10) ** (-3 / 4)
 
-    fitted = interpolate.interp1d(depth, kh)
+    fitted = interpolate.interp1d(depth, kh)  # 線形補間
     fitted_kh = fitted(x)
 
     return fitted_kh / 1e6  # N/mm2

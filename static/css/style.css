@@ -103,6 +103,10 @@ div.upload_area {
   margin: 10px;
 }
 
+*:focus {
+  outline: none;
+}
+
 /* Base Styles
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
 /* NOTE

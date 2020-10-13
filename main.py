@@ -54,15 +54,16 @@ def init_page():
 def refresh():
 
     inputs = request.form.to_dict()
-    inputs['soil_data'] = session['soil_data']
+    soil_data = session['soil_data']
+
+    inputs['soil_data'] = soil_data
+    soil_table = make_soil_data_table(soil_data)
 
     results = calculations.get_results(**inputs)
     summary = update_summary(results)
     fig = update_figure(**results)
 
-    print(session['soil_data'])
-
-    return render_template("main.html", fig=fig, **inputs, **summary)
+    return render_template("main.html", fig=fig, **inputs, **summary, soil_table=soil_table)
 
 
 # file upload

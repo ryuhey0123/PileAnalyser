@@ -72,18 +72,22 @@
   </form>
   <br>
 
-  <table class="input">
-    <tr>
-      <th>深度</th>
-      <th>N値</th>
-      <th>土質</th>
-      <th>alpha</th>
-      <th>低減係数</th>
-      <th>採用</th>
-      <th>E0</th>
-    </tr>
-    {{ soil_table | safe }}
-  </table>
+  <details>
+    <summary>地盤情報...</summary>
+    <table class="input">
+      <tr>
+        <th>深度</th>
+        <th>N値</th>
+        <th>土質</th>
+        <th>alpha</th>
+        <th>低減係数</th>
+        <th>採用</th>
+        <th>E0</th>
+      </tr>
+      {{ soil_table | safe }}
+    </table>
+  </details>
+  
   <br>
 
   <table style="width: 100%" class="result">
