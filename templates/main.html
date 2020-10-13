@@ -14,18 +14,14 @@
     <table style="width: 100%">
       <tr>
         <th>解析モード</th>
-        <th>低減方法</th>
         <th>杭頭条件</th>
         <th>材質</th>
       </tr>
       <tr>
         <td>
-          <label><input type="radio" name="mode" value="non_liner" disabled {{ "checked" if mode=="non_liner" }} >非線形</label>
+          <label><input type="radio" name="mode" value="non_liner" {{ "checked" if mode=="non_liner" }} >非線形 (複層地盤)</label>
+          <label><input type="radio" name="mode" value="non_liner_single" {{ "checked" if mode=="non_liner_single" }} >非線形 (単層地盤)</label>
           <label><input type="radio" name="mode" value="liner" {{ "checked" if mode=="liner" }} >線形</label>
-        </td>
-        <td>
-          <label><input type="radio" name="dec_mode" value="multi" {{ "checked" if dec_mode=="multi" }}>多層地盤</label>
-          <label><input type="radio" name="dec_mode" value="single" disabled {{ "checked" if dec_mode=="single" }}>単層地盤</label>
         </td>
         <td>
           <label><input type="radio" name="condition" value="fix" {{ "checked" if condition=="fix" }}>固定</label>

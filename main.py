@@ -51,14 +51,16 @@ def init_page():
 
 
 @app.route("/", methods=["POST"])
-def main_page():
+def refresh():
 
     inputs = request.form.to_dict()
     inputs['soil_data'] = session['soil_data']
 
     results = calculations.get_results(**inputs)
     summary = update_summary(results)
-    fig = update_figure(results)
+    fig = update_figure(**results)
+
+    print(session['soil_data'])
 
     return render_template("main.html", fig=fig, **inputs, **summary)
 
@@ -121,15 +123,7 @@ def update_summary(results):
     )
 
 
-def update_figure(results):
-
-    x = results['x']
-    dec = results['dec']
-    kh0s = results['kh0s']
-    y = results['y']
-    t = results['t']
-    m = results['m']
-    q = results['q']
+def update_figure(x, dec, kh0s, y, t, m, q):
 
     fig = make_subplots(
         rows=1, cols=6,
@@ -143,9 +137,10 @@ def update_figure(results):
     fig.add_trace(go.Scatter(x=m, y=x, fill='tozerox', line=dict(color="#E91E63")), row=1, col=5)
     fig.add_trace(go.Scatter(x=q, y=x, fill='tozerox', line=dict(color="#4CAF50")), row=1, col=6)
 
+    fig.update_xaxes(range=[0, 1.1], row=1, col=1)
+
     fig['layout'].update(
         autosize=True,
-        # height=GRAPH_HEIGHT,
         margin=dict(l=10, r=10, b=50, t=50),
         showlegend=False,
         yaxis=dict(autorange='reversed')
