@@ -1,3 +1,4 @@
+from typing import Tuple
 import numpy as np
 from scipy import interpolate
 
@@ -75,7 +76,7 @@ def pile_stiffness(diameter: float, thickness: float, thickness_margin: float, m
     return (sec1 - sec2) * _YOUNG_MODULES.get(material)
 
 
-def deformation_analysis_by_FDM(div_num: int, div_size: float, stiffness: float, diameter: float, khs: np.ndarray, k0: float, force: float) -> (np.ndarray, np.ndarray):
+def deformation_analysis_by_FDM(div_num: int, div_size: float, stiffness: float, diameter: float, khs: np.ndarray, k0: float, force: float) -> Tuple[np.ndarray, np.ndarray]:
 
     def _left_matrix(n, h, ei, b, khs, k0):
         left = np.zeros((n + 5, n + 5))
@@ -103,7 +104,7 @@ def deformation_analysis_by_FDM(div_num: int, div_size: float, stiffness: float,
     return y, dec
 
 
-def deformation_analysis_by_non_liner_FDM(div_num: int, div_size: float, stiffness: float, diameter: float, khs: np.ndarray, k0: float, force: float) -> (np.ndarray, np.ndarray):
+def deformation_analysis_by_non_liner_FDM(div_num: int, div_size: float, stiffness: float, diameter: float, khs: np.ndarray, k0: float, force: float) -> Tuple[np.ndarray, np.ndarray]:
 
     dec_khs = khs
     y, _ = deformation_analysis_by_FDM(div_num, div_size, stiffness, diameter, khs, k0, force)  # 初期値
@@ -121,7 +122,7 @@ def deformation_analysis_by_non_liner_FDM(div_num: int, div_size: float, stiffne
     return y, dec
 
 
-def deformation_analysis_by_non_liner_single_FDM(div_num: int, div_size: float, stiffness: float, diameter: float, khs: np.ndarray, k0: float, force: float) -> (np.ndarray, np.ndarray):
+def deformation_analysis_by_non_liner_single_FDM(div_num: int, div_size: float, stiffness: float, diameter: float, khs: np.ndarray, k0: float, force: float) -> Tuple[np.ndarray, np.ndarray]:
 
     dec_khs = khs
     y, _ = deformation_analysis_by_FDM(div_num, div_size, stiffness, diameter, khs, k0, force)  # 初期値
