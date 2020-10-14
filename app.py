@@ -182,4 +182,5 @@ def update_figure(x, dec, kh0s, y, t, m, q):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
+    # app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
+    app.run()
