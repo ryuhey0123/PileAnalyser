@@ -14,7 +14,7 @@ app.secret_key = "hogehoge"
 
 # initial values
 
-init_form_values = {
+init_inputs = {
     'mode': 'liner',
     'dec_mode': 'multi',
     'condition': 'fix',
@@ -25,7 +25,7 @@ init_form_values = {
     'force': 500,
 }
 
-init_result_values = {
+init_summary = {
     'kh': [0, 0],
     'deformation': [0, 0],
     'degree': [0, 0],
@@ -49,7 +49,10 @@ init_soil_data = {
 @app.route("/", methods=["GET"])
 def init_page():
     session['soil_data'] = init_soil_data
-    return render_template("main.html", fig="", **init_form_values, **init_result_values)
+    return render_template("main.html",
+                           fig="",
+                           **init_inputs,
+                           **init_summary)
 
 
 @app.route("/", methods=["POST"])
@@ -59,17 +62,24 @@ def refresh():
 
     inputs = request.form.to_dict()
     soil_data = session['soil_data']
-
     inputs['soil_data'] = soil_data
-    soil_table = make_soil_data_table(soil_data)
 
+    soil_table = make_soil_data_table(soil_data)
     results = calculations.get_results(**inputs)
     summary = update_summary(results)
     fig = update_figure(**results)
 
+    session['inputs'] = inputs
+    session['summary'] = summary
+
     solution_time = "time : {:.3f} sec".format(time.time() - start)
 
-    return render_template("main.html", fig=fig, **inputs, **summary, soil_table=soil_table, solution_time=solution_time)
+    return render_template("main.html",
+                           fig=fig,
+                           soil_table=soil_table,
+                           solution_time=solution_time,
+                           **inputs,
+                           **summary)
 
 
 # file upload
@@ -79,18 +89,20 @@ def upload():
 
     files = request.files
     soil_data = decode_upload_file(files['uploadFile'])
-
-    session['soil_data'] = soil_data
     soil_table = make_soil_data_table(soil_data)
 
-    return render_template("main.html", fig="", **init_form_values, **init_result_values, soil_table=soil_table)
+    inputs = session['inputs']
+    inputs['soil_data'] = soil_data
 
+    session['inputs'] = inputs
+    session['soil_table'] = soil_table
 
-# ajax
-
-@app.route('/test_ajax', methods=['POST'])
-def test_ajax():
-    return jsonify({"message": "Hello Ajax"})
+    return render_template("main.html",
+                           fig="",
+                           soil_table=soil_table,
+                           isOpen=True,
+                           **inputs,
+                           **init_summary)
 
 
 def make_soil_data_table(soil_data: dict):
