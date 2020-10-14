@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import pandas as pd
 from flask import *
@@ -53,6 +55,8 @@ def init_page():
 @app.route("/", methods=["POST"])
 def refresh():
 
+    start = time.time()
+
     inputs = request.form.to_dict()
     soil_data = session['soil_data']
 
@@ -63,7 +67,9 @@ def refresh():
     summary = update_summary(results)
     fig = update_figure(**results)
 
-    return render_template("main.html", fig=fig, **inputs, **summary, soil_table=soil_table)
+    solution_time = "time : {:.3f} sec".format(time.time() - start)
+
+    return render_template("main.html", fig=fig, **inputs, **summary, soil_table=soil_table, solution_time=solution_time)
 
 
 # file upload
