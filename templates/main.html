@@ -1,20 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='css/style.css') }}">
+  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+  <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
 </head>
 <body>
 
 <div class="page">
 
-  <h3>多層地盤中の杭の非線形解析</h3>
+  <h4>多層地盤中の杭の非線形解析</h4>
+
+  <div>弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。</div>
+  <br>
+
+  <script src="/static/js/test.js"></script>
+  <input type="button" value="test" onclick="test_ajax()">
+  <span id="ajax_test">Hey</span>
 
   <form method="POST" action="/">
 
-    <table style="width: 100%">
+    <table style="width: 100%; table-layout: fixed;">
       <tr>
         <th>解析モード</th>
         <th>杭頭条件</th>
+        <!-- <th>杭脚条件</th> -->
         <th>材質</th>
       </tr>
       <tr>
@@ -26,10 +35,17 @@
         <td>
           <label><input type="radio" name="condition" value="fix" {{ "checked" if condition=="fix" }}>固定</label>
           <label><input type="radio" name="condition" value="pin" {{ "checked" if condition=="pin" }}>ピン</label>
+          <label><input type="radio" name="condition" value="half" disabled {{ "checked" if condition=="half" }}>半固定</label>
         </td>
+        <!-- <td>
+          <label><input type="radio" name="bottom_condition" value="pin" "disabled" {{ "checked" if condition=="pin" }}>ピン</label>
+          <label><input type="radio" name="bottom_condition" value="free" "disabled" {{ "checked" if condition=="free" }}>自由</label>
+          <label><input type="radio" name="bottom_condition" value="fix" "disabled" {{ "checked" if condition=="fix" }}>固定</label>
+        </td> -->
         <td>
           <label><input type="radio" name="material" value="concrete" {{ "checked" if material=="concrete" }}>コンクリート</label>
           <label><input type="radio" name="material" value="steel" {{ "checked" if material=="steel" }}>鉄</label>
+          <label><input type="radio" name="material" value="other" disabled {{ "checked" if material=="other" }}>その他</label>
         </td>
       </tr>
     </table>
@@ -59,18 +75,19 @@
           <button type="submit">solve</button>
         </td>
       </tr>
+      <tr>
+        <td colspan="4"></td>
+        <td style="text-align: center">{{ solution_time }}</td>
+      </tr>
     </table>
-
   </form>
-  <br>
 
   <form action="/upload" method="post" enctype="multipart/form-data">
     <div class="upload_area" aria-disabled="false">
       <input type="file" name="uploadFile" accept=".xlsx">
-      <input type="submit" value="submit">
+      <input type="submit" value="upload">
     </div>
   </form>
-  <br>
 
   <details>
     <summary>地盤情報...</summary>
@@ -86,10 +103,8 @@
       </tr>
       {{ soil_table | safe }}
     </table>
-  </details>
-  
-  <br>
-
+  </details><br>
+ 
   <table style="width: 100%" class="result">
     <tr>
       <th></th>
@@ -103,7 +118,7 @@
       </th>
       <th>
         <div>変形角</div>
-        <div class="unit">rad</div>
+        <div class="unit">×10<sup>-3</sup> rad</div>
       </th>
       <th>
         <div>曲げモーメント</div>
