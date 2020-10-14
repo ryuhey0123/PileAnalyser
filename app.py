@@ -86,6 +86,13 @@ def upload():
     return render_template("main.html", fig="", **init_form_values, **init_result_values, soil_table=soil_table)
 
 
+# ajax
+
+@app.route('/test_ajax', methods=['POST'])
+def test_ajax():
+    return jsonify({"message": "Hello Ajax"})
+
+
 def make_soil_data_table(soil_data: dict):
 
     td = {}
