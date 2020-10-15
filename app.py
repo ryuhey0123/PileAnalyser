@@ -29,7 +29,10 @@ init_soil_data = {
 
 @app.route("/", methods=["GET"])
 def main_page():
-    session['soil_data'] = init_soil_data
+
+    soil_data = decode_upload_file('./sample/sample1.xlsx')
+    session['soil_data'] = soil_data 
+
     return render_template("main.html")
 
 
@@ -155,5 +158,6 @@ def update_figure(x, dec, kh0s, y, t, m, q):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
-    # app.run()
+    # app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
+    app.run()
+
