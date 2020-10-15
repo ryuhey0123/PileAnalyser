@@ -8,8 +8,7 @@ function init() {
         contentType: false,
         processData: false,
         success: function(data) {
-            var table = document.getElementById("soil-table")
-            table.insertAdjacentHTML('beforeend', data) 
+            $("#soil-table").html(data)
         },
     });
 }
@@ -53,6 +52,8 @@ function solve_button() {
             figure.contentWindow.document.open();
             figure.contentWindow.document.write(result.fig);
             figure.contentWindow.document.close();
+
+            document.getElementById("soil-data-details").open = false;
         }
     })
 }
@@ -69,8 +70,7 @@ function file_upload() {
         contentType: false,
         processData: false,
         success: function(data) {
-            var table = document.getElementById("soil-table")
-            table.insertAdjacentHTML('beforeend', data) 
+            $("#soil-table").html(data)
             document.getElementById("soil-data-details").open = true;
         },
     });

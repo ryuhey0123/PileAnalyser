@@ -12,26 +12,11 @@ app = Flask(__name__)
 app.secret_key = "hogehoge"
 
 
-# initial values
-
-init_soil_data = {
-    'depth': [1.15, 2.15, 3.15, 4.15, 5.15, 6.15, 7.15, 8.15, 9.15, 10.15, 11.15, 12.15, 13.15, 14.15, 15.15, 16.15, 17.15, 18.15, 19.15, 20.15, 21.15, 22.15, 23.1],
-    'nValue': [15.0, 1.9, 3.9, 2.0, 1.9, 3.9, 4.8, 5.0, 3.0, 4.5, 5.8, 2.5, 11.0, 105.9, 225.0, 163.6, 49.0, 90.0, 257.1, 180.0, 450.0, 128.6, 600.0],
-    'soil': ['S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S', 'S'],
-    'alpha': [80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80],
-    'reductions': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    'adopted_reductions': [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    'E0': [10500.0, 1330.0, 2730.0, 1400.0, 1330.0, 2730.0, 3360.0, 3500.0, 2100.0, 3150.0, 4060.0, 1750.0, 7700.0, 74130.0, 157500.0, 114520.0, 34300.0, 63000.0, 179970.00000000003, 126000.0, 315000.0, 90020.0, 420000.0],
-}
-
-
-# interface
-
 @app.route("/", methods=["GET"])
 def main_page():
 
     soil_data = decode_upload_file('./sample/sample1.xlsx')
-    session['soil_data'] = soil_data 
+    session['soil_data'] = soil_data
 
     return render_template("main.html")
 
@@ -58,8 +43,6 @@ def solve():
         "time": solution_time
     })
 
-
-# file upload
 
 @app.route("/init_upload_ajax", methods=["POST"])
 def init_upload_ajax():
@@ -122,6 +105,8 @@ def update_soil_data_table(soil_data: dict):
         row = "<tr>" + td['depth'][i] + td['nValue'][i] + td['soil'][i] + td['alpha'][i] + td['reductions'][i] + td['adopted_reductions'][i] + td['E0'][i] + "</tr>"
         html += row
 
+    html = "<tr><th>深度</th><th>N値</th><th>土質</th><th>alpha</th><th>低減係数</th><th>採用</th><th>E0</th></tr>" + html
+
     return html
 
 
@@ -160,4 +145,3 @@ def update_figure(x, dec, kh0s, y, t, m, q):
 if __name__ == '__main__':
     # app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
     app.run()
-
