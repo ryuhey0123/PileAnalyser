@@ -5,7 +5,8 @@
   <script src="/static/js/test.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
-<body>
+
+<body onload="init()">
 
 <div class="page">
 
@@ -14,7 +15,7 @@
   <div>弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。</div>
   <br>
 
-  <form method="POST" action="/">
+  <form id="inputForm">
 
     <table style="width: 100%; table-layout: fixed;">
       <tr>
@@ -25,24 +26,24 @@
       </tr>
       <tr>
         <td>
-          <label><input type="radio" name="mode" value="non_liner" {{ "checked" if mode=="non_liner" }} >非線形 (複層地盤)</label>
-          <label><input type="radio" name="mode" value="non_liner_single" {{ "checked" if mode=="non_liner_single" }} >非線形 (単層地盤)</label>
-          <label><input type="radio" name="mode" value="liner" {{ "checked" if mode=="liner" }} >線形</label>
+          <label><input type="radio" name="mode" value="non_liner" checked>非線形 (複層地盤)</label>
+          <label><input type="radio" name="mode" value="non_liner_single">非線形 (単層地盤)</label>
+          <label><input type="radio" name="mode" value="liner">線形</label>
         </td>
         <td>
-          <label><input type="radio" name="condition" value="fix" {{ "checked" if condition=="fix" }}>固定</label>
-          <label><input type="radio" name="condition" value="pin" {{ "checked" if condition=="pin" }}>ピン</label>
-          <label><input type="radio" name="condition" value="half" disabled {{ "checked" if condition=="half" }}>半固定</label>
+          <label><input type="radio" name="condition" value="fix" checked>固定</label>
+          <label><input type="radio" name="condition" value="pin">ピン</label>
+          <label><input type="radio" name="condition" value="half">半固定</label>
         </td>
         <td>
-          <label><input type="radio" name="bottom_condition" value="free" {{ "checked" if bottom_condition=="free" }}>自由</label>
-          <label><input type="radio" name="bottom_condition" value="pin" disabled {{ "checked" if bottom_condition=="pin" }}>ピン</label>
-          <label><input type="radio" name="bottom_condition" value="fix" disabled {{ "checked" if bottom_condition=="fix" }}>固定</label>
+          <label><input type="radio" name="bottom_condition" value="free" checked>自由</label>
+          <label><input type="radio" name="bottom_condition" value="pin" disabled>ピン</label>
+          <label><input type="radio" name="bottom_condition" value="fix" disabled>固定</label>
         </td>
         <td>
-          <label><input type="radio" name="material" value="concrete" {{ "checked" if material=="concrete" }}>コンクリート</label>
-          <label><input type="radio" name="material" value="steel" {{ "checked" if material=="steel" }}>鉄</label>
-          <label><input type="radio" name="material" value="other" disabled {{ "checked" if material=="other" }}>その他</label>
+          <label><input type="radio" name="material" value="concrete" checked>コンクリート</label>
+          <label><input type="radio" name="material" value="steel">鉄</label>
+          <label><input type="radio" name="material" value="other">その他</label>
         </td>
       </tr>
     </table>
@@ -57,24 +58,24 @@
       </tr>
       <tr>
         <td>
-          <input type="number" name="diameter" value="{{ diameter }}">
+          <input type="number" name="diameter" value="1300">
         </td>
         <td>
-          <input type="number" name="length" step="0.1" value="{{ length }}">
+          <input type="number" name="pile_length" step="0.1" value="17.5">
         </td>
         <td>
-          <input type="number" name="level" step="0.1" value="{{ level }}">
+          <input type="number" name="level" step="0.1" value="-2.5">
         </td>
         <td>
-          <input type="number" name="force" value="{{ force }}">
+          <input type="number" name="force" value="1000">
         </td>
         <td>
-          <button type="submit">solve</button>
+          <button type="button" onclick="solve_button()">solve</button>
         </td>
       </tr>
       <tr>
         <td colspan="4"></td>
-        <td style="text-align: center">{{ solution_time }}</td>
+        <td style="text-align: center"><div id="time"> . </div></td>
       </tr>
     </table>
   </form>
@@ -86,9 +87,9 @@
     </div>
   </form>
 
-  <details {{ "open" if isOpen }}>
+  <details id="soil-data-details">
     <summary>地盤情報...</summary>
-    <table class="input">
+    <table class="input" id="soil-table">
       <tr>
         <th>深度</th>
         <th>N値</th>
@@ -98,7 +99,6 @@
         <th>採用</th>
         <th>E0</th>
       </tr>
-      {{ soil_table | safe }}
     </table>
   </details><br>
  
@@ -128,23 +128,23 @@
     </tr>
     <tr>
       <th>MAX</th>
-      <td>{{ kh[0] }}</td>
-      <td>{{ deformation[0] }}</td>
-      <td>{{ degree[0] }}</td>
-      <td>{{ moment[0] }}</td>
-      <td>{{ shear[0] }}</td>
+      <td><div id="kh_max"></div></td>
+      <td><div id="deformation_max"></div></td>
+      <td><div id="degree_max"></div></td>
+      <td><div id="moment_max"></div></td>
+      <td><div id="shear_max"></div></td>
     </tr>
     <tr>
       <th>MIN</th>
-      <td>{{ kh[1] }}</td>
-      <td>{{ deformation[1] }}</td>
-      <td>{{ degree[1] }}</td>
-      <td>{{ moment[1] }}</td>
-      <td>{{ shear[1] }}</td>
+      <td><div id="kh_min"></div></td>
+      <td><div id="deformation_min"></div></td>
+      <td><div id="degree_min"></div></td>
+      <td><div id="moment_min"></div></td>
+      <td><div id="shear_min"></div></td>
     </tr>
   </table>
 
-  {{ fig | safe }}
+  <iframe id="figure-iframe" frameborder="no" scrolling="no" width="100%" height="500px"></iframe>
 
 </div>
 

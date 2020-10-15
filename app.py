@@ -14,26 +14,6 @@ app.secret_key = "hogehoge"
 
 # initial values
 
-init_inputs = {
-    'mode': 'non_liner',
-    'dec_mode': 'multi',
-    'condition': 'fix',
-    'bottom_condition': 'free',
-    'material': 'concrete',
-    'diameter': 1300,
-    'length': 17.5,
-    'level': -2.5,
-    'force': 1000,
-}
-
-init_summary = {
-    'kh': [0, 0],
-    'deformation': [0, 0],
-    'degree': [0, 0],
-    'moment': [0, 0],
-    'shear': [0, 0],
-}
-
 init_soil_data = {
     'depth': [1.15, 2.15, 3.15, 4.15, 5.15, 6.15, 7.15, 8.15, 9.15, 10.15, 11.15, 12.15, 13.15, 14.15, 15.15, 16.15, 17.15, 18.15, 19.15, 20.15, 21.15, 22.15, 23.1],
     'nValue': [15.0, 1.9, 3.9, 2.0, 1.9, 3.9, 4.8, 5.0, 3.0, 4.5, 5.8, 2.5, 11.0, 105.9, 225.0, 163.6, 49.0, 90.0, 257.1, 180.0, 450.0, 128.6, 600.0],
@@ -48,31 +28,44 @@ init_soil_data = {
 # interface
 
 @app.route("/", methods=["GET"])
-def main_page(inputs=init_inputs, summary=init_summary, **kwargs):
-    return render_template("main.html", **inputs, **summary, **kwargs)
+def main_page():
+    session['soil_data'] = init_soil_data
+    return render_template("main.html")
 
 
-@app.route("/", methods=["POST"])
-def refresh():
+@app.route("/solve", methods=["POST"])
+def solve():
 
     start = time.time()
 
-    inputs = request.form.to_dict()
+    inputs = request.json
     soil_data = session['soil_data']
     inputs['soil_data'] = soil_data
 
     results = calculations.get_results(**inputs)
 
-    soil_table = update_soil_data_table(soil_data)
     summary = update_summary(results)
     fig = update_figure(**results)
 
     solution_time = "time : {:.3f} sec".format(time.time() - start)
 
-    return main_page(fig=fig, soil_table=soil_table, solution_time=solution_time, inputs=inputs, summary=summary)
+    return json.dumps({
+        "summary": summary,
+        "fig": fig,
+        "time": solution_time
+    })
 
 
 # file upload
+
+@app.route("/init_upload_ajax", methods=["POST"])
+def init_upload_ajax():
+
+    soil_data = session['soil_data']
+    soil_table = update_soil_data_table(soil_data)
+
+    return soil_table
+
 
 @app.route("/upload_ajax", methods=["POST"])
 def upload_ajax():
@@ -80,8 +73,9 @@ def upload_ajax():
     files = request.files
     soil_data = decode_upload_file(files['file'])
     session['soil_data'] = soil_data
+    soil_table = update_soil_data_table(soil_data)
 
-    return ""
+    return soil_table
 
 
 def decode_upload_file(file):
