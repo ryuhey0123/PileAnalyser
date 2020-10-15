@@ -8,7 +8,7 @@ _YOUNG_MODULES = {
 }
 
 
-def get_results(mode, condition, material, diameter, length, level, force, soil_data) -> dict:
+def get_results(mode, condition, bottom_condition, material, diameter, length, level, force, soil_data) -> dict:
 
     diameter = float(diameter)  # mm
     length = float(length) * 1e3  # to mm
@@ -41,13 +41,13 @@ def get_results(mode, condition, material, diameter, length, level, force, soil_
     q[2] = -force
 
     return dict(
-        x=x / 1e3,
+        x=x / 1e3,        # m
         dec=dec,
-        kh0s=kh0s * 1e6,
-        y=y[2:-3],
-        t=t[2:-3] * 1e3,
-        m=m[2:-3] / 1e6,
-        q=q[2:-3] / 1e3
+        kh0s=kh0s * 1e6,  # kN/m3 (低減前の地盤反力係数)
+        y=y[2:-2],        # mm
+        t=t[2:-2] * 1e3,  # x10^3 rad
+        m=m[2:-2] / 1e6,  # kNm
+        q=q[2:-2] / 1e3   # kN
     )
 
 
@@ -67,7 +67,7 @@ def kh_by_soil_data(diameter: float, x: np.ndarray, soil_data: dict):
 
 
 def top_condition_to_stiffness(condition: str) -> float:
-    return np.inf if condition == "fix" else 10e-10
+    return np.inf if condition == "fix" else 10e-15
 
 
 def pile_stiffness(diameter: float, thickness: float, thickness_margin: float, material: str) -> float:

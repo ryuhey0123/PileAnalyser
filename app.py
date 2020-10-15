@@ -18,6 +18,7 @@ init_inputs = {
     'mode': 'liner',
     'dec_mode': 'multi',
     'condition': 'fix',
+    'bottom_condition': 'free',
     'material': 'concrete',
     'diameter': 1300,
     'length': 17.5,
@@ -182,5 +183,5 @@ def update_figure(x, dec, kh0s, y, t, m, q):
 
 
 if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
-    app.run()
+    app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
+    # app.run()

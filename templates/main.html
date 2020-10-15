@@ -18,7 +18,7 @@
       <tr>
         <th>解析モード</th>
         <th>杭頭条件</th>
-        <!-- <th>杭脚条件</th> -->
+        <th>杭脚条件</th>
         <th>材質</th>
       </tr>
       <tr>
@@ -32,11 +32,11 @@
           <label><input type="radio" name="condition" value="pin" {{ "checked" if condition=="pin" }}>ピン</label>
           <label><input type="radio" name="condition" value="half" disabled {{ "checked" if condition=="half" }}>半固定</label>
         </td>
-        <!-- <td>
-          <label><input type="radio" name="bottom_condition" value="pin" "disabled" {{ "checked" if condition=="pin" }}>ピン</label>
-          <label><input type="radio" name="bottom_condition" value="free" "disabled" {{ "checked" if condition=="free" }}>自由</label>
-          <label><input type="radio" name="bottom_condition" value="fix" "disabled" {{ "checked" if condition=="fix" }}>固定</label>
-        </td> -->
+        <td>
+          <label><input type="radio" name="bottom_condition" value="free" {{ "checked" if bottom_condition=="free" }}>自由</label>
+          <label><input type="radio" name="bottom_condition" value="pin" disabled {{ "checked" if bottom_condition=="pin" }}>ピン</label>
+          <label><input type="radio" name="bottom_condition" value="fix" disabled {{ "checked" if bottom_condition=="fix" }}>固定</label>
+        </td>
         <td>
           <label><input type="radio" name="material" value="concrete" {{ "checked" if material=="concrete" }}>コンクリート</label>
           <label><input type="radio" name="material" value="steel" {{ "checked" if material=="steel" }}>鉄</label>
