@@ -61,7 +61,7 @@ table.input input {
 }
 
 table.input th {
-  padding: 6px 9px;
+  padding: 3px 3px;
   border-right:1px solid #000;
   border-bottom:1px solid #000;
   text-align: center;
@@ -70,6 +70,8 @@ table.input th {
 table.input tr td {
   border-right:1px solid #000;
   border-bottom:1px solid #000;
+  padding: 2px 2px;
+  text-align: right;
 }
 
 table.input {

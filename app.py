@@ -15,7 +15,7 @@ app.secret_key = "hogehoge"
 # initial values
 
 init_inputs = {
-    'mode': 'liner',
+    'mode': 'non_liner',
     'dec_mode': 'multi',
     'condition': 'fix',
     'bottom_condition': 'free',
@@ -23,7 +23,7 @@ init_inputs = {
     'diameter': 1300,
     'length': 17.5,
     'level': -2.5,
-    'force': 500,
+    'force': 1000,
 }
 
 init_summary = {
@@ -48,12 +48,8 @@ init_soil_data = {
 # interface
 
 @app.route("/", methods=["GET"])
-def init_page():
-    session['soil_data'] = init_soil_data
-    return render_template("main.html",
-                           fig="",
-                           **init_inputs,
-                           **init_summary)
+def main_page(inputs=init_inputs, summary=init_summary, **kwargs):
+    return render_template("main.html", **inputs, **summary, **kwargs)
 
 
 @app.route("/", methods=["POST"])
@@ -65,60 +61,27 @@ def refresh():
     soil_data = session['soil_data']
     inputs['soil_data'] = soil_data
 
-    soil_table = make_soil_data_table(soil_data)
     results = calculations.get_results(**inputs)
+
+    soil_table = update_soil_data_table(soil_data)
     summary = update_summary(results)
     fig = update_figure(**results)
 
-    session['inputs'] = inputs
-    session['summary'] = summary
-
     solution_time = "time : {:.3f} sec".format(time.time() - start)
 
-    return render_template("main.html",
-                           fig=fig,
-                           soil_table=soil_table,
-                           solution_time=solution_time,
-                           **inputs,
-                           **summary)
+    return main_page(fig=fig, soil_table=soil_table, solution_time=solution_time, inputs=inputs, summary=summary)
 
 
 # file upload
 
-@app.route("/upload", methods=["POST"])
-def upload():
+@app.route("/upload_ajax", methods=["POST"])
+def upload_ajax():
 
     files = request.files
-    soil_data = decode_upload_file(files['uploadFile'])
-    soil_table = make_soil_data_table(soil_data)
+    soil_data = decode_upload_file(files['file'])
+    session['soil_data'] = soil_data
 
-    inputs = session['inputs']
-    inputs['soil_data'] = soil_data
-
-    session['inputs'] = inputs
-    session['soil_table'] = soil_table
-
-    return render_template("main.html",
-                           fig="",
-                           soil_table=soil_table,
-                           isOpen=True,
-                           **inputs,
-                           **init_summary)
-
-
-def make_soil_data_table(soil_data: dict):
-
-    td = {}
-    for key, value in soil_data.items():
-        data = list(map(lambda i: '<td><input type="text" value="{}"></td>'.format(i), value))
-        td[key] = data
-
-    html = ""
-    for i in range(len(td['depth'])):
-        row = "<tr>" + td['depth'][i] + td['nValue'][i] + td['soil'][i] + td['alpha'][i] + td['reductions'][i] + td['adopted_reductions'][i] + td['E0'][i] + "</tr>"
-        html += row
-
-    return html
+    return ""
 
 
 def decode_upload_file(file):
@@ -148,6 +111,21 @@ def update_summary(results):
         moment=max_and_min_values_by('m'),
         shear=max_and_min_values_by('q'),
     )
+
+
+def update_soil_data_table(soil_data: dict):
+
+    td = {}
+    for key, value in soil_data.items():
+        data = list(map(lambda i: '<td>{}</td>'.format(i), value))
+        td[key] = data
+
+    html = ""
+    for i in range(len(td['depth'])):
+        row = "<tr>" + td['depth'][i] + td['nValue'][i] + td['soil'][i] + td['alpha'][i] + td['reductions'][i] + td['adopted_reductions'][i] + td['E0'][i] + "</tr>"
+        html += row
+
+    return html
 
 
 def update_figure(x, dec, kh0s, y, t, m, q):

@@ -2,6 +2,8 @@
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+  <script src="/static/js/test.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
 </head>
 <body>
 
@@ -77,10 +79,10 @@
     </table>
   </form>
 
-  <form action="/upload" method="post" enctype="multipart/form-data">
+  <form id="upload-file" method="post" enctype="multipart/form-data">
     <div class="upload_area" aria-disabled="false">
-      <input type="file" name="uploadFile" accept=".xlsx">
-      <input type="submit" value="upload">
+      <input name="file" type="file" accept=".xlsx">
+      <button type="button" onclick="file_upload()">Upload</button>
     </div>
   </form>
 
