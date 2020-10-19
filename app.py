@@ -31,15 +31,16 @@ def solve():
     inputs['soil_data'] = soil_data
 
     results = calculations.get_results(**inputs)
-
     summary = update_summary(results)
-    fig = update_figure(**results)
+
+    for key, value in results.items():
+        results[key] = value.tolist()
 
     solution_time = "time : {:.3f} sec".format(time.time() - start)
 
     return json.dumps({
+        "results": results,
         "summary": summary,
-        "fig": fig,
         "time": solution_time
     })
 
@@ -143,5 +144,5 @@ def update_figure(x, dec, kh0s, y, t, m, q):
 
 
 if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
-    app.run()
+    app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
+    # app.run()

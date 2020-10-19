@@ -2,8 +2,9 @@
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="/static/css/style.css">
-  <script src="/static/js/test.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="/static/js/test.js"></script>
 </head>
 
 <body onload="init()">
@@ -134,7 +135,10 @@
     </tr>
   </table>
 
-  <iframe id="figure-iframe" frameborder="no" scrolling="no" width="100%" height="500px"></iframe>
+  <!-- <iframe id="figure-iframe" frameborder="no" scrolling="no" width="100%" height="500px"></iframe> -->
+
+  <!-- <button type="button" onclick="plot_glaph()">plot</button> -->
+  <div id="figure"></div>
 
 </div>
 
