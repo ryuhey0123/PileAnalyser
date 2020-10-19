@@ -110,5 +110,5 @@ def update_soil_data_table(soil_data: dict):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
-    # app.run()
+    # app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
+    app.run()

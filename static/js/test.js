@@ -50,12 +50,6 @@ function solve_button() {
 
             plot_glaph(result.results)
 
-            // var figure = document.getElementById("figure-iframe");
-            // figure.contentWindow.document.open();
-            // figure.contentWindow.document.write(result.fig);
-            // figure.contentWindow.document.close();
-            // plot_glaph();
-
             document.getElementById("soil-data-details").open = false;
         }
     })
