@@ -18,7 +18,7 @@ function solve_button() {
     var inputForm = document.getElementById("inputForm");
     var inputData = JSON.stringify({
         "mode": inputForm.mode.value,
-        "condition": inputForm.condition.value,
+        "condition": inputForm.condition_value.value,
         "bottom_condition": inputForm.bottom_condition.value,
         "material": inputForm.material.value,
         "diameter": inputForm.diameter.value,

@@ -57,9 +57,10 @@ def kh_by_soil_data(diameter: float, x: np.ndarray, soil_data: dict):
 
 
 def top_condition_to_stiffness(mode, condition, div_num, div_size, stiffness, diameter, kh0s, force) -> float:
-    if condition == "1.0":
+    condition = float(condition)
+    if condition == 1.0:
         k0 = np.inf
-    elif condition == "0.0":
+    elif condition == 0.0:
         k0 = 10e-15
     else:
         k0 = half_condition_solver(mode, condition, div_num, div_size, stiffness, diameter, kh0s, force)
