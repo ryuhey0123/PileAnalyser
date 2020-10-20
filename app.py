@@ -29,7 +29,6 @@ def solve():
     inputs['soil_data'] = soil_data
 
     results = calculations.get_results(**inputs)
-    summary = update_summary(results)
 
     for key, value in results.items():
         results[key] = value.tolist()
@@ -38,7 +37,6 @@ def solve():
 
     return json.dumps({
         "results": results,
-        "summary": summary,
         "time": solution_time
     })
 
@@ -78,20 +76,6 @@ def decode_upload_file(file):
 
 # formatters
 
-def update_summary(results):
-
-    def max_and_min_values_by(key: str, field='{:.1f}'):
-        return list(map(lambda x: field.format(x), [np.max(results[key]), np.min(results[key])]))
-
-    return dict(
-        kh=max_and_min_values_by('kh0s'),
-        deformation=max_and_min_values_by('y', field='{:.2f}'),
-        degree=max_and_min_values_by('t', field='{:.3f}'),
-        moment=max_and_min_values_by('m'),
-        shear=max_and_min_values_by('q'),
-    )
-
-
 def update_soil_data_table(soil_data: dict):
 
     td = {}
@@ -110,5 +94,5 @@ def update_soil_data_table(soil_data: dict):
 
 
 if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
-    app.run()
+    app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
+    # app.run()

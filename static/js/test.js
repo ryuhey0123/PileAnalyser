@@ -34,22 +34,9 @@ function solve_button() {
         contentType: 'application/json',
         success: function(data) {
             var result = JSON.parse(data);
-
-            document.getElementById("time").innerText = result.time;
-
-            document.getElementById("kh_max").innerText = result.summary.kh[0];
-            document.getElementById("kh_min").innerText = result.summary.kh[1];
-            document.getElementById("deformation_max").innerText = result.summary.deformation[0];
-            document.getElementById("deformation_min").innerText = result.summary.deformation[1];
-            document.getElementById("degree_max").innerText = result.summary.degree[0];
-            document.getElementById("degree_min").innerText = result.summary.degree[1];
-            document.getElementById("moment_max").innerText = result.summary.moment[0];
-            document.getElementById("moment_min").innerText = result.summary.moment[1];
-            document.getElementById("shear_max").innerText = result.summary.shear[0];
-            document.getElementById("shear_min").innerText = result.summary.shear[1];
-
+            update_summary(result.results)
             plot_glaph(result.results)
-
+            document.getElementById("time").innerText = result.time;
             document.getElementById("soil-data-details").open = false;
         }
     })
@@ -72,6 +59,42 @@ function file_upload() {
         },
     });
 };
+
+
+function update_summary(results) {
+
+    function max_and_min_values_by(key, fixed=1) {
+
+        const aryMax = function (a, b) {return Math.max(a, b);}
+        const aryMin = function (a, b) {return Math.min(a, b);}
+
+        const ary = results[key];
+        const maximam = ary.reduce(aryMax);
+        const minimam = ary.reduce(aryMin);
+
+        return [maximam.toFixed(fixed), minimam.toFixed(fixed)]
+    }
+
+    const summary = {
+        kh: max_and_min_values_by('kh0s'),
+        deformation: max_and_min_values_by('y', field='2'),
+        degree: max_and_min_values_by('t', field='3'),
+        moment: max_and_min_values_by('m'),
+        shear: max_and_min_values_by('q'),
+    }
+
+    document.getElementById("kh_max").innerText = summary.kh[0];
+    document.getElementById("kh_min").innerText = summary.kh[1];
+    document.getElementById("deformation_max").innerText = summary.deformation[0];
+    document.getElementById("deformation_min").innerText = summary.deformation[1];
+    document.getElementById("degree_max").innerText = summary.degree[0];
+    document.getElementById("degree_min").innerText = summary.degree[1];
+    document.getElementById("moment_max").innerText = summary.moment[0];
+    document.getElementById("moment_min").innerText = summary.moment[1];
+    document.getElementById("shear_max").innerText = summary.shear[0];
+    document.getElementById("shear_min").innerText = summary.shear[1];
+}
+
 
 function plot_glaph(results) {
 
@@ -100,7 +123,10 @@ function plot_glaph(results) {
 
         showlegend: false,
         autosize: true,
-        margin: {l: 20, r: 20, b: 10, t: 50},
+        margin: {l: 20, r: 20, b: 50, t: 70},
+
+        colorway: ["#795548", "#9C27B0", "#2196F3", "#FFC107", "#E91E63", "#4CAF50"],
+        plot_bgcolor: "#FFFFFF",
 
         annotations: [
             {
@@ -163,8 +189,7 @@ function plot_glaph(results) {
                 xref: 'paper',
                 yref: 'paper',
             },
-
-        ]
+        ],
     };
 
     Plotly.newPlot('figure', data, layout);
