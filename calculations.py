@@ -15,26 +15,16 @@ def get_results(mode, condition, bottom_condition, material, diameter, length, l
     level = float(level) * 1e3  # to mm
     force = float(force) * 1e3  # to N
 
-    k0 = top_condition_to_stiffness(condition)
-    stiffness = pile_stiffness(diameter, diameter, 0, material)
-
     div_num = 100
     div_size = length / div_num
-
     x = np.linspace(-level, length - level, div_num + 1)
 
     kh0s = kh_by_soil_data(diameter, x, soil_data)
+    stiffness = pile_stiffness(diameter, diameter, 0, material)
 
-    # solve y
-    if mode == 'liner':
-        y, dec = deformation_analysis_by_FDM(div_num, div_size, stiffness, diameter, kh0s, k0, force)
-    elif mode == 'non_liner':
-        y, dec = deformation_analysis_by_non_liner_FDM(div_num, div_size, stiffness, diameter, kh0s, k0, force)
-    elif mode == 'non_liner_single':
-        y, dec = deformation_analysis_by_non_liner_single_FDM(div_num, div_size, stiffness, diameter, kh0s, k0, force)
-    else:
-        y, dec = deformation_analysis_by_FDM(div_num, div_size, stiffness, diameter, kh0s, k0, force)
+    k0 = top_condition_to_stiffness(mode, condition, div_num, div_size, stiffness, diameter, kh0s, force)
 
+    y, dec = solve_y(mode, div_num, div_size, stiffness, diameter, kh0s, k0, force)
     t = np.gradient(y, div_size)  # solve degree
     m = -np.gradient(t, div_size) * stiffness  # solve moment
     q = np.gradient(m, div_size)  # solve shear
@@ -66,14 +56,55 @@ def kh_by_soil_data(diameter: float, x: np.ndarray, soil_data: dict):
     return fitted_kh / 1e6  # N/mm2
 
 
-def top_condition_to_stiffness(condition: str) -> float:
-    return np.inf if condition == "fix" else 10e-15
+def top_condition_to_stiffness(mode, condition, div_num, div_size, stiffness, diameter, kh0s, force) -> float:
+    if condition == "1.0":
+        k0 = np.inf
+    elif condition == "0.0":
+        k0 = 10e-15
+    else:
+        k0 = half_condition_solver(mode, condition, div_num, div_size, stiffness, diameter, kh0s, force)
+    return k0
+
+
+def half_condition_solver(mode, condition, div_num, div_size, stiffness, diameter, kh0s, force):
+    y_at_fix, _ = solve_y(mode, div_num, div_size, stiffness, diameter, kh0s, np.inf, force)
+    y_at_pin, _ = solve_y(mode, div_num, div_size, stiffness, diameter, kh0s, 10e-15, force)
+
+    moment_at_fix = -np.gradient(np.gradient(y_at_fix, div_size), div_size)[2] * stiffness
+    degree_at_pin = np.gradient(y_at_pin, div_size)[2]
+
+    condition = float(condition)
+    half_moment = moment_at_fix * condition
+    half_degree = degree_at_pin * (1 - condition)
+
+    k0 = half_moment / half_degree
+
+    err = 1.1e6
+    while err > 1.0e6:
+        y, _ = solve_y(mode, div_num, div_size, stiffness, diameter, kh0s, k0, force)
+        m = -np.gradient(np.gradient(y, div_size), div_size)[2] * stiffness
+        err = m - half_moment
+        k0 = k0 * half_moment / m
+
+    return k0
 
 
 def pile_stiffness(diameter: float, thickness: float, thickness_margin: float, material: str) -> float:
     sec1 = np.pi * (diameter - thickness_margin * 2) ** 4 / 64
     sec2 = np.pi * (diameter - thickness) ** 4 / 64
     return (sec1 - sec2) * _YOUNG_MODULES.get(material)
+
+
+def solve_y(mode, div_num, div_size, stiffness, diameter, kh0s, k0, force):
+    if mode == 'liner':
+        y, dec = deformation_analysis_by_FDM(div_num, div_size, stiffness, diameter, kh0s, k0, force)
+    elif mode == 'non_liner':
+        y, dec = deformation_analysis_by_non_liner_FDM(div_num, div_size, stiffness, diameter, kh0s, k0, force)
+    elif mode == 'non_liner_single':
+        y, dec = deformation_analysis_by_non_liner_single_FDM(div_num, div_size, stiffness, diameter, kh0s, k0, force)
+    else:
+        y, dec = deformation_analysis_by_FDM(div_num, div_size, stiffness, diameter, kh0s, k0, force)
+    return y, dec
 
 
 def deformation_analysis_by_FDM(div_num: int, div_size: float, stiffness: float, diameter: float, khs: np.ndarray, k0: float, force: float) -> Tuple[np.ndarray, np.ndarray]:
