@@ -27,19 +27,21 @@
       </tr>
       <tr>
         <td>
-          <label><input type="radio" name="mode" value="non_liner" checked>非線形 (複層地盤)</label>
+          <label><input type="radio" name="mode" value="non_liner" checked>非線形 (多層地盤)</label>
           <label><input type="radio" name="mode" value="non_liner_single">非線形 (単層地盤)</label>
           <label><input type="radio" name="mode" value="liner">線形</label>
         </td>
         <td>
           <label><input type="radio" name="bottom_condition" value="free" checked>自由</label>
-          <label><input type="radio" name="bottom_condition" value="pin" disabled>ピン</label>
-          <label><input type="radio" name="bottom_condition" value="fix" disabled>固定</label>
+          <label><input type="radio" name="bottom_condition" value="pin">ピン</label>
+          <br>
+          <!-- <label><input type="radio" name="bottom_condition" value="fix" disabled>固定</label> -->
         </td>
         <td>
           <label><input type="radio" name="material" value="concrete" checked>コンクリート</label>
           <label><input type="radio" name="material" value="steel">鉄</label>
-          <label><input type="radio" name="material" value="other">その他</label>
+          <br>
+          <!-- <label><input type="radio" name="material" value="other">その他</label> -->
         </td>
         <td>
           <input type="number" name="condition_value" value="1.0" max="1.0" min="0.0" step="0.1"> 

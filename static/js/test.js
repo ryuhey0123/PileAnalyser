@@ -114,12 +114,19 @@ function plot_glaph(results) {
             subplots: ['xy', 'x2y', 'x3y', 'x4y', 'x5y', 'x6y']
         },
 
-        yaxis: {autorange: 'reversed'},
+        yaxis:  {autorange: 'reversed'},
         yaxis2: {autorange: 'reversed'},
         yaxis3: {autorange: 'reversed'},
         yaxis4: {autorange: 'reversed'},
         yaxis5: {autorange: 'reversed'},
         yaxis6: {autorange: 'reversed'},
+
+        xaxis:  {hoverformat: '.3f'},
+        xaxis2: {hoverformat: '.1f'},
+        xaxis3: {hoverformat: '.2f'},
+        xaxis4: {hoverformat: '.3f'},
+        xaxis5: {hoverformat: '.1f'},
+        xaxis6: {hoverformat: '.1f'},
 
         showlegend: false,
         autosize: true,
@@ -128,6 +135,8 @@ function plot_glaph(results) {
         colorway: ["#795548", "#9C27B0", "#2196F3", "#FFC107", "#E91E63", "#4CAF50"],
         plot_bgcolor: "#FFFFFF",
 
+        hovermode: 'closest',
+        
         annotations: [
             {
                 text: "Decrease",
