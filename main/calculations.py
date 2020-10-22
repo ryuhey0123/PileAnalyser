@@ -1,5 +1,7 @@
 from typing import Tuple
+
 import numpy as np
+import pandas as pd
 from scipy import interpolate
 
 _YOUNG_MODULES = {
@@ -179,3 +181,16 @@ def deformation_analysis_by_non_liner_single_FDM(bottom_condition, div_num: int,
         y = new_y
 
     return y, dec
+
+
+def decode_upload_file(file):
+    df = pd.read_excel(file)
+    return dict(
+        depth=df['深度'].values.tolist(),
+        nValue=df['N値'].values.tolist(),
+        soil=df['土質'].values.tolist(),
+        reductions=df['低減係数'].values.tolist(),
+        adopted_reductions=df['採用低減係数'].values.tolist(),
+        alpha=df['alpha'].values.tolist(),
+        E0=df['E0'].values.tolist()
+    )

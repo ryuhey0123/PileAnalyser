@@ -1,6 +1,5 @@
 import time
 
-import pandas as pd
 from flask import session, request, render_template, json
 
 from main import app
@@ -10,7 +9,7 @@ from main import calculations
 @app.route("/", methods=["GET"])
 def main_page():
 
-    soil_data = decode_upload_file('./sample/sample1.xlsx')
+    soil_data = calculations.decode_upload_file('./sample/sample1.xlsx')
     session['soil_data'] = soil_data
 
     return render_template("main.html")
@@ -51,24 +50,11 @@ def init_upload_ajax():
 def upload_ajax():
 
     files = request.files
-    soil_data = decode_upload_file(files['file'])
+    soil_data = calculations.decode_upload_file(files['file'])
     session['soil_data'] = soil_data
     soil_table = update_soil_data_table(soil_data)
 
     return soil_table
-
-
-def decode_upload_file(file):
-    df = pd.read_excel(file)
-    return dict(
-        depth=df['深度'].values.tolist(),
-        nValue=df['N値'].values.tolist(),
-        soil=df['土質'].values.tolist(),
-        reductions=df['低減係数'].values.tolist(),
-        adopted_reductions=df['採用低減係数'].values.tolist(),
-        alpha=df['alpha'].values.tolist(),
-        E0=df['E0'].values.tolist()
-    )
 
 
 # formatters
