@@ -1,12 +1,10 @@
 import time
 
 import pandas as pd
-from flask import *
+from flask import session, request, render_template, json
 
-import calculations
-
-app = Flask(__name__)
-app.secret_key = "hogehoge"
+from main import app
+from main import calculations
 
 
 @app.route("/", methods=["GET"])
