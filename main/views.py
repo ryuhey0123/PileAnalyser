@@ -23,6 +23,7 @@ def solve():
     inputs = request.json
     soil_data = session['soil_data']
     inputs['soil_data'] = soil_data
+    inputs['div_num'] = 100
 
     results = calculations.get_results(**inputs)
 

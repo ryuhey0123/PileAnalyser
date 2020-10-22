@@ -10,14 +10,14 @@ _YOUNG_MODULES = {
 }
 
 
-def get_results(mode, condition, bottom_condition, material, diameter, length, level, force, soil_data) -> dict:
+def get_results(mode, condition, bottom_condition, material, diameter, length, level, force, soil_data, div_num) -> dict:
 
     diameter = float(diameter)  # mm
     length = float(length) * 1e3  # to mm
     level = float(level) * 1e3  # to mm
     force = float(force) * 1e3  # to N
+    div_num = int(div_num)
 
-    div_num = 100
     div_size = length / div_num
     x = np.linspace(-level, length - level, div_num + 1)
 
