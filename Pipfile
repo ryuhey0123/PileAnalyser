@@ -5,6 +5,10 @@ verify_ssl = true
 
 [dev-packages]
 flake8 = "*"
+pytest = "*"
+pylint = "*"
+autopep8 = "*"
+python-dotenv = "*"
 
 [packages]
 numpy = "*"
@@ -21,4 +25,3 @@ python_version = "3.8"
 [scripts]
 start = "flask run"
 debug = "flask run --debugger --reload"
-
