@@ -7,8 +7,12 @@ function init() {
         data: "",
         contentType: false,
         processData: false,
+        beforSend: function() {
+            document.getElementById("loading-spiner").style.display = "block";
+        },
         success: function(data) {
-            $("#soil-table").html(data)
+            $("#soil-table").html(data);
+            document.getElementById("loading-spiner").style.display = "none";
         },
     });
 }
@@ -32,12 +36,20 @@ function solve_button() {
         url: '/solve',
         data: inputData,
         contentType: 'application/json',
+        beforSend: function() {
+            document.getElementById("loading-spiner").style.display = "block";
+        },
         success: function(data) {
+
+            // const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+            // _sleep(10000);
+
             var result = JSON.parse(data);
             update_summary(result.results)
             plot_glaph(result.results)
             document.getElementById("time").innerText = result.time;
             document.getElementById("soil-data-details").open = false;
+            document.getElementById("loading-spiner").style.display = "none";
         }
     })
 }
