@@ -7,13 +7,13 @@ function init() {
         data: "",
         contentType: false,
         processData: false,
-        beforSend: function() {
+        beforeSend: function() {
             document.getElementById("loading-spiner").style.display = "block";
         },
-        success: function(data) {
-            $("#soil-table").html(data);
-            document.getElementById("loading-spiner").style.display = "none";
-        },
+
+    }).done(function(data) {
+        $("#soil-table").html(data);
+        document.getElementById("loading-spiner").style.display = "none";
     });
 }
 
@@ -36,22 +36,18 @@ function solve_button() {
         url: '/solve',
         data: inputData,
         contentType: 'application/json',
-        beforSend: function() {
+        beforeSend: function() {
             document.getElementById("loading-spiner").style.display = "block";
         },
-        success: function(data) {
 
-            // const _sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-            // _sleep(10000);
-
-            var result = JSON.parse(data);
-            update_summary(result.results)
-            plot_glaph(result.results)
-            document.getElementById("time").innerText = result.time;
-            document.getElementById("soil-data-details").open = false;
-            document.getElementById("loading-spiner").style.display = "none";
-        }
-    })
+    }).done(function(data) {
+        var result = JSON.parse(data);
+        update_summary(result.results);
+        plot_glaph(result.results);
+        document.getElementById("time").innerText = result.time;
+        document.getElementById("soil-data-details").open = false;
+        document.getElementById("loading-spiner").style.display = "none";
+    });
 }
 
 
@@ -65,10 +61,10 @@ function file_upload() {
         data: form_data,
         contentType: false,
         processData: false,
-        success: function(data) {
-            $("#soil-table").html(data)
-            document.getElementById("soil-data-details").open = true;
-        },
+
+    }).done(function(data) {
+        $("#soil-table").html(data)
+        document.getElementById("soil-data-details").open = true; 
     });
 };
 
