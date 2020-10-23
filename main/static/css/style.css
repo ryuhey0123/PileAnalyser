@@ -31,6 +31,14 @@
   }
 }
 
+div.explain {
+  line-height: 30px;
+  border-width: 1px;
+  border-style: solid;
+  margin: 10px;
+  padding: 20px;
+}
+
 table.result {
   table-layout: fixed;
 }
@@ -310,15 +318,6 @@ td:not(.CalendarDay) {
   text-align: left;
   border-bottom: 0 solid #E1E1E1;
 }
-/*th:first-child:not(.CalendarDay),*/
-/*td:first-child:not(.CalendarDay) {*/
-/*  padding-left: 0;*/
-/*}*/
-/*th:last-child:not(.CalendarDay),*/
-/*td:last-child:not(.CalendarDay) {*/
-/*  padding-right: 0;*/
-/*}*/
-
 
 /* Spacing
 –––––––––––––––––––––––––––––––––––––––––––––––––– */

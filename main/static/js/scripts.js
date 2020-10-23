@@ -138,7 +138,7 @@ function plot_glaph(results) {
         yaxis5: {autorange: 'reversed'},
         yaxis6: {autorange: 'reversed'},
 
-        xaxis:  {hoverformat: '.3f'},
+        xaxis:  {hoverformat: '.3f', range: [0, 1]},
         xaxis2: {hoverformat: '.1f'},
         xaxis3: {hoverformat: '.2f'},
         xaxis4: {hoverformat: '.3f'},
