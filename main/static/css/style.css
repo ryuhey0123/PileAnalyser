@@ -4,7 +4,7 @@
   min-height: 277mm;
   padding: 10mm;
   margin: 10mm auto;
-  /*border-radius: 5px;*/
+  border-radius: 5px;
   background: white;
   box-shadow: 0 0 10px lightgrey;
 }
@@ -36,16 +36,16 @@ table.result {
 }
 
 table.result th {
-  background-color:  #607D8B;
-  border: solid 2px;
+  /* background-color:  #607D8B; */
+  border: solid darkgray 1px;
   text-align: center;
-  color: white;
+  /* color: white; */
   padding: 0;
 }
 
 table.result td {
-  background-color: #CFD8DC;
-  border: solid white 2px;
+  /* background-color: #CFD8DC; */
+  border: solid darkgray 1px;
   padding: 2px 5px;
   text-align: right;
 }
