@@ -14,6 +14,9 @@ function init() {
     }).done(function(data) {
         $("#soil-table").html(data);
         document.getElementById("loading-spiner").style.display = "none";
+
+    }).complete(function(data) {
+        document.getElementById("loading-spiner").style.display = "none"; 
     });
 }
 
@@ -47,6 +50,9 @@ function solve_button() {
         document.getElementById("time").innerText = result.time;
         document.getElementById("soil-data-details").open = false;
         document.getElementById("loading-spiner").style.display = "none";
+
+    }).complete(function(data) {
+        document.getElementById("loading-spiner").style.display = "none";
     });
 }
 
@@ -65,6 +71,9 @@ function file_upload() {
     }).done(function(data) {
         $("#soil-table").html(data)
         document.getElementById("soil-data-details").open = true; 
+
+    }).complete(function(data) {
+        document.getElementById("loading-spiner").style.display = "none";
     });
 };
 
