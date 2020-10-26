@@ -9,7 +9,7 @@
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
-<style>
+<!-- <style>
   .container {
     border: 1px solid blue;
   }
@@ -32,10 +32,11 @@
   [class*=" col-lg-"] {
     border: 1px dotted red;
   }
-</style>
+</style> -->
 
 <body onload="init()">
 
+  <br>
   <div class="container">
     <div class="row">
       <div class="col">
@@ -76,13 +77,10 @@
     </div>
 
     <h4>多層地盤中の杭の非線形解析</h4>
-
-    <p>
-      弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。
-      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#theoryExplain" aria-expanded="false" aria-controls="theoryExplain">
-        解析理論
-      </button>
-    </p>
+    <div>弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。</div>
+    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#theoryExplain" aria-expanded="false" aria-controls="theoryExplain">
+      解析理論
+    </button>
 
     <div class="collapse" id="theoryExplain">
       <div class="card card-body">
@@ -193,11 +191,10 @@
     </div>
 
     <form id="inputForm">
-
-      <div class="row">
+      <div class="form-row">
         <div class="col">
           <fieldset class="form-group">
-            <legend class="col-form-label">解析モード</legend>
+            <label class="col-form-label">解析モード</label>
             <div class="form-check">
               <input type="radio" name="mode" value="non_liner" checked>
               <label class="form-check-label">非線形 (多層地盤)</label>
@@ -212,10 +209,9 @@
             </div>
           </fieldset>
         </div>
-
         <div class="col">
           <fieldset class="form-group">
-            <legend class="col-form-label">杭脚条件</legend>
+            <label class="col-form-label">杭脚条件</label>
             <div class="form-check">
               <input type="radio" name="bottom_condition" value="free" checked>
               <label class="form-check-label">自由</label>
@@ -226,10 +222,9 @@
             </div>
           </fieldset>
         </div>
-
         <div class="col">
           <fieldset class="form-group">
-            <legend class="col-form-label">材質</legend>
+            <label class="col-form-label">材質</label>
             <div class="form-check">
               <input type="radio" name="material"value="concrete" checked>
               <label class="form-check-label">コンクリート</label>
@@ -240,79 +235,77 @@
             </div>
           </fieldset>
         </div>
-
+      </div>
+      <div class="form-row">
+        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#detailSettings" aria-expanded="false" aria-controls="theoryExplain">
+          詳細設定
+        </button>
+        <div class="collapse" id="detailSettings">
+          <div class="card card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>分割数</label>
+                  <input type="number" class="form-control" name="div_num" id="divNum" value="100" min="10" step="10">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>非線形解析時の変位誤差</label>
+                  <input type="number" class="form-control" name="yErr" id="yErr" value="0.01">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label>杭頭の応力誤差</label>
+                  <input type="number" class="form-control" name="mErr" id="mErr" value="1.0">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
         <div class="col">
           <div class="form-group">
-            <legend class="col-form-label">杭頭固定度</legend>
+            <label>杭径</label>
+            <input type="number" class="form-control" name="diameter" value="1300">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>杭長</label>
+            <input type="number" class="form-control" name="pile_length" value="17.5">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>杭天端</label>
+            <input type="number" class="form-control" name="level" value="-2.5">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>入力水平力</label>
+            <input type="number" class="form-control" name="force" value="1000">
+          </div>
+        </div>
+        <div class="col">
+          <div class="form-group">
+            <label>杭頭固定度</label>
             <input type="number" class="form-control" name="condition_value" id="pileTopCondition" value="1.0" max="1.0" min="0.0" step="0.1">
           </div>
         </div>
-
       </div>
-
-      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#detailSettings" aria-expanded="false" aria-controls="theoryExplain">
-        詳細設定
-      </button>
-      <div class="collapse" id="detailSettings">
-        <div class="card card-body">
-          <div class="row">
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>分割数</label>
-                <input type="number" class="form-control" name="div_num" id="divNum" value="100" min="10" step="10">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>非線形解析時の変位誤差</label>
-                <input type="number" class="form-control" name="yErr" id="yErr" value="0.01">
-              </div>
-            </div>
-            <div class="col-md-4">
-              <div class="form-group">
-                <label>杭頭の応力誤差</label>
-                <input type="number" class="form-control" name="mErr" id="mErr" value="1.0">
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <label>杭径</label>
-          <input type="number" class="form-control" name="diameter" value="1300">
-        </div>
-        <div class="col">
-          <label>杭長</label>
-          <input type="number" class="form-control" name="pile_length" value="17.5">
-        </div>
-        <div class="col">
-          <label>杭天端</label>
-          <input type="number" class="form-control" name="level" value="-2.5">
-        </div>
-        <div class="col">
-          <label>入力水平力</label>
-          <input type="number" class="form-control" name="force" value="1000">
-        </div>
-      </div>
-
-      <div class="form row">
-        <div class="form col-9">
-          <div id="time">0.003 sec</div>
-        </div>
-        <div class="form col">
-          <button type="button" class="btn btn-primary" onclick="solve_button()">solve</button>
-        </div>
-      </div>
-
+      <button type="button" class="btn btn-primary" onclick="solve_button()">solve</button>
+      <span id="time">0.003 sec</span>
     </form>
 
     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#soilDataDetails" aria-expanded="false" aria-controls="theoryExplain">
      地盤情報
     </button>
     <div class="collapse" id="soilDataDetails">
-      <summary>地盤情報...</summary>
+
       <form id="upload-file" method="post" enctype="multipart/form-data">
         <div class="upload_area" aria-disabled="false">
           <input name="file" type="file" accept=".xlsx">
