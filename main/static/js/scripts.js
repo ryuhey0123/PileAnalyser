@@ -8,15 +8,15 @@ function init() {
         contentType: false,
         processData: false,
         beforeSend: function() {
-            document.getElementById("loading-spiner").style.display = "block";
+            document.getElementById("loading-spinner").style.display = "block";
         },
 
     }).done(function(data) {
         $("#soil-table").html(data);
-        document.getElementById("loading-spiner").style.display = "none";
+        document.getElementById("loading-spinner").style.display = "none";
 
     }).complete(function(data) {
-        document.getElementById("loading-spiner").style.display = "none"; 
+        document.getElementById("loading-spinner").style.display = "none";
     });
 }
 
@@ -34,25 +34,27 @@ function solve_button() {
         "force": inputForm.force.value
     });
 
+    console.log(inputData);
+
     $.ajax({
         type: 'POST',
         url: '/solve',
         data: inputData,
         contentType: 'application/json',
         beforeSend: function() {
-            document.getElementById("loading-spiner").style.display = "block";
+            document.getElementById("loading-spinner").style.display = "block";
         },
 
     }).done(function(data) {
         var result = JSON.parse(data);
         update_summary(result.results);
-        plot_glaph(result.results);
+        plot_graph(result.results);
         document.getElementById("time").innerText = result.time;
         document.getElementById("soil-data-details").open = false;
-        document.getElementById("loading-spiner").style.display = "none";
+        document.getElementById("loading-spinner").style.display = "none";
 
     }).complete(function(data) {
-        document.getElementById("loading-spiner").style.display = "none";
+        document.getElementById("loading-spinner").style.display = "none";
     });
 }
 
@@ -70,10 +72,10 @@ function file_upload() {
 
     }).done(function(data) {
         $("#soil-table").html(data)
-        document.getElementById("soil-data-details").open = true; 
+        document.getElementById("soil-data-details").open = true;
 
     }).complete(function(data) {
-        document.getElementById("loading-spiner").style.display = "none";
+        document.getElementById("loading-spinner").style.display = "none";
     });
 };
 
@@ -86,10 +88,10 @@ function update_summary(results) {
         const aryMin = function (a, b) {return Math.min(a, b);}
 
         const ary = results[key];
-        const maximam = ary.reduce(aryMax);
-        const minimam = ary.reduce(aryMin);
+        const maximum = ary.reduce(aryMax);
+        const minimum = ary.reduce(aryMin);
 
-        return [maximam.toFixed(fixed), minimam.toFixed(fixed)]
+        return [maximum.toFixed(fixed), minimum.toFixed(fixed)]
     }
 
     const summary = {
@@ -113,7 +115,7 @@ function update_summary(results) {
 }
 
 
-function plot_glaph(results) {
+function plot_graph(results) {
 
     var trace_dec = {x: results['dec'], y: results['x'], fill: 'tozerox', type: 'scatter'};
     var trace_kh0s = {x: results['kh0s'], y: results['x'], xaxis: 'x2', yaxis: 'y2', fill: 'tozerox', type: 'scatter'};
@@ -153,7 +155,7 @@ function plot_glaph(results) {
         plot_bgcolor: "#FFFFFF",
 
         hovermode: 'closest',
-        
+
         annotations: [
             {
                 text: "Decrease",

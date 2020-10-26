@@ -2,20 +2,69 @@
 <html>
 
 <head>
-  <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="/static/css/pageLayout.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/userStyle.css">
   <link rel="stylesheet" type="text/css" href="/static/css/loading.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-  <script>MathJax = { chtml: { matchFontHeight: false }, tex: { inlineMath: [['$', '$']] } };</script>
-  <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
-  <script src="/static/js/scripts.js"></script>
 </head>
+
+<style>
+  .container {
+    border: 1px solid blue;
+  }
+
+  .row {
+    border: 1px solid green;
+  }
+
+  .col {
+    border: 1px solid red;
+  }
+
+  [class^="col-xs-"],
+  [class*=" col-xs-"],
+  [class^="col-sm-"],
+  [class*=" col-sm-"],
+  [class^="col-md-"],
+  [class*=" col-md-"],
+  [class^="col-lg-"],
+  [class*=" col-lg-"] {
+    border: 1px dotted red;
+  }
+</style>
 
 <body onload="init()">
 
-  <div class="page">
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="input-group input-group-sm mb-3">
+          <input type="text" class="form-control">
+          <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary" id="result-save-button">Save</button>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="input-group input-group-sm mb-3">
+          <select class="custom-select" id="inputGroupSelect02">
+            <option selected>Choose...</option>
+            <option value="1">One</option>
+            <option value="2">Two</option>
+            <option value="3">Three</option>
+          </select>
+          <div class="input-group-append">
+            <button type="button" class="btn btn-outline-secondary" id="result-save-button">Loading</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <div class="loading" id="loading-spiner">
+  <div class="container">
+
+    <div class="loading" id="loading-spinner">
       <div class="sk-chase">
         <div class="sk-chase-dot"></div>
         <div class="sk-chase-dot"></div>
@@ -28,183 +77,241 @@
 
     <h4>多層地盤中の杭の非線形解析</h4>
 
-    <div>弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。</div>
-    <br>
+    <p>
+      弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。
+      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#theoryExplain" aria-expanded="false" aria-controls="theoryExplain">
+        解析理論
+      </button>
+    </p>
 
-    <details>
-      <summary>解析理論...</summary>
-      <div class="explain">
-        線形地盤における弾性支承梁の基本方程式は、
+    <div class="collapse" id="theoryExplain">
+      <div class="card card-body">
+        <div class="math display">
+          線形地盤における弾性支承梁の基本方程式は、
 
-        $$ EI \frac{d^4y}{dx^4} + k_h B y = 0 \tag{1} $$
+          $$ EI \frac{d^4y}{dx^4} + k_h B y = 0 \tag{1} $$
 
-        である。ここで、$k_h$ は水平地盤反力係数。
-        初期値が不明なため、差分法を用いて解析を行う。差分法による表現は下記となる。
+          である。ここで、$k_h$ は水平地盤反力係数。
+          初期値が不明なため、差分法を用いて解析を行う。差分法による表現は下記となる。
 
-        $$ EI \frac{y_{y+2} - 4y_{y+1} + 6y_{y} - 4y_{y-1} + y_{y-2}}{h^4} + k_h B y_i = 0 $$
-        $$ \Leftrightarrow ~~~ y_{y+2} - 4y_{y+1} + C_1 y_{y} - 4y_{y-1} + y_{y-2} = 0 ~~~~ \left( C_1 = 6 + \frac{k_h
-        B}{EI} h^4 \right) \tag{2} $$
+          $$ EI \frac{y_{y+2} - 4y_{y+1} + 6y_{y} - 4y_{y-1} + y_{y-2}}{h^4} + k_h B y_i = 0 $$
+          $$ \Leftrightarrow ~~~ y_{y+2} - 4y_{y+1} + C_1 y_{y} - 4y_{y-1} + y_{y-2} = 0 ~~~~ \left( C_1 = 6 + \frac{k_h
+          B}{EI} h^4 \right) \tag{2} $$
 
-        境界条件は、まず杭頭について、
+          境界条件は、まず杭頭について、
 
-        $$ Q(0) = -EI \frac{d^3y}{dx^3}(0) = P $$
-        $$ \Leftrightarrow ~~~ -EI \frac{y_{2} - 2y_{1} + 2y_{-1} - y_{-2}}{2h^3} = P $$
-        $$ \Leftrightarrow ~~~ y_{2} - 2y_{1} + 2y_{-1} - y_{-2} = C_2 ~~~ \left(C_2 = -\frac{2P}{EI}h^3 \right)
-        \tag{3} $$
+          $$ Q(0) = -EI \frac{d^3y}{dx^3}(0) = P $$
+          $$ \Leftrightarrow ~~~ -EI \frac{y_{2} - 2y_{1} + 2y_{-1} - y_{-2}}{2h^3} = P $$
+          $$ \Leftrightarrow ~~~ y_{2} - 2y_{1} + 2y_{-1} - y_{-2} = C_2 ~~~ \left(C_2 = -\frac{2P}{EI}h^3 \right)
+          \tag{3} $$
 
-        また、杭頭の回転剛性 $K_0 ( = M_0 / \theta_0)$ を用いて、
+          また、杭頭の回転剛性 $K_0 ( = M_0 / \theta_0)$ を用いて、
 
-        $$ \frac{dy}{dx}(0) K_0 = -\frac{d^2y}{dx^2}(0) EI $$
-        $$ \Leftrightarrow ~~~ \frac{y_1 - y_{-1}}{2h} K_0 = -EI \frac{y_1 - 2y_0 + y_{-1}}{h^2} $$
-        $$ \Leftrightarrow ~~~ (2 C_3 + h) y_1 - 4 C_3 y_0 + (2 C_3 - h) y_{-1} = 0 ~~~ \left( C_3 = \frac{EI}{K_0} \right) \tag{4} $$
+          $$ \frac{dy}{dx}(0) K_0 = -\frac{d^2y}{dx^2}(0) EI $$
+          $$ \Leftrightarrow ~~~ \frac{y_1 - y_{-1}}{2h} K_0 = -EI \frac{y_1 - 2y_0 + y_{-1}}{h^2} $$
+          $$ \Leftrightarrow ~~~ (2 C_3 + h) y_1 - 4 C_3 y_0 + (2 C_3 - h) y_{-1} = 0 ~~~ \left( C_3 = \frac{EI}{K_0}
+          \right) \tag{4} $$
 
-        杭脚についての境界条件は、ローラー支点を仮定する場合は、
+          杭脚についての境界条件は、ローラー支点を仮定する場合は、
 
-        $$ Q(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L+2} - 2y_{L+1} + 2y_{L-1} - y_{L-2} = 0 \tag{5a} $$
-        $$ M(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L+1} - 2y_{L} + y_{L-1} = 0 \tag{5b} $$
+          $$ Q(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L+2} - 2y_{L+1} + 2y_{L-1} - y_{L-2} = 0 \tag{5a} $$
+          $$ M(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L+1} - 2y_{L} + y_{L-1} = 0 \tag{5b} $$
 
-        ピン支点を仮定する場合は、
+          ピン支点を仮定する場合は、
 
-        $$ y(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L} = 0 \tag{6a} $$
-        $$ M(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L+1} + y_{L-1} = 0 \tag{6b} $$
-        $$ \theta(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L+2} + y_{L-2} = 0 \tag{6c} $$
+          $$ y(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L} = 0 \tag{6a} $$
+          $$ M(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L+1} + y_{L-1} = 0 \tag{6b} $$
+          $$ \theta(L) = 0 ~~~ \Leftrightarrow ~~~ y_{L+2} + y_{L-2} = 0 \tag{6c} $$
 
-        以上より、一般化された行列として下記を組み立てることができる。まず、杭脚がローラーの場合においては、
+          以上より、一般化された行列として下記を組み立てることができる。まず、杭脚がローラーの場合においては、
 
-        $$
-        \left( \begin{array}{cc:ccccccc:cc}
-        -1 & 2 & 0 & -2 & 1 & & & & & & \\
-        & 2 C_3 - h & 4 C_3 & 2 C_3 + h & & & & & & & \\
-        \hdashline
-        1 & -4 & C_1 & -4 & 1 & & & & & & \\
-        & 1 & -4 & C_1 & -4 & 1 & & & & & \\
-        & & 1 & -4 & C_1 & -4 & 1 & & & & \\
-        & & & \ddots & \ddots & \ddots & \ddots & \ddots \\
-        & & & & 1 & -4 & C_1 & -4 & 1 & & \\
-        & & & & & 1 & -4 & C_1 & -4 & 1 & \\
-        & & & & & & 1 & -4 & C_1 & -4 & 1 \\
-        \hdashline
-        & & & & & & -1 & 2 & 0 & -2 & 1 \\
-        & & & & & & & 1 & -2 & 1 & \\
-        \end{array} \right)
+          $$
+          \left( \begin{array}{cc:ccccccc:cc}
+          -1 & 2 & 0 & -2 & 1 & & & & & & \\
+          & 2 C_3 - h & 4 C_3 & 2 C_3 + h & & & & & & & \\
+          \hdashline
+          1 & -4 & C_1 & -4 & 1 & & & & & & \\
+          & 1 & -4 & C_1 & -4 & 1 & & & & & \\
+          & & 1 & -4 & C_1 & -4 & 1 & & & & \\
+          & & & \ddots & \ddots & \ddots & \ddots & \ddots \\
+          & & & & 1 & -4 & C_1 & -4 & 1 & & \\
+          & & & & & 1 & -4 & C_1 & -4 & 1 & \\
+          & & & & & & 1 & -4 & C_1 & -4 & 1 \\
+          \hdashline
+          & & & & & & -1 & 2 & 0 & -2 & 1 \\
+          & & & & & & & 1 & -2 & 1 & \\
+          \end{array} \right)
 
-        \left( \begin{array}{c}
-        y_{-2} \\ y_{-1} \\ \hdashline y_{0} \\ y_{1} \\ y_{2} \\ \vdots \\ y_{L-2} \\ y_{L-1} \\ y_{L} \\ \hdashline y_{L+1} \\ y_{L+2}
-        \end{array} \right) =
+          \left( \begin{array}{c}
+          y_{-2} \\ y_{-1} \\ \hdashline y_{0} \\ y_{1} \\ y_{2} \\ \vdots \\ y_{L-2} \\ y_{L-1} \\ y_{L} \\ \hdashline
+          y_{L+1} \\ y_{L+2}
+          \end{array} \right) =
 
-        \left( \begin{array}{c}
-        C_2 \\ 0 \\ \hdashline 0 \\ 0 \\ 0 \\ \vdots \\ 0 \\ 0 \\ 0 \\ \hdashline 0 \\ 0
-        \end{array} \right)
+          \left( \begin{array}{c}
+          C_2 \\ 0 \\ \hdashline 0 \\ 0 \\ 0 \\ \vdots \\ 0 \\ 0 \\ 0 \\ \hdashline 0 \\ 0
+          \end{array} \right)
 
-        \tag{7a}
-        $$
+          \tag{7a}
+          $$
 
-        杭脚がピンの場合においては、
+          杭脚がピンの場合においては、
 
-        $$
-        \left( \begin{array}{cc:ccccccc:cc}
-        -1 & 2 & 0 & -2 & 1 & & & & & & \\
-        & 2 C_3 - h & 4 C_3 & 2 C_3 + h & & & & & & & \\
-        \hdashline
-        1 & -4 & C_1 & -4 & 1 & & & & & & \\
-        & 1 & -4 & C_1 & -4 & 1 & & & & & \\
-        & & 1 & -4 & C_1 & -4 & 1 & & & & \\
-        & & & \ddots & \ddots & \ddots & \ddots & \ddots \\
-        & & & & 1 & -4 & C_1 & -4 & 1 & & \\
-        & & & & & 1 & -4 & C_1 & -4 & 1 & \\
-        & & & & & & 1 & -4 & C_1 & -4 & 1 \\
-        \hdashline
-        & & & & & & 1 & 0 & 1 & 0 & 1 \\
-        & & & & & & & 1 & 1 & 1 & \\
-        \end{array} \right)
+          $$
+          \left( \begin{array}{cc:ccccccc:cc}
+          -1 & 2 & 0 & -2 & 1 & & & & & & \\
+          & 2 C_3 - h & 4 C_3 & 2 C_3 + h & & & & & & & \\
+          \hdashline
+          1 & -4 & C_1 & -4 & 1 & & & & & & \\
+          & 1 & -4 & C_1 & -4 & 1 & & & & & \\
+          & & 1 & -4 & C_1 & -4 & 1 & & & & \\
+          & & & \ddots & \ddots & \ddots & \ddots & \ddots \\
+          & & & & 1 & -4 & C_1 & -4 & 1 & & \\
+          & & & & & 1 & -4 & C_1 & -4 & 1 & \\
+          & & & & & & 1 & -4 & C_1 & -4 & 1 \\
+          \hdashline
+          & & & & & & 1 & 0 & 1 & 0 & 1 \\
+          & & & & & & & 1 & 1 & 1 & \\
+          \end{array} \right)
 
-        \left( \begin{array}{c}
-        y_{-2} \\ y_{-1} \\ \hdashline y_{0} \\ y_{1} \\ y_{2} \\ \vdots \\ y_{L-2} \\ y_{L-1} \\ y_{L} \\ \hdashline y_{L+1} \\ y_{L+2}
-        \end{array} \right) =
+          \left( \begin{array}{c}
+          y_{-2} \\ y_{-1} \\ \hdashline y_{0} \\ y_{1} \\ y_{2} \\ \vdots \\ y_{L-2} \\ y_{L-1} \\ y_{L} \\ \hdashline
+          y_{L+1} \\ y_{L+2}
+          \end{array} \right) =
 
-        \left( \begin{array}{c}
-        C_2 \\ 0 \\ \hdashline 0 \\ 0 \\ 0 \\ \vdots \\ 0 \\ 0 \\ 0 \\ \hdashline 0 \\ 0
-        \end{array} \right)
+          \left( \begin{array}{c}
+          C_2 \\ 0 \\ \hdashline 0 \\ 0 \\ 0 \\ \vdots \\ 0 \\ 0 \\ 0 \\ \hdashline 0 \\ 0
+          \end{array} \right)
 
-        \tag{7b}
-        $$
+          \tag{7b}
+          $$
 
-        あとは両辺に左から逆行列を乗ずることによって、連立方程式をとけば良い。
-        地盤の多層状態を考慮する場合は、$k_h(x)$についてデータを与えれば良いし、地盤の非線形性を考慮する場合は、$k_h(x)$ に $y^{-1/2}$ ( $y$ は $\rm{cm}$ ) を乗じて収斂計算を行えば良い。
+          あとは両辺に左から逆行列を乗ずることによって、連立方程式をとけば良い。
+          地盤の多層状態を考慮する場合は、$k_h(x)$についてデータを与えれば良いし、地盤の非線形性を考慮する場合は、$k_h(x)$ に $y^{-1/2}$ ( $y$ は $\rm{cm}$ )
+          を乗じて収斂計算を行えば良い。
+        </div>
+      </div>
+    </div>
+
+    <form id="inputForm">
+
+      <div class="row">
+        <div class="col">
+          <fieldset class="form-group">
+            <legend class="col-form-label">解析モード</legend>
+            <div class="form-check">
+              <input type="radio" name="mode" value="non_liner" checked>
+              <label class="form-check-label">非線形 (多層地盤)</label>
+            </div>
+            <div class="form-check">
+              <input type="radio" name="mode" value="non_liner_single">
+              <label class="form-check-label">非線形 (単層地盤)</label>
+            </div>
+            <div class="form-check">
+              <input type="radio" name="mode" value="liner">
+              <label class="form-check-label">線形</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="col">
+          <fieldset class="form-group">
+            <legend class="col-form-label">杭脚条件</legend>
+            <div class="form-check">
+              <input type="radio" name="bottom_condition" value="free" checked>
+              <label class="form-check-label">自由</label>
+            </div>
+            <div class="form-check">
+              <input type="radio" name="bottom_condition"value="pin">
+              <label class="form-check-label">ピン</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="col">
+          <fieldset class="form-group">
+            <legend class="col-form-label">材質</legend>
+            <div class="form-check">
+              <input type="radio" name="material"value="concrete" checked>
+              <label class="form-check-label">コンクリート</label>
+            </div>
+            <div class="form-check">
+              <input type="radio" name="material" value="steel">
+              <label class="form-check-label">鉄</label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="col">
+          <div class="form-group">
+            <legend class="col-form-label">杭頭固定度</legend>
+            <input type="number" class="form-control" name="condition_value" id="pileTopCondition" value="1.0" max="1.0" min="0.0" step="0.1">
+          </div>
+        </div>
 
       </div>
 
-    </details>
-    <br>
+      <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#detailSettings" aria-expanded="false" aria-controls="theoryExplain">
+        詳細設定
+      </button>
+      <div class="collapse" id="detailSettings">
+        <div class="card card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>分割数</label>
+                <input type="number" class="form-control" name="div_num" id="divNum" value="100" min="10" step="10">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>非線形解析時の変位誤差</label>
+                <input type="number" class="form-control" name="yErr" id="yErr" value="0.01">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>杭頭の応力誤差</label>
+                <input type="number" class="form-control" name="mErr" id="mErr" value="1.0">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    <div class="dot-elastic"></div>
-    <form id="inputForm">
+      <div class="row">
+        <div class="col">
+          <label>杭径</label>
+          <input type="number" class="form-control" name="diameter" value="1300">
+        </div>
+        <div class="col">
+          <label>杭長</label>
+          <input type="number" class="form-control" name="pile_length" value="17.5">
+        </div>
+        <div class="col">
+          <label>杭天端</label>
+          <input type="number" class="form-control" name="level" value="-2.5">
+        </div>
+        <div class="col">
+          <label>入力水平力</label>
+          <input type="number" class="form-control" name="force" value="1000">
+        </div>
+      </div>
 
-      <table style="width: 100%; table-layout: fixed;">
-        <tr>
-          <th>解析モード</th>
-          <th>杭脚条件</th>
-          <th>材質</th>
-          <th>杭頭固定度</th>
-        </tr>
-        <tr>
-          <td>
-            <label><input type="radio" name="mode" value="non_liner" checked>非線形 (多層地盤)</label>
-            <label><input type="radio" name="mode" value="non_liner_single">非線形 (単層地盤)</label>
-            <label><input type="radio" name="mode" value="liner">線形</label>
-          </td>
-          <td>
-            <label><input type="radio" name="bottom_condition" value="free" checked>自由</label>
-            <label><input type="radio" name="bottom_condition" value="pin">ピン</label>
-            <br>
-          </td>
-          <td>
-            <label><input type="radio" name="material" value="concrete" checked>コンクリート</label>
-            <label><input type="radio" name="material" value="steel">鉄</label>
-            <br>
-            <!-- <label><input type="radio" name="material" value="other">その他</label> -->
-          </td>
-          <td>
-            <input type="number" name="condition_value" value="1.0" max="1.0" min="0.0" step="0.1">
-          </td>
-        </tr>
-      </table>
-      <br>
+      <div class="form row">
+        <div class="form col-9">
+          <div id="time">0.003 sec</div>
+        </div>
+        <div class="form col">
+          <button type="button" class="btn btn-primary" onclick="solve_button()">solve</button>
+        </div>
+      </div>
 
-      <table style="width: 100%">
-        <tr>
-          <th>杭径 (mm)</th>
-          <th>杭長 (m)</th>
-          <th>杭天端 (m)</th>
-          <th>入力水平力 (kN)</th>
-        </tr>
-        <tr>
-          <td>
-            <input type="number" name="diameter" value="1300">
-          </td>
-          <td>
-            <input type="number" name="pile_length" step="0.1" value="17.5">
-          </td>
-          <td>
-            <input type="number" name="level" step="0.1" value="-2.5">
-          </td>
-          <td>
-            <input type="number" name="force" value="1000">
-          </td>
-          <td>
-            <button type="button" onclick="solve_button()">solve</button>
-          </td>
-        </tr>
-        <tr>
-          <td colspan="4"></td>
-          <td style="text-align: center">
-            <div id="time"> . </div>
-          </td>
-        </tr>
-      </table>
     </form>
 
-    <details id="soil-data-details">
+    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#soilDataDetails" aria-expanded="false" aria-controls="theoryExplain">
+     地盤情報
+    </button>
+    <div class="collapse" id="soilDataDetails">
       <summary>地盤情報...</summary>
       <form id="upload-file" method="post" enctype="multipart/form-data">
         <div class="upload_area" aria-disabled="false">
@@ -212,10 +319,12 @@
           <button type="button" onclick="file_upload()">Upload</button>
         </div>
       </form>
-      <table class="input" id="soil-table"></table>
-    </details><br>
+      <div class="card card-body">
+        <table class="table table-bordered" id="soil-table"></table>
+      </div>
+    </div>
 
-    <table style="width: 100%" class="result">
+    <table class="table table-bordered">
       <tr>
         <th></th>
         <th>
@@ -280,6 +389,14 @@
     <div id="figure"></div>
 
   </div>
+
+  <script>MathJax = { chtml: { matchFontHeight: false }, tex: { inlineMath: [['$', '$']] } };</script>
+  <script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+
+  <script src="/static/js/scripts.js"></script>
 
 </body>
 
