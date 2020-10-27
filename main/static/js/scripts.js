@@ -34,7 +34,7 @@ function solve_button() {
         "force": inputForm.force.value
     });
 
-    console.log(inputData);
+    // console.log(inputData);
 
     $.ajax({
         type: 'POST',
@@ -50,7 +50,6 @@ function solve_button() {
         update_summary(result.results);
         plot_graph(result.results);
         document.getElementById("time").innerText = result.time;
-        document.getElementById("soil-data-details").open = false;
         document.getElementById("loading-spinner").style.display = "none";
 
     }).complete(function(data) {
