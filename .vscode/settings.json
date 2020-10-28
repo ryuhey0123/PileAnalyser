@@ -5,6 +5,8 @@
     "liveServer.settings.root": "/main",
     "cSpell.words": [
         "Leftrightarrow",
-        "chtml"
+        "chtml",
+        "phablet",
+        "tolist"
     ]
 }
