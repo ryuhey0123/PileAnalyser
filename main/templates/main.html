@@ -82,7 +82,7 @@
       解析理論
     </button>
 
-    <div class="collapse" id="theoryExplain">
+    <div class="collapse theory" id="theoryExplain">
       <div class="card card-body">
         <div class="math display">
           線形地盤における弾性支承梁の基本方程式は、
@@ -236,35 +236,7 @@
           </fieldset>
         </div>
       </div>
-      <div class="form-row">
-        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#detailSettings" aria-expanded="false" aria-controls="theoryExplain">
-          詳細設定
-        </button>
-        <div class="collapse" id="detailSettings">
-          <div class="card card-body">
-            <div class="row">
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>分割数</label>
-                  <input type="number" class="form-control" name="div_num" id="divNum" value="100" min="10" step="10">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>非線形解析時の変位誤差</label>
-                  <input type="number" class="form-control" name="yErr" id="yErr" value="0.01">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-group">
-                  <label>杭頭の応力誤差</label>
-                  <input type="number" class="form-control" name="mErr" id="mErr" value="1.0">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+
       <div class="form-row">
         <div class="col">
           <div class="form-group">
@@ -297,8 +269,48 @@
           </div>
         </div>
       </div>
-      <button type="button" class="btn btn-primary" onclick="solve_button()">solve</button>
-      <span id="time">0.003 sec</span>
+
+      <div class="form-row">
+        <div class="col">
+          <button type="button" class="btn btn-primary" onclick="solve_button()">solve</button>
+        </div>
+        <div class="col">
+          <span id="time">0.003 sec</span>
+        </div>
+        <div class="col">
+          <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#detailSettings" aria-expanded="false" aria-controls="theoryExplain">
+            詳細設定
+          </button>
+        </div>
+      </div>
+      <div class="from-row">
+        <div class="col">
+          <div class="collapse" id="detailSettings">
+            <div class="card card-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>分割数</label>
+                    <input type="number" class="form-control" name="div_num" id="divNum" value="100" min="10" step="10">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>非線形解析時の変位誤差</label>
+                    <input type="number" class="form-control" name="yErr" id="yErr" value="0.01">
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group">
+                    <label>杭頭の応力誤差</label>
+                    <input type="number" class="form-control" name="mErr" id="mErr" value="1.0">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </form>
 
     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#soilDataDetails" aria-expanded="false" aria-controls="theoryExplain">
@@ -307,17 +319,15 @@
     <div class="collapse" id="soilDataDetails">
 
       <form id="upload-file" method="post" enctype="multipart/form-data">
-        <div class="upload_area" aria-disabled="false">
-          <input name="file" type="file" accept=".xlsx">
-          <button type="button" onclick="file_upload()">Upload</button>
-        </div>
+        <input name="file" type="file" accept=".xlsx">
+        <button type="button" onclick="file_upload()">Upload</button>
       </form>
       <div class="card card-body">
         <table class="table table-bordered" id="soil-table"></table>
       </div>
     </div>
 
-    <table class="table table-bordered">
+    <table class="table table-bordered output-table">
       <tr>
         <th></th>
         <th>
@@ -379,7 +389,10 @@
       </tr>
     </table>
 
-    <div id="figure"></div>
+    <div class="card card-body">
+      <div id="figure"></div>
+    </div>
+    <br>
 
   </div>
 

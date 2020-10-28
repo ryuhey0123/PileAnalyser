@@ -5,42 +5,34 @@
 }
 
 .MathJax {
-  font-size: 0.85em;
+  font-size: 0.80em;
 }
 
 /* USER STYLES -------------------------------------------------------- */
 
-div.utility-area {
-  position: relative;
-  width: 190mm;
-  margin: 10mm auto;
-  margin-bottom: 5mm;
+.theory {
+  font-size: 0.80em;
 }
 
-div.explain-area {
-  font-size: small;
-  line-height: 30px;
-  border-width: 1px;
-  border-style: solid;
-  margin: 10px;
-  padding: 20px;
+.unit {
+  font-weight: normal;
 }
 
-/* table.result {
+.output-table {
   table-layout: fixed;
-} */
-
-/* table.result th {
-  border: solid darkgray 1px;
-  text-align: center;
-  padding: 0;
-} */
-
-/* table.result td {
-  border: solid darkgray 1px;
-  padding: 2px 5px;
   text-align: right;
-} */
+  vertical-align: middle;
+}
+
+.output-table th {
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.5em 0.1em;
+}
+
+.output-table td {
+  padding: 0.5em 0.5em;
+}
 
 /* table.input input {
   border: 0px solid #000;
@@ -73,9 +65,7 @@ div.explain-area {
   width: 100%;
 } */
 
-/* div.unit {
-  font-weight: normal;
-} */
+
 /*
 div.upload_area {
   width: 95%;

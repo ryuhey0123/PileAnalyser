@@ -148,7 +148,7 @@ function plot_graph(results) {
 
         showlegend: false,
         autosize: true,
-        margin: {l: 20, r: 20, b: 50, t: 70},
+        margin: {l: 20, r: 20, b: 50, t: 50},
 
         colorway: ["#795548", "#9C27B0", "#2196F3", "#FFC107", "#E91E63", "#4CAF50"],
         plot_bgcolor: "#FFFFFF",
@@ -221,3 +221,7 @@ function plot_graph(results) {
 
     Plotly.newPlot('figure', data, layout);
 }
+
+window.onresize = function() {
+    Plotly.Plots.resize('figure');
+};
