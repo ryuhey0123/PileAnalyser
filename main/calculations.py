@@ -183,14 +183,25 @@ def deformation_analysis_by_non_liner_single_FDM(bottom_condition, div_num: int,
     return y, dec
 
 
+class UploadExcelFile():
+    depth = '深度'
+    nValue = 'N値'
+    soil = '土質'
+    reductions = '低減係数'
+    adopted_reductions = '採用低減係数'
+    alpha = 'alpha'
+    E0 = 'E0'
+
+
 def decode_upload_file(file):
     df = pd.read_excel(file)
     return dict(
-        depth=df['深度'].values.tolist(),
-        nValue=df['N値'].values.tolist(),
-        soil=df['土質'].values.tolist(),
-        reductions=df['低減係数'].values.tolist(),
-        adopted_reductions=df['採用低減係数'].values.tolist(),
-        alpha=df['alpha'].values.tolist(),
-        E0=df['E0'].values.tolist()
+        depth=df[UploadExcelFile.depth].values.tolist(),
+        nValue=df[UploadExcelFile.nValue].values.tolist(),
+        soil=df[UploadExcelFile.soil].values.tolist(),
+        reductions=df[UploadExcelFile.reductions].values.tolist(),
+        adopted_reductions=df[UploadExcelFile.adopted_reductions].values.tolist(),
+        alpha=df[UploadExcelFile.alpha].values.tolist(),
+        E0=df[UploadExcelFile.E0].values.tolist()
     )
+
