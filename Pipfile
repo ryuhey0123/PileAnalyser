@@ -18,6 +18,7 @@ plotly = "*"
 scipy = "*"
 gunicorn = "*"
 xlrd = "*"
+sqlalchemy = "*"
 
 [requires]
 python_version = "3.8"

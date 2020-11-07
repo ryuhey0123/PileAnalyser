@@ -1,5 +1,5 @@
 function init() {
-    solve_button()
+    solve_button();
 
     $.ajax({
         type: 'POST',
@@ -16,14 +16,26 @@ function init() {
         document.getElementById("loading-spiner").style.display = "none";
 
     }).complete(function(data) {
-        document.getElementById("loading-spiner").style.display = "none"; 
+        document.getElementById("loading-spiner").style.display = "none";
+    });
+}
+
+
+function save_button() {
+    $.ajax({
+        type: 'POST',
+        url: '/save',
+        data: "",
+        contentType: 'application/json',
+    }).done(function(data) {
+        console.log(data);
     });
 }
 
 
 function solve_button() {
-    var inputForm = document.getElementById("inputForm");
-    var inputData = JSON.stringify({
+    const inputForm = document.getElementById("inputForm");
+    const inputData = JSON.stringify({
         "mode": inputForm.mode.value,
         "condition": inputForm.condition_value.value,
         "bottom_condition": inputForm.bottom_condition.value,
@@ -46,7 +58,7 @@ function solve_button() {
     }).done(function(data) {
         var result = JSON.parse(data);
         update_summary(result.results);
-        plot_glaph(result.results);
+        plot_graph(result.results);
         document.getElementById("time").innerText = result.time;
         document.getElementById("soil-data-details").open = false;
         document.getElementById("loading-spiner").style.display = "none";
@@ -59,7 +71,7 @@ function solve_button() {
 
 function file_upload() {
 
-    var form_data = new FormData($('#upload-file').get(0));
+    const form_data = new FormData($('#upload-file').get(0));
 
     $.ajax({
         type: 'POST',
@@ -69,27 +81,27 @@ function file_upload() {
         processData: false,
 
     }).done(function(data) {
-        $("#soil-table").html(data)
-        document.getElementById("soil-data-details").open = true; 
+        $("#soil-table").html(data);
+        document.getElementById("soil-data-details").open = true;
 
     }).complete(function(data) {
         document.getElementById("loading-spiner").style.display = "none";
     });
-};
+}
 
 
 function update_summary(results) {
 
     function max_and_min_values_by(key, fixed=1) {
 
-        const aryMax = function (a, b) {return Math.max(a, b);}
-        const aryMin = function (a, b) {return Math.min(a, b);}
+        const aryMax = function (a, b) {return Math.max(a, b);};
+        const aryMin = function (a, b) {return Math.min(a, b);};
 
         const ary = results[key];
-        const maximam = ary.reduce(aryMax);
-        const minimam = ary.reduce(aryMin);
+        const maximum = ary.reduce(aryMax);
+        const minimum = ary.reduce(aryMin);
 
-        return [maximam.toFixed(fixed), minimam.toFixed(fixed)]
+        return [maximum.toFixed(fixed), minimum.toFixed(fixed)];
     }
 
     const summary = {
@@ -98,7 +110,7 @@ function update_summary(results) {
         degree: max_and_min_values_by('t', field='3'),
         moment: max_and_min_values_by('m'),
         shear: max_and_min_values_by('q'),
-    }
+    };
 
     document.getElementById("kh_max").innerText = summary.kh[0];
     document.getElementById("kh_min").innerText = summary.kh[1];
@@ -113,18 +125,18 @@ function update_summary(results) {
 }
 
 
-function plot_glaph(results) {
+function plot_graph(results) {
 
-    var trace_dec = {x: results['dec'], y: results['x'], fill: 'tozerox', type: 'scatter'};
-    var trace_kh0s = {x: results['kh0s'], y: results['x'], xaxis: 'x2', yaxis: 'y2', fill: 'tozerox', type: 'scatter'};
-    var trace_y = {x: results['y'], y: results['x'], xaxis: 'x3', yaxis: 'y3', fill: 'tozerox', type: 'scatter'};
-    var trace_t = {x: results['t'], y: results['x'], xaxis: 'x4', yaxis: 'y4', fill: 'tozerox', type: 'scatter'};
-    var trace_m = {x: results['m'], y: results['x'], xaxis: 'x5', yaxis: 'y5', fill: 'tozerox', type: 'scatter'};
-    var trace_q = {x: results['q'], y: results['x'], xaxis: 'x6', yaxis: 'y6', fill: 'tozerox', type: 'scatter'};
+    const trace_dec = {x: results.dec, y: results.x, fill: 'tozerox', type: 'scatter'};
+    const trace_kh0s = {x: results.kh0s, y: results.x, xaxis: 'x2', yaxis: 'y2', fill: 'tozerox', type: 'scatter'};
+    const trace_y = {x: results.y, y: results.x, xaxis: 'x3', yaxis: 'y3', fill: 'tozerox', type: 'scatter'};
+    const trace_t = {x: results.t, y: results.x, xaxis: 'x4', yaxis: 'y4', fill: 'tozerox', type: 'scatter'};
+    const trace_m = {x: results.m, y: results.x, xaxis: 'x5', yaxis: 'y5', fill: 'tozerox', type: 'scatter'};
+    const trace_q = {x: results.q, y: results.x, xaxis: 'x6', yaxis: 'y6', fill: 'tozerox', type: 'scatter'};
 
-    var data = [trace_dec, trace_kh0s, trace_y, trace_t, trace_m, trace_q];
+    const data = [trace_dec, trace_kh0s, trace_y, trace_t, trace_m, trace_q];
 
-    var layout = {
+    const layout = {
         grid: {
             rows: 1,
             columns: 6,
@@ -153,7 +165,7 @@ function plot_glaph(results) {
         plot_bgcolor: "#FFFFFF",
 
         hovermode: 'closest',
-        
+
         annotations: [
             {
                 text: "Decrease",

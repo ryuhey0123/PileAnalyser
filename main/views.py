@@ -4,6 +4,7 @@ from flask import session, request, render_template, json
 
 from main import app
 from main import calculations
+from models.models import TestContent
 
 
 @app.route("/", methods=["GET"])
@@ -57,6 +58,11 @@ def upload_ajax():
 
     return soil_table
 
+
+@app.route("/save", methods=["POST"])
+def save_data():
+    all_data = TestContent.query.all()
+    return str(all_data[0])
 
 # formatters
 
