@@ -23,15 +23,22 @@ function init() {
 
 function save_button() {
     const inputForm = document.getElementById("inputForm");
+    const saveForm = document.getElementById("saveForm");
+
     const inputData = JSON.stringify({
-        "mode": inputForm.mode.value,
-        "condition": inputForm.condition_value.value,
-        "bottom_condition": inputForm.bottom_condition.value,
-        "material": inputForm.material.value,
-        "diameter": inputForm.diameter.value,
-        "length": inputForm.pile_length.value,
-        "level": inputForm.level.value,
-        "force": inputForm.force.value
+        "inputs": {
+            "mode": inputForm.mode.value,
+            "condition": inputForm.condition_value.value,
+            "bottom_condition": inputForm.bottom_condition.value,
+            "material": inputForm.material.value,
+            "diameter": inputForm.diameter.value,
+            "length": inputForm.pile_length.value,
+            "level": inputForm.level.value,
+            "force": inputForm.force.value
+        },
+        "contents": {
+            "title": saveForm.title.value
+        }
     });
 
     $.ajax({

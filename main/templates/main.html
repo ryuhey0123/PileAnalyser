@@ -10,6 +10,11 @@
 
 <body onload="init()">
 
+<form id="saveForm">
+  <input type="text" name="title" placeholder="title...">
+  <button type="button" onclick="save_button()">SAVE</button>
+</form>
+
 <div class="page">
 
   <div class="loading" id="loading-spiner">
@@ -23,12 +28,7 @@
     </div>
   </div>
 
-  <table style="width: 100%;">
-    <tr>
-      <td><h4>多層地盤中の杭の非線形解析</h4></td>
-      <td style="text-align: right;"><button type="button" onclick="save_button()">SAVE</button></td>
-    </tr>
-  </table>
+  <h4>多層地盤中の杭の非線形解析</h4>
 
   <div>弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。</div>
   <br>

@@ -63,24 +63,27 @@ def upload_ajax():
 def save_data():
     from models.database import Base, ENGINE
 
+    inputs = request.json
+
     Base.metadata.drop_all(bind=ENGINE)
     Base.metadata.create_all(bind=ENGINE)
 
     Sess.add(User(name='MacLOve', password='fuckyou'))
 
-    test_project1 = Project(title='Test Project1')
-    Sess.add(test_project1)
+    project = Project(title='Test Project1')
+    Sess.add(project)
 
     test_soildata1 = Soildata(data=json.dumps(session['soil_data']))
     Sess.add(test_soildata1)
 
     test_user: User = Sess.query(User).filter(User.name == 'MacLOve').first()
+
     Sess.add(Content(
+        title=inputs["contents"]["title"],
+        input=inputs["inputs"],
         user_id=test_user.id,
-        project_id=test_project1.id,
+        project_id=project.id,
         soildata_id=test_soildata1.id,
-        input={'diameter': 1300, 'length': 17.0},
-        output={'x': [1, 2, 3], 'y': [3, 4, 5]}
     ))
 
     Sess.commit()

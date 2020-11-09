@@ -68,7 +68,7 @@ class Content(Base):
     title = Column(String, nullable=True)
 
     input = Column(JSON, nullable=False)
-    output = Column(JSON, nullable=False)
+    # output = Column(JSON, nullable=False)
 
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship('User')
@@ -79,13 +79,14 @@ class Content(Base):
     soildata_id = Column(Integer, ForeignKey('soildatum.id'))
     soildata = relationship('Soildata')
 
-    def __init__(self, user_id: int, project_id: int, soildata_id: int,
-                 input: dict, output: dict):
+    def __init__(self, title: str, input: dict, user_id: int, project_id: int, soildata_id: int):
+        self.title = title
+        self.input = input
+
         self.user_id = user_id
         self.project_id = project_id
         self.soildata_id = soildata_id
-        self.input = input
-        self.output = output
+
         self.timestamp = datetime.datetime.now()
 
 
