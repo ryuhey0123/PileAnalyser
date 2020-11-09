@@ -1,22 +1,11 @@
 import datetime
 from hashlib import sha256
 
-from sqlalchemy import create_engine
-from sqlalchemy import Column, Integer, String, ForeignKey, JSON, DateTime, desc
-from sqlalchemy.orm import sessionmaker, Session, relationship
-from sqlalchemy.ext.declarative import declarative_base
+from flask_login import UserMixin
+from sqlalchemy import Column, Integer, String, ForeignKey, JSON, DateTime
+from sqlalchemy.orm import relationship
 
-
-# SQLALCHEMY_DATABASE_URL = 'sqlite:///:memory:'
-SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://{user}:{password}@{host}/{name}'.format(**{
-    'user': 'ryuhey',  # createuser -P ryuhey
-    'password': 'macmac',
-    'host': 'localhost',
-    'name': 'pile-analyser'  # createdb Test -O ryuhey
-})
-
-
-Base = declarative_base()
+from .database import Base
 
 
 class User(Base):
@@ -36,6 +25,10 @@ class User(Base):
         self.timestamp = datetime.datetime.now()
 
 
+class LoginUser(UserMixin, User):
+    pass
+
+
 class Project(Base):
     __tablename__ = "projects"
 
@@ -51,11 +44,28 @@ class Project(Base):
         self.timestamp = datetime.datetime.now()
 
 
+class Soildata(Base):
+    __tablename__ = 'soildatum'
+
+    id = Column(Integer, primary_key=True)
+    timestamp = Column(DateTime, nullable=False)
+
+    data = Column(JSON)
+
+    contents = relationship("Content", backref="soildatum")
+
+    def __init__(self, data: dict) -> None:
+        self.data = data
+        self.timestamp = datetime.datetime.now()
+
+
 class Content(Base):
     __tablename__ = "contents"
 
     id = Column(Integer, primary_key=True)
     timestamp = Column(DateTime, nullable=False)
+
+    title = Column(String, nullable=True)
 
     input = Column(JSON, nullable=False)
     output = Column(JSON, nullable=False)
@@ -66,20 +76,35 @@ class Content(Base):
     project_id = Column(Integer, ForeignKey('projects.id'))
     project = relationship('Project')
 
-    def __init__(self, user_id: int, project_id: int, input: dict, output: dict):
+    soildata_id = Column(Integer, ForeignKey('soildatum.id'))
+    soildata = relationship('Soildata')
+
+    def __init__(self, user_id: int, project_id: int, soildata_id: int,
+                 input: dict, output: dict):
         self.user_id = user_id
         self.project_id = project_id
+        self.soildata_id = soildata_id
         self.input = input
         self.output = output
         self.timestamp = datetime.datetime.now()
 
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
-SessionMaker = sessionmaker(engine)
-session: Session = SessionMaker()
-
-
 if __name__ == "__main__":
+    from sqlalchemy import create_engine, desc
+    from sqlalchemy.orm import sessionmaker, Session
+
+    # SQLALCHEMY_DATABASE_URL = 'sqlite:///:memory:'
+    SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://{user}:{password}@{host}/{name}'.format(**{
+        'user': 'ryuhey',  # createuser -P ryuhey
+        'password': 'macmac',
+        'host': 'localhost',
+        'name': 'pile-analyser'  # createdb Test -O ryuhey
+    })
+
+    engine = create_engine(SQLALCHEMY_DATABASE_URL, echo=True)
+    SessionMaker = sessionmaker(engine)
+    session: Session = SessionMaker()
+
     Base.metadata.drop_all(engine)
     Base.metadata.create_all(engine)
 

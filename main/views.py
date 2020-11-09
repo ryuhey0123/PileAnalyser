@@ -4,7 +4,7 @@ from flask import session, request, render_template, json
 
 from main import app
 from main import calculations
-from models.models import Content, Input
+from models import Sess, User, Content, Project, Soildata
 
 
 @app.route("/", methods=["GET"])
@@ -61,10 +61,30 @@ def upload_ajax():
 
 @app.route("/save", methods=["POST"])
 def save_data():
-    content = Content()
-    input = Input(content_id=content.id, **request.json)
-    print(input.id)
-    # all_data = Content.query.all()
+    from models.database import Base, ENGINE
+
+    Base.metadata.drop_all(bind=ENGINE)
+    Base.metadata.create_all(bind=ENGINE)
+
+    Sess.add(User(name='MacLOve', password='fuckyou'))
+
+    test_project1 = Project(title='Test Project1')
+    Sess.add(test_project1)
+
+    test_soildata1 = Soildata(data=json.dumps(session['soil_data']))
+    Sess.add(test_soildata1)
+
+    test_user: User = Sess.query(User).filter(User.name == 'MacLOve').first()
+    Sess.add(Content(
+        user_id=test_user.id,
+        project_id=test_project1.id,
+        soildata_id=test_soildata1.id,
+        input={'diameter': 1300, 'length': 17.0},
+        output={'x': [1, 2, 3], 'y': [3, 4, 5]}
+    ))
+
+    Sess.commit()
+
     return 'Hello'
 
 

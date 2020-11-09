@@ -28,3 +28,4 @@ python_version = "3.8"
 [scripts]
 start = "flask run"
 debug = "flask run --debugger --reload"
+refresh = "python models/models.py"

@@ -1,18 +1,18 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
-import os
 
 
-DATABASE = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'database.db')
-ENGINE = create_engine('sqlite:///' + DATABASE, convert_unicode=True, echo=True)
+SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://{user}:{password}@{host}/{name}'.format(**{
+    'user': 'ryuhey',  # createuser -P ryuhey
+    'password': 'macmac',
+    'host': 'localhost',
+    'name': 'pile-analyser'  # createdb Test -O ryuhey
+})
 
-session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=ENGINE))
+ENGINE = create_engine(SQLALCHEMY_DATABASE_URL, echo=True, convert_unicode=True)
+
+SessionMaker = sessionmaker(ENGINE)
+Sess: Session = SessionMaker()
 
 Base = declarative_base()
-Base.query = session.query_property()
-
-
-def init_db():
-    from . import models
-    Base.metadata.create_all(bind=ENGINE)
