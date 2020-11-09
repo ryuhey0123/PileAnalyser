@@ -22,10 +22,22 @@ function init() {
 
 
 function save_button() {
+    const inputForm = document.getElementById("inputForm");
+    const inputData = JSON.stringify({
+        "mode": inputForm.mode.value,
+        "condition": inputForm.condition_value.value,
+        "bottom_condition": inputForm.bottom_condition.value,
+        "material": inputForm.material.value,
+        "diameter": inputForm.diameter.value,
+        "length": inputForm.pile_length.value,
+        "level": inputForm.level.value,
+        "force": inputForm.force.value
+    });
+
     $.ajax({
         type: 'POST',
         url: '/save',
-        data: "",
+        data: inputData,
         contentType: 'application/json',
     }).done(function(data) {
         console.log(data);

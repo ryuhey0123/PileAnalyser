@@ -4,7 +4,7 @@ from flask import session, request, render_template, json
 
 from main import app
 from main import calculations
-from models.models import TestContent
+from models.models import Content, Input
 
 
 @app.route("/", methods=["GET"])
@@ -61,10 +61,12 @@ def upload_ajax():
 
 @app.route("/save", methods=["POST"])
 def save_data():
-    all_data = TestContent.query.all()
-    return str(all_data[0])
+    content = Content()
+    input = Input(content_id=content.id, **request.json)
+    print(input.id)
+    # all_data = Content.query.all()
+    return 'Hello'
 
-# formatters
 
 def update_soil_data_table(soil_data: dict):
 
@@ -81,8 +83,3 @@ def update_soil_data_table(soil_data: dict):
     html = "<tr><th>深度</th><th>N値</th><th>土質</th><th>alpha</th><th>低減係数</th><th>採用</th><th>E0</th></tr>" + html
 
     return html
-
-
-# if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0', port=8888, threaded=True)
-    # app.run()
