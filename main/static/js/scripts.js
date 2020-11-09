@@ -1,5 +1,54 @@
+window.addEventListener('DOMContentLoaded', function() {
+    login();
+
+    $.ajax({
+        type: 'POST',
+        url: '/get_projects',
+        data: '',
+        contentType: false
+    }).done(function(data) {
+        const titles = data.titles;
+        const project = document.getElementById("project");
+        for (let i = 0; i < titles.length; i++) {
+            let option = document.createElement("option");
+            option.text = titles[i];
+            project.appendChild(option);
+        }
+    });
+});
+
+
+function login() {
+    const userData = JSON.stringify({
+        'name': 'admin',
+        'password': 'admin'
+    });
+    $.ajax({
+        type: 'POST',
+        url: '/login',
+        data: userData,
+        contentType: 'application/json'
+    });
+}
+
+
 function init() {
     solve_button();
+
+    $.ajax({
+        type: 'POST',
+        url: '/get_contents_name',
+        data: '',
+        contentType: false
+    }).done(function(data) {
+        const titles = data.titles;
+        const project = document.getElementById("contents");
+        for (let i = 0; i < titles.length; i++) {
+            let option = document.createElement("option");
+            option.text = titles[i];
+            project.appendChild(option);
+        }
+    });
 
     $.ajax({
         type: 'POST',
@@ -10,11 +59,9 @@ function init() {
         beforeSend: function() {
             document.getElementById("loading-spiner").style.display = "block";
         },
-
     }).done(function(data) {
         $("#soil-table").html(data);
         document.getElementById("loading-spiner").style.display = "none";
-
     }).complete(function(data) {
         document.getElementById("loading-spiner").style.display = "none";
     });

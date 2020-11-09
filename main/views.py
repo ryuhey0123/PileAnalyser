@@ -60,35 +60,48 @@ def upload_ajax():
 
 
 @app.route("/save", methods=["POST"])
-def save_data():
-    from models.database import Base, ENGINE
-
+def save():
     inputs = request.json
 
-    Base.metadata.drop_all(bind=ENGINE)
-    Base.metadata.create_all(bind=ENGINE)
+    user: User = Sess.query(User).filter(User.name == 'admin').first()
+    project: User = Sess.query(Project).filter(Project.title == 'Sample Project1').first()
 
-    Sess.add(User(name='MacLOve', password='fuckyou'))
-
-    project = Project(title='Test Project1')
-    Sess.add(project)
-
-    test_soildata1 = Soildata(data=json.dumps(session['soil_data']))
-    Sess.add(test_soildata1)
-
-    test_user: User = Sess.query(User).filter(User.name == 'MacLOve').first()
+    soildata = Soildata(data=json.dumps(session['soil_data']))
+    Sess.add(soildata)
 
     Sess.add(Content(
         title=inputs["contents"]["title"],
         input=inputs["inputs"],
-        user_id=test_user.id,
+        user_id=user.id,
         project_id=project.id,
-        soildata_id=test_soildata1.id,
+        soildata_id=soildata.id,
     ))
 
     Sess.commit()
 
     return 'Hello'
+
+
+@app.route('/login', methods=["POST"])
+def login():
+    inputs = request.json
+    session['user'] = inputs['name']
+    return 'OK'
+
+
+@app.route("/get_projects", methods=["POST"])
+def get_projects():
+    user: User = Sess.query(User).filter(User.name == session['user']).first()
+    projects = Sess.query(Project).filter(Project.user_id == user.id)
+
+    return {'titles': [project.title for project in projects]}
+
+
+@app.route("/get_contents_name", methods=["POST"])
+def get_contents_name():
+    user: User = Sess.query(User).filter(User.name == session['user']).first()
+    contents = Sess.query(Content).filter(Content.project_id == 1)
+    return {'titles': [content.title for content in contents]}
 
 
 def update_soil_data_table(soil_data: dict):

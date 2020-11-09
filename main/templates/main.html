@@ -10,10 +10,24 @@
 
 <body onload="init()">
 
-<form id="saveForm">
-  <input type="text" name="title" placeholder="title...">
-  <button type="button" onclick="save_button()">SAVE</button>
-</form>
+
+<table>
+  <tr>
+    <td>
+      <form id="saveForm">
+        <select name="project" id="project"></select>
+        <input type="text" name="title" placeholder="title...">
+        <button type="button" onclick="save_button()">Save</button>
+      </form>
+    </td>
+    <td>
+      <form id="loadForm">
+        <select name="contents" id="contents"></select>
+        <button type="button" onclick="load_button()">Load</button>
+      </form>
+    </td>
+  </tr>
+</table>
 
 <div class="page">
 

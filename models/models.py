@@ -18,6 +18,7 @@ class User(Base):
     password = Column(String, nullable=False)
 
     contents = relationship("Content", backref="users")
+    projects = relationship("Project", backref="users")
 
     def __init__(self, name: str, password: str):
         self.name = name
@@ -37,11 +38,15 @@ class Project(Base):
 
     title = Column(String, nullable=False)
 
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship('User')
+
     contents = relationship("Content", backref="projects")
 
-    def __init__(self, title: str) -> None:
+    def __init__(self, title: str, user_id: int) -> None:
         self.title = title
         self.timestamp = datetime.datetime.now()
+        self.user_id = user_id
 
 
 class Soildata(Base):

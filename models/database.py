@@ -10,7 +10,7 @@ SQLALCHEMY_DATABASE_URL = 'postgresql+psycopg2://{user}:{password}@{host}/{name}
     'name': 'pile-analyser'  # createdb Test -O ryuhey
 })
 
-ENGINE = create_engine(SQLALCHEMY_DATABASE_URL, echo=True, convert_unicode=True)
+ENGINE = create_engine(SQLALCHEMY_DATABASE_URL, echo=False, convert_unicode=True)
 
 SessionMaker = sessionmaker(ENGINE)
 Sess: Session = SessionMaker()
