@@ -1,21 +1,61 @@
 window.addEventListener('DOMContentLoaded', function() {
     login();
+    update_selectable_projects();
+});
 
+const saveForm = document.getElementById("saveForm");
+saveForm.project.onchange = () => update_selectable_contents();
+
+const loadForm = document.getElementById("loadForm");
+
+const inputForm = document.getElementById("inputForm");
+
+const loading_spiner = document.getElementById("loading-spiner");
+
+
+function add_options(node, titles) {
+    for (let i = 0; i < titles.length; i++) {
+        let option = document.createElement("option");
+        option.text = titles[i];
+        node.appendChild(option);
+    }
+}
+
+function delete_options(node) {
+    while (node.firstChild) {
+        node.removeChild(node.firstChild);
+    }
+}
+
+function update_selectable_projects() {
     $.ajax({
         type: 'POST',
         url: '/get_projects',
         data: '',
-        contentType: false
+        contentType: false,
+        beforeSend: function() {
+            delete_options(saveForm.project);
+        }
     }).done(function(data) {
-        const titles = data.titles;
-        const project = document.getElementById("project");
-        for (let i = 0; i < titles.length; i++) {
-            let option = document.createElement("option");
-            option.text = titles[i];
-            project.appendChild(option);
+        add_options(saveForm.project, data.titles);
+    });
+}
+
+function update_selectable_contents() {
+    $.ajax({
+        type: 'POST',
+        url: '/get_contents_name',
+        data: JSON.stringify({'project': saveForm.project.value}),
+        contentType: 'application/json',
+        beforeSend: function() {
+            delete_options(loadForm.contents);
+        }
+    }).done(function(data) {
+        if (data.titles != '') {
+            add_options(loadForm.contents, data.titles);
         }
     });
-});
+}
 
 
 function login() {
@@ -23,6 +63,7 @@ function login() {
         'name': 'admin',
         'password': 'admin'
     });
+
     $.ajax({
         type: 'POST',
         url: '/login',
@@ -37,41 +78,23 @@ function init() {
 
     $.ajax({
         type: 'POST',
-        url: '/get_contents_name',
-        data: '',
-        contentType: false
-    }).done(function(data) {
-        const titles = data.titles;
-        const project = document.getElementById("contents");
-        for (let i = 0; i < titles.length; i++) {
-            let option = document.createElement("option");
-            option.text = titles[i];
-            project.appendChild(option);
-        }
-    });
-
-    $.ajax({
-        type: 'POST',
         url: '/init_upload_ajax',
         data: "",
         contentType: false,
         processData: false,
         beforeSend: function() {
-            document.getElementById("loading-spiner").style.display = "block";
+            loading_spiner.style.display = "block";
         },
     }).done(function(data) {
         $("#soil-table").html(data);
-        document.getElementById("loading-spiner").style.display = "none";
+        loading_spiner.style.display = "none";
     }).complete(function(data) {
-        document.getElementById("loading-spiner").style.display = "none";
+        loading_spiner.style.display = "none";
     });
 }
 
 
 function save_button() {
-    const inputForm = document.getElementById("inputForm");
-    const saveForm = document.getElementById("saveForm");
-
     const inputData = JSON.stringify({
         "inputs": {
             "mode": inputForm.mode.value,
@@ -84,6 +107,7 @@ function save_button() {
             "force": inputForm.force.value
         },
         "contents": {
+            "project": saveForm.project.value,
             "title": saveForm.title.value
         }
     });
@@ -93,8 +117,9 @@ function save_button() {
         url: '/save',
         data: inputData,
         contentType: 'application/json',
-    }).done(function(data) {
-        console.log(data);
+    }).done(function() {
+        update_selectable_contents();
+        saveForm.title.value = '';
     });
 }
 
@@ -118,7 +143,7 @@ function solve_button() {
         data: inputData,
         contentType: 'application/json',
         beforeSend: function() {
-            document.getElementById("loading-spiner").style.display = "block";
+            loading_spiner.style.display = "block";
         },
 
     }).done(function(data) {
@@ -127,10 +152,10 @@ function solve_button() {
         plot_graph(result.results);
         document.getElementById("time").innerText = result.time;
         document.getElementById("soil-data-details").open = false;
-        document.getElementById("loading-spiner").style.display = "none";
+        loading_spiner.style.display = "none";
 
     }).complete(function(data) {
-        document.getElementById("loading-spiner").style.display = "none";
+        loading_spiner.style.display = "none";
     });
 }
 
@@ -151,7 +176,7 @@ function file_upload() {
         document.getElementById("soil-data-details").open = true;
 
     }).complete(function(data) {
-        document.getElementById("loading-spiner").style.display = "none";
+        loading_spiner.style.display = "none";
     });
 }
 

@@ -64,7 +64,7 @@ def save():
     inputs = request.json
 
     user: User = Sess.query(User).filter(User.name == 'admin').first()
-    project: User = Sess.query(Project).filter(Project.title == 'Sample Project1').first()
+    project: User = Sess.query(Project).filter(Project.title == inputs['contents']['project']).first()
 
     soildata = Soildata(data=json.dumps(session['soil_data']))
     Sess.add(soildata)
@@ -99,8 +99,8 @@ def get_projects():
 
 @app.route("/get_contents_name", methods=["POST"])
 def get_contents_name():
-    user: User = Sess.query(User).filter(User.name == session['user']).first()
-    contents = Sess.query(Content).filter(Content.project_id == 1)
+    project: Project = Sess.query(Project).filter(Project.title == request.json['project']).first()
+    contents = Sess.query(Content).filter(Content.project_id == project.id)
     return {'titles': [content.title for content in contents]}
 
 
