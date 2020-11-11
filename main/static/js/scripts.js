@@ -6,6 +6,7 @@ const inputForm = document.getElementById("inputForm");
 const loading_spiner = document.getElementById("loading-spiner");
 
 const inputData = () => JSON.stringify({
+
     "mode": inputForm.mode.value,
     "condition": inputForm.condition_value.value,
     "bottom_condition": inputForm.bottom_condition.value,
@@ -16,6 +17,14 @@ const inputData = () => JSON.stringify({
     "force": inputForm.force.value
 });
 
+$(function () {
+    $('#openModal').click(function(){
+        $('#modalArea').fadeIn();
+    });
+    $('#closeModal , #modalBg').click(function(){
+      $('#modalArea').fadeOut();
+    });
+});
 
 window.addEventListener('DOMContentLoaded', function() {
     login();
