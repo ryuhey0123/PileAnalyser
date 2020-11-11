@@ -1,7 +1,10 @@
+// DOMs
+
 const saveForm = document.getElementById("saveForm");
-saveForm.project.onchange = () => update_selectable_contents();
 
 const loadForm = document.getElementById("loadForm");
+loadForm.project.onchange = () => update_selectable_contents(loadForm);
+
 const inputForm = document.getElementById("inputForm");
 const loading_spiner = document.getElementById("loading-spiner");
 
@@ -17,23 +20,30 @@ const inputData = () => JSON.stringify({
     "force": inputForm.force.value
 });
 
-$(function () {
-    $('#openModal').click(function(){
-        $('#modalArea').fadeIn();
-    });
-    $('#closeModal , #modalBg').click(function(){
-      $('#modalArea').fadeOut();
-    });
+// jQuery
+
+var $body = $('body');
+
+$('.menu-open-btn').on('click', function(){
+  $body.addClass('is-menu-open');
+  return false;
 });
+
+$('.menu-close-btn').on('click', function(){
+  $body.removeClass('is-menu-open');
+  return false;
+});
+
+// Functions
 
 window.addEventListener('DOMContentLoaded', function() {
     login();
     (async() => {
-        await update_selectable_projects();
-        await update_selectable_contents();
+        await update_selectable_projects(saveForm);
+        await update_selectable_projects(loadForm);
+        await update_selectable_contents(loadForm);
     })();
 });
-
 
 function add_options(select_node, titles) {
     for (let i = 0; i < titles.length; i++) {
@@ -49,32 +59,32 @@ function delete_options(node) {
     }
 }
 
-async function update_selectable_projects() {
+async function update_selectable_projects(node) {
     await $.ajax({
         type: 'POST',
         url: '/get_projects',
         data: '',
         contentType: false,
         beforeSend: function() {
-            delete_options(saveForm.project);
+            delete_options(node.project);
         }
     }).done(function(data) {
-        add_options(saveForm.project, data.titles);
+        add_options(node.project, data.titles);
     });
 }
 
-async function update_selectable_contents() {
+async function update_selectable_contents(node) {
     await $.ajax({
         type: 'POST',
         url: '/get_contents_name',
-        data: JSON.stringify({'project': saveForm.project.value}),
+        data: JSON.stringify({'project': node.project.value}),
         contentType: 'application/json',
         beforeSend: function() {
-            delete_options(loadForm.contents);
+            delete_options(node.contents);
         }
     }).done(function(data) {
         if (data.titles != '') {
-            add_options(loadForm.contents, data.titles);
+            add_options(node.contents, data.titles);
         }
     });
 }
@@ -146,7 +156,7 @@ function load_button() {
     $.ajax({
         type: 'POST',
         url: '/load',
-        data: JSON.stringify({'content': loadForm.contents.value, 'project': saveForm.project.value}),
+        data: JSON.stringify({'content': loadForm.contents.value, 'project': loadForm.project.value}),
         contentType: 'application/json',
         beforeSend: function() {
             loading_spiner.style.display = "block";

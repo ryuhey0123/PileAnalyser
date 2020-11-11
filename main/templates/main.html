@@ -8,166 +8,172 @@
 
 <body onload="init()">
 
-  <table>
-    <tr>
-      <td>
-        <form id="saveForm">
-          <select name="project" id="project"></select>
-          <input type="text" name="title" placeholder="title...">
-          <button type="button" onclick="save_button()">Save</button>
-        </form>
-      </td>
-      <td>
-        <form id="loadForm">
-          <select name="contents" id="contents"></select>
-          <button type="button" onclick="load_button()">Load</button>
-        </form>
-      </td>
-    </tr>
-  </table>
+  <div id="content">
 
-  <div class="page">
+    <div class="page">
 
-    <div class="loading" id="loading-spiner">
-      <div class="sk-chase">
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
-        <div class="sk-chase-dot"></div>
+    <a href="#" class="menu-open-btn">PushMe</a>
+
+      <div class="loading" id="loading-spiner">
+        <div class="sk-chase">
+          <div class="sk-chase-dot"></div>
+          <div class="sk-chase-dot"></div>
+          <div class="sk-chase-dot"></div>
+          <div class="sk-chase-dot"></div>
+          <div class="sk-chase-dot"></div>
+          <div class="sk-chase-dot"></div>
+        </div>
       </div>
-    </div>
 
-    <h4>多層地盤中の杭の非線形解析</h4>
+      <h4>多層地盤中の杭の非線形解析</h4>
 
-    <div>弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。</div>
-    <br>
-    <div class="dot-elastic"></div>
-    <form id="inputForm">
-
-      <table style="width: 100%; table-layout: fixed;">
-        <tr>
-          <th>解析モード</th>
-          <th>杭脚条件</th>
-          <th>材質</th>
-          <th>杭頭固定度</th>
-        </tr>
-        <tr>
-          <td>
-            <label><input type="radio" name="mode" value="non_liner" checked>非線形 (多層地盤)</label>
-            <label><input type="radio" name="mode" value="non_liner_single">非線形 (単層地盤)</label>
-            <label><input type="radio" name="mode" value="liner">線形</label>
-          </td>
-          <td>
-            <label><input type="radio" name="bottom_condition" value="free" checked>自由</label>
-            <label><input type="radio" name="bottom_condition" value="pin">ピン</label>
-            <br>
-            <!-- <label><input type="radio" name="bottom_condition" value="fix" disabled>固定</label> -->
-          </td>
-          <td>
-            <label><input type="radio" name="material" value="concrete" checked>コンクリート</label>
-            <label><input type="radio" name="material" value="steel">鉄</label>
-            <br>
-            <!-- <label><input type="radio" name="material" value="other">その他</label> -->
-          </td>
-          <td>
-            <input type="number" name="condition_value" value="1.0" max="1.0" min="0.0" step="0.1">
-          </td>
-        </tr>
-      </table>
+      <div>弾性支承梁の微分方程式を差分法によって解析し、杭の応力を算出する。</div>
       <br>
+      <div class="dot-elastic"></div>
+      <form id="inputForm">
 
-      <table style="width: 100%">
+        <table style="width: 100%; table-layout: fixed;">
+          <tr>
+            <th>解析モード</th>
+            <th>杭脚条件</th>
+            <th>材質</th>
+            <th>杭頭固定度</th>
+          </tr>
+          <tr>
+            <td>
+              <label><input type="radio" name="mode" value="non_liner" checked>非線形 (多層地盤)</label>
+              <label><input type="radio" name="mode" value="non_liner_single">非線形 (単層地盤)</label>
+              <label><input type="radio" name="mode" value="liner">線形</label>
+            </td>
+            <td>
+              <label><input type="radio" name="bottom_condition" value="free" checked>自由</label>
+              <label><input type="radio" name="bottom_condition" value="pin">ピン</label>
+              <br>
+              <!-- <label><input type="radio" name="bottom_condition" value="fix" disabled>固定</label> -->
+            </td>
+            <td>
+              <label><input type="radio" name="material" value="concrete" checked>コンクリート</label>
+              <label><input type="radio" name="material" value="steel">鉄</label>
+              <br>
+              <!-- <label><input type="radio" name="material" value="other">その他</label> -->
+            </td>
+            <td>
+              <input type="number" name="condition_value" value="1.0" max="1.0" min="0.0" step="0.1">
+            </td>
+          </tr>
+        </table>
+        <br>
+
+        <table style="width: 100%">
+          <tr>
+            <th>杭径 (mm)</th>
+            <th>杭長 (m)</th>
+            <th>杭天端 (m)</th>
+            <th>入力水平力 (kN)</th>
+          </tr>
+          <tr>
+            <td>
+              <input type="number" name="diameter" value="1300">
+            </td>
+            <td>
+              <input type="number" name="pile_length" step="0.1" value="17.5">
+            </td>
+            <td>
+              <input type="number" name="level" step="0.1" value="-2.5">
+            </td>
+            <td>
+              <input type="number" name="force" value="1000">
+            </td>
+            <td>
+              <button type="button" onclick="solve_button()">solve</button>
+            </td>
+          </tr>
+          <tr>
+            <td colspan="4"></td>
+            <td style="text-align: center"><div id="time"> . </div></td>
+          </tr>
+        </table>
+      </form>
+
+      <form id="upload-file" method="post" enctype="multipart/form-data">
+        <div class="upload_area" aria-disabled="false">
+          <input name="file" type="file" accept=".xlsx">
+          <button type="button" onclick="file_upload()">Upload</button>
+        </div>
+      </form>
+
+      <details id="soil-data-details">
+        <summary>地盤情報...</summary>
+        <table class="input" id="soil-table"></table>
+      </details><br>
+
+      <table style="width: 100%" class="result">
         <tr>
-          <th>杭径 (mm)</th>
-          <th>杭長 (m)</th>
-          <th>杭天端 (m)</th>
-          <th>入力水平力 (kN)</th>
+          <th></th>
+          <th>
+            <div>kh</div>
+            <div class="unit">kN/m3</div>
+          </th>
+          <th>
+            <div>変形</div>
+            <div class="unit">mm</div>
+          </th>
+          <th>
+            <div>変形角</div>
+            <div class="unit">×10<sup>-3</sup> rad</div>
+          </th>
+          <th>
+            <div>曲げモーメント</div>
+            <div class="unit">kNm</div>
+          </th>
+          <th>
+            <div>せん断力</div>
+            <div class="unit">kN</div>
+          </th>
         </tr>
         <tr>
-          <td>
-            <input type="number" name="diameter" value="1300">
-          </td>
-          <td>
-            <input type="number" name="pile_length" step="0.1" value="17.5">
-          </td>
-          <td>
-            <input type="number" name="level" step="0.1" value="-2.5">
-          </td>
-          <td>
-            <input type="number" name="force" value="1000">
-          </td>
-          <td>
-            <button type="button" onclick="solve_button()">solve</button>
-          </td>
+          <th>MAX</th>
+          <td><div id="kh_max"></div></td>
+          <td><div id="deformation_max"></div></td>
+          <td><div id="degree_max"></div></td>
+          <td><div id="moment_max"></div></td>
+          <td><div id="shear_max"></div></td>
         </tr>
         <tr>
-          <td colspan="4"></td>
-          <td style="text-align: center"><div id="time"> . </div></td>
+          <th>MIN</th>
+          <td><div id="kh_min"></div></td>
+          <td><div id="deformation_min"></div></td>
+          <td><div id="degree_min"></div></td>
+          <td><div id="moment_min"></div></td>
+          <td><div id="shear_min"></div></td>
         </tr>
       </table>
-    </form>
 
-    <form id="upload-file" method="post" enctype="multipart/form-data">
-      <div class="upload_area" aria-disabled="false">
-        <input name="file" type="file" accept=".xlsx">
-        <button type="button" onclick="file_upload()">Upload</button>
-      </div>
-    </form>
+      <div id="figure"></div>
 
-    <details id="soil-data-details">
-      <summary>地盤情報...</summary>
-      <table class="input" id="soil-table"></table>
-    </details><br>
+    </div>
+  </div>
 
-    <table style="width: 100%" class="result">
-      <tr>
-        <th></th>
-        <th>
-          <div>kh</div>
-          <div class="unit">kN/m3</div>
-        </th>
-        <th>
-          <div>変形</div>
-          <div class="unit">mm</div>
-        </th>
-        <th>
-          <div>変形角</div>
-          <div class="unit">×10<sup>-3</sup> rad</div>
-        </th>
-        <th>
-          <div>曲げモーメント</div>
-          <div class="unit">kNm</div>
-        </th>
-        <th>
-          <div>せん断力</div>
-          <div class="unit">kN</div>
-        </th>
-      </tr>
-      <tr>
-        <th>MAX</th>
-        <td><div id="kh_max"></div></td>
-        <td><div id="deformation_max"></div></td>
-        <td><div id="degree_max"></div></td>
-        <td><div id="moment_max"></div></td>
-        <td><div id="shear_max"></div></td>
-      </tr>
-      <tr>
-        <th>MIN</th>
-        <td><div id="kh_min"></div></td>
-        <td><div id="deformation_min"></div></td>
-        <td><div id="degree_min"></div></td>
-        <td><div id="moment_min"></div></td>
-        <td><div id="shear_min"></div></td>
-      </tr>
-    </table>
-
-    <div id="figure"></div>
-
+  <div id="modal-menu">
+    <div class="modalWrapper">
+      <h5>解析結果を保存する</h5>
+      <form id="saveForm">
+        Project: <select name="project" id="project"></select>
+        Content: <input type="text" name="title" placeholder="title...">
+        <button type="button" onclick="save_button()">Save</button>
+      </form>
+      <h5>解析結果を読み込む</h5>
+      <form id="loadForm">
+        project: <select name="project" id="project"></select>
+        Content: <select name="contents" id="contents"></select>
+        <button type="button" onclick="load_button()">Load</button>
+      </form>
+      <div class="menu-close-btn">×</div>
+    </div>
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
   <script src="/static/js/scripts.js"></script>
+
 </body>
 </html>
