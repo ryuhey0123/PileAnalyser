@@ -18,7 +18,7 @@ POSTGRESQL_DATABASE_URL = 'postgresql+psycopg2://{user}:{password}@{host}/{name}
 DATABASE_URL = SQLITE_DATABASE_URL
 # DATABASE_URL = POSTGRESQL_DATABASE_URL
 
-ENGINE = create_engine(DATABASE_URL, echo=False, convert_unicode=True)
+ENGINE = create_engine(DATABASE_URL, echo=False, convert_unicode=True, connect_args={'check_same_thread': False})
 
 SessionMaker = sessionmaker(ENGINE)
 Sess: Session = SessionMaker()

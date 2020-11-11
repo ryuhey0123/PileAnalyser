@@ -1,23 +1,36 @@
-window.addEventListener('DOMContentLoaded', function() {
-    login();
-    update_selectable_projects();
-});
-
 const saveForm = document.getElementById("saveForm");
 saveForm.project.onchange = () => update_selectable_contents();
 
 const loadForm = document.getElementById("loadForm");
-
 const inputForm = document.getElementById("inputForm");
-
 const loading_spiner = document.getElementById("loading-spiner");
 
+const inputData = () => JSON.stringify({
+    "mode": inputForm.mode.value,
+    "condition": inputForm.condition_value.value,
+    "bottom_condition": inputForm.bottom_condition.value,
+    "material": inputForm.material.value,
+    "diameter": inputForm.diameter.value,
+    "length": inputForm.pile_length.value,
+    "level": inputForm.level.value,
+    "force": inputForm.force.value
+});
 
-function add_options(node, titles) {
+
+window.addEventListener('DOMContentLoaded', function() {
+    login();
+    (async() => {
+        await update_selectable_projects();
+        await update_selectable_contents();
+    })();
+});
+
+
+function add_options(select_node, titles) {
     for (let i = 0; i < titles.length; i++) {
         let option = document.createElement("option");
         option.text = titles[i];
-        node.appendChild(option);
+        select_node.appendChild(option);
     }
 }
 
@@ -27,8 +40,8 @@ function delete_options(node) {
     }
 }
 
-function update_selectable_projects() {
-    $.ajax({
+async function update_selectable_projects() {
+    await $.ajax({
         type: 'POST',
         url: '/get_projects',
         data: '',
@@ -41,8 +54,8 @@ function update_selectable_projects() {
     });
 }
 
-function update_selectable_contents() {
-    $.ajax({
+async function update_selectable_contents() {
+    await $.ajax({
         type: 'POST',
         url: '/get_contents_name',
         data: JSON.stringify({'project': saveForm.project.value}),
@@ -57,7 +70,6 @@ function update_selectable_contents() {
     });
 }
 
-
 function login() {
     const userData = JSON.stringify({
         'name': 'admin',
@@ -71,7 +83,6 @@ function login() {
         contentType: 'application/json'
     });
 }
-
 
 function init() {
     solve_button();
@@ -92,7 +103,6 @@ function init() {
         loading_spiner.style.display = "none";
     });
 }
-
 
 function save_button() {
     const inputData = JSON.stringify({
@@ -123,42 +133,59 @@ function save_button() {
     });
 }
 
-
-function solve_button() {
-    const inputForm = document.getElementById("inputForm");
-    const inputData = JSON.stringify({
-        "mode": inputForm.mode.value,
-        "condition": inputForm.condition_value.value,
-        "bottom_condition": inputForm.bottom_condition.value,
-        "material": inputForm.material.value,
-        "diameter": inputForm.diameter.value,
-        "length": inputForm.pile_length.value,
-        "level": inputForm.level.value,
-        "force": inputForm.force.value
-    });
-
+function load_button() {
     $.ajax({
         type: 'POST',
-        url: '/solve',
-        data: inputData,
+        url: '/load',
+        data: JSON.stringify({'content': loadForm.contents.value, 'project': saveForm.project.value}),
         contentType: 'application/json',
         beforeSend: function() {
             loading_spiner.style.display = "block";
         },
-
     }).done(function(data) {
-        var result = JSON.parse(data);
-        update_summary(result.results);
-        plot_graph(result.results);
-        document.getElementById("time").innerText = result.time;
-        document.getElementById("soil-data-details").open = false;
-        loading_spiner.style.display = "none";
+        const result = JSON.parse(data);
+        const input = result.input;
+        const soil_data = result.soil_data;
 
+        inputForm.mode.value = input.mode;
+        inputForm.condition_value.value = input.condition;
+        inputForm.bottom_condition.value = input.bottom_condition;
+        inputForm.material.value = input.material;
+        inputForm.diameter.value = input.diameter;
+        inputForm.pile_length.value = input.length;
+        inputForm.level.value = input.level;
+        inputForm.force.value = input.force;
+
+        $("#soil-table").html(soil_data);
+
+        solve_button();
+
+        loading_spiner.style.display = "none";
     }).complete(function(data) {
         loading_spiner.style.display = "none";
     });
 }
 
+function solve_button() {
+    $.ajax({
+        type: 'POST',
+        url: '/solve',
+        data: inputData(),
+        contentType: 'application/json',
+        beforeSend: function() {
+            loading_spiner.style.display = "block";
+        },
+    }).done(function(data) {
+        const result = JSON.parse(data);
+        update_summary(result.results);
+        plot_graph(result.results);
+        document.getElementById("time").innerText = result.time;
+        document.getElementById("soil-data-details").open = false;
+        loading_spiner.style.display = "none";
+    }).complete(function(data) {
+        loading_spiner.style.display = "none";
+    });
+}
 
 function file_upload() {
 
@@ -179,7 +206,6 @@ function file_upload() {
         loading_spiner.style.display = "none";
     });
 }
-
 
 function update_summary(results) {
 
@@ -214,7 +240,6 @@ function update_summary(results) {
     document.getElementById("shear_max").innerText = summary.shear[0];
     document.getElementById("shear_min").innerText = summary.shear[1];
 }
-
 
 function plot_graph(results) {
 

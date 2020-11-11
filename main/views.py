@@ -63,8 +63,8 @@ def upload_ajax():
 def save():
     inputs = request.json
 
-    user: User = Sess.query(User).filter(User.name == 'admin').first()
-    project: User = Sess.query(Project).filter(Project.title == inputs['contents']['project']).first()
+    user: User = Sess.query(User).filter(User.name == session['user']).first()
+    project: Project = Sess.query(Project).filter(Project.title == inputs['contents']['project']).first()
 
     soildata = Soildata(data=json.dumps(session['soil_data']))
     Sess.add(soildata)
@@ -80,6 +80,26 @@ def save():
     Sess.commit()
 
     return 'Hello'
+
+
+@app.route("/load", methods=["POST"])
+def load():
+    content_name = request.json['content']
+    project_name = request.json['project']
+    user: User = Sess.query(User).filter(User.name == session['user']).first()
+
+    project: Project = Sess.query(Project).\
+        filter(Project.user_id == user.id).\
+        filter(Project.title == project_name).first()
+
+    content: Content = Sess.query(Content).\
+        filter(Content.project_id == project.id).\
+        filter(Content.title == content_name).first()
+
+    return json.dumps({
+        'input': content.input,
+        'soil_data': content.soildata
+    })
 
 
 @app.route('/login', methods=["POST"])
