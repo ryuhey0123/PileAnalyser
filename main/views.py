@@ -63,11 +63,15 @@ def upload_ajax():
 def save():
     inputs = request.json
 
-    user: User = Sess.query(User).filter(User.name == session['user']).first()
-    project: Project = Sess.query(Project).filter(Project.title == inputs['contents']['project']).first()
+    user: User = Sess.query(User).\
+        filter(User.name == session['user']).first()
+
+    project: Project = Sess.query(Project).\
+        filter(Project.title == inputs['contents']['project']).first()
 
     soildata = Soildata(data=json.dumps(session['soil_data']))
     Sess.add(soildata)
+    Sess.flush()
 
     Sess.add(Content(
         title=inputs["contents"]["title"],
@@ -84,21 +88,26 @@ def save():
 
 @app.route("/load", methods=["POST"])
 def load():
-    content_name = request.json['content']
-    project_name = request.json['project']
-    user: User = Sess.query(User).filter(User.name == session['user']).first()
+    user: User = Sess.query(User).\
+        filter(User.name == session['user']).first()
 
     project: Project = Sess.query(Project).\
         filter(Project.user_id == user.id).\
-        filter(Project.title == project_name).first()
+        filter(Project.title == request.json['project']).first()
 
     content: Content = Sess.query(Content).\
         filter(Content.project_id == project.id).\
-        filter(Content.title == content_name).first()
+        filter(Content.title == request.json['content']).first()
+
+    soil_data: Soildata = Sess.query(Soildata).get(content.soildata_id)
+
+    session['soil_data'] = json.loads(soil_data.data)
+
+    soil_table = update_soil_data_table(json.loads(soil_data.data))
 
     return json.dumps({
         'input': content.input,
-        'soil_data': content.soildata
+        'soil_data': soil_table
     })
 
 
@@ -111,16 +120,23 @@ def login():
 
 @app.route("/get_projects", methods=["POST"])
 def get_projects():
-    user: User = Sess.query(User).filter(User.name == session['user']).first()
-    projects = Sess.query(Project).filter(Project.user_id == user.id)
+    user: User = Sess.query(User).\
+        filter(User.name == session['user']).first()
+
+    projects = Sess.query(Project).\
+        filter(Project.user_id == user.id)
 
     return {'titles': [project.title for project in projects]}
 
 
 @app.route("/get_contents_name", methods=["POST"])
 def get_contents_name():
-    project: Project = Sess.query(Project).filter(Project.title == request.json['project']).first()
-    contents = Sess.query(Content).filter(Content.project_id == project.id)
+    project: Project = Sess.query(Project).\
+        filter(Project.title == request.json['project']).first()
+
+    contents = Sess.query(Content).\
+        filter(Content.project_id == project.id)
+
     return {'titles': [content.title for content in contents]}
 
 
