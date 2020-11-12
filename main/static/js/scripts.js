@@ -8,17 +8,17 @@ loadForm.project.onchange = () => update_selectable_contents(loadForm);
 const inputForm = document.getElementById("inputForm");
 const loading_spiner = document.getElementById("loading-spiner");
 
-const inputData = () => JSON.stringify({
-
+const inputData = () => { return {
     "mode": inputForm.mode.value,
     "condition": inputForm.condition_value.value,
     "bottom_condition": inputForm.bottom_condition.value,
+    "div_num": 100,
     "material": inputForm.material.value,
     "diameter": inputForm.diameter.value,
     "length": inputForm.pile_length.value,
     "level": inputForm.level.value,
     "force": inputForm.force.value
-});
+};};
 
 $("switch.ios-toggle").click((e)=>{$(e.target).toggleClass("on");});
 
@@ -39,13 +39,25 @@ $('.menu-close-btn').on('click', function(){
 // Functions
 
 window.addEventListener('DOMContentLoaded', function() {
+    loading_spiner.style.display = "block";
+
     $("switch.ios-toggle").toggleClass("on");
+
     login();
+
     (async() => {
         await update_selectable_projects(saveForm);
         await update_selectable_projects(loadForm);
         await update_selectable_contents(loadForm);
     })();
+
+    solve_button();
+
+    $.post('/upload', NaN, function(data) {
+        $("#soil-table").html(data);
+    });
+
+    loading_spiner.style.display = "none";
 });
 
 function add_options(select_node, titles) {
@@ -63,28 +75,20 @@ function delete_options(node) {
 }
 
 async function update_selectable_projects(node) {
+    delete_options(node.project);
     await $.ajax({
-        type: 'POST',
-        url: '/get_projects',
-        data: '',
-        contentType: false,
-        beforeSend: function() {
-            delete_options(node.project);
-        }
+        type: 'GET',
+        url: '/database/projects',
     }).done(function(data) {
         add_options(node.project, data.titles);
     });
 }
 
 async function update_selectable_contents(node) {
+    delete_options(node.contents);
     await $.ajax({
-        type: 'POST',
-        url: '/get_contents_name',
-        data: JSON.stringify({'project': node.project.value}),
-        contentType: 'application/json',
-        beforeSend: function() {
-            delete_options(node.contents);
-        }
+        type: 'GET',
+        url: '/database/contents/' + node.project.value,
     }).done(function(data) {
         if (data.titles != '') {
             add_options(node.contents, data.titles);
@@ -106,38 +110,9 @@ function login() {
     });
 }
 
-function init() {
-    solve_button();
-
-    $.ajax({
-        type: 'POST',
-        url: '/init_upload_ajax',
-        data: "",
-        contentType: false,
-        processData: false,
-        beforeSend: function() {
-            loading_spiner.style.display = "block";
-        },
-    }).done(function(data) {
-        $("#soil-table").html(data);
-        loading_spiner.style.display = "none";
-    }).complete(function(data) {
-        loading_spiner.style.display = "none";
-    });
-}
-
 function save_button() {
-    const inputData = JSON.stringify({
-        "inputs": {
-            "mode": inputForm.mode.value,
-            "condition": inputForm.condition_value.value,
-            "bottom_condition": inputForm.bottom_condition.value,
-            "material": inputForm.material.value,
-            "diameter": inputForm.diameter.value,
-            "length": inputForm.pile_length.value,
-            "level": inputForm.level.value,
-            "force": inputForm.force.value
-        },
+    const data = JSON.stringify({
+        "inputs": inputData(),
         "contents": {
             "project": saveForm.project.value,
             "title": saveForm.title.value
@@ -146,8 +121,8 @@ function save_button() {
 
     $.ajax({
         type: 'POST',
-        url: '/save',
-        data: inputData,
+        url: '/database/save',
+        data: data,
         contentType: 'application/json',
     }).done(function() {
         update_selectable_contents();
@@ -158,7 +133,7 @@ function save_button() {
 function load_button() {
     $.ajax({
         type: 'POST',
-        url: '/load',
+        url: '/database/load',
         data: JSON.stringify({'content': loadForm.contents.value, 'project': loadForm.project.value}),
         contentType: 'application/json',
         beforeSend: function() {
@@ -189,47 +164,41 @@ function load_button() {
 }
 
 function solve_button() {
+    loading_spiner.style.display = "block";
+
     $.ajax({
         type: 'POST',
         url: '/solve',
-        data: inputData(),
+        data: JSON.stringify(inputData()),
         contentType: 'application/json',
-        beforeSend: function() {
-            loading_spiner.style.display = "block";
-        },
     }).done(function(data) {
         const result = JSON.parse(data);
+
         update_summary(result.results);
         plot_graph(result.results);
+
         document.getElementById("time").innerText = result.time;
         document.getElementById("soil-data-details").open = false;
         loading_spiner.style.display = "none";
-    }).complete(function(data) {
-        loading_spiner.style.display = "none";
     });
 }
 
-function file_upload() {
-
+async function file_upload() {
     const form_data = new FormData($('#upload-file').get(0));
 
-    $.ajax({
+    await $.ajax({
         type: 'POST',
-        url: '/upload_ajax',
+        url: '/upload',
         data: form_data,
         contentType: false,
         processData: false,
-
     }).done(function(data) {
         $("#soil-table").html(data);
         document.getElementById("soil-data-details").open = true;
-
-    }).complete(function(data) {
-        loading_spiner.style.display = "none";
     });
 }
 
-function update_summary(results) {
+async function update_summary(results) {
 
     function max_and_min_values_by(key, fixed=1) {
 
@@ -263,7 +232,7 @@ function update_summary(results) {
     document.getElementById("shear_min").innerText = summary.shear[1];
 }
 
-function plot_graph(results) {
+async function plot_graph(results) {
 
     const trace_dec = {x: results.dec, y: results.x, fill: 'tozerox', type: 'scatter'};
     const trace_kh0s = {x: results.kh0s, y: results.x, xaxis: 'x2', yaxis: 'y2', fill: 'tozerox', type: 'scatter'};

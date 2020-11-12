@@ -7,6 +7,9 @@ from main import calculations as calc
 from models import Sess, User, Content, Project, Soildata
 
 
+# Page Routing
+
+
 @app.route("/", methods=["GET"])
 def main_page():
 
@@ -16,15 +19,22 @@ def main_page():
     return render_template("main.html")
 
 
+# API Routing
+
+
+@app.route('/login', methods=["POST"])
+def login():
+    inputs = request.json
+    session['user'] = inputs['name']
+    return 500
+
+
 @app.route("/solve", methods=["POST"])
 def solve():
-
     start = time.time()
 
     inputs = request.json
-    soil_data = session['soil_data']
-    inputs['soil_data'] = soil_data
-    inputs['div_num'] = 100
+    inputs['soil_data'] = session['soil_data']
 
     results = calc.get_results(**inputs)
 
@@ -33,33 +43,27 @@ def solve():
 
     solution_time = "time : {:.3f} sec".format(time.time() - start)
 
-    return json.dumps({
-        "results": results,
-        "time": solution_time
-    })
+    return json.dumps({"results": results, "time": solution_time})
 
 
-@app.route("/init_upload_ajax", methods=["POST"])
-def init_upload_ajax():
+@app.route("/upload", methods=["POST"])
+def upload():
+    file = request.files.get('file')
 
-    soil_data = session['soil_data']
-    soil_table = calc.update_soil_data_table(soil_data)
+    if file is None:
+        soil_data = calc.decode_upload_file('./sample/sample1.xlsx')
+    else:
+        soil_data = calc.decode_upload_file(file)
 
-    return soil_table
-
-
-@app.route("/upload_ajax", methods=["POST"])
-def upload_ajax():
-
-    files = request.files
-    soil_data = calc.decode_upload_file(files['file'])
     session['soil_data'] = soil_data
-    soil_table = calc.update_soil_data_table(soil_data)
 
-    return soil_table
+    return calc.update_soil_data_table(soil_data)
 
 
-@app.route("/save", methods=["POST"])
+# Database Routing
+
+
+@app.route("/database/save", methods=["POST"])
 def save():
     inputs = request.json
 
@@ -83,10 +87,10 @@ def save():
 
     Sess.commit()
 
-    return 'Hello'
+    return '500'
 
 
-@app.route("/load", methods=["POST"])
+@app.route("/database/load", methods=["POST"])
 def load():
     user: User = Sess.query(User).\
         filter(User.name == session['user']).first()
@@ -111,14 +115,7 @@ def load():
     })
 
 
-@app.route('/login', methods=["POST"])
-def login():
-    inputs = request.json
-    session['user'] = inputs['name']
-    return 'OK'
-
-
-@app.route("/get_projects", methods=["POST"])
+@app.route("/database/projects", methods=["GET"])
 def get_projects():
     user: User = Sess.query(User).\
         filter(User.name == session['user']).first()
@@ -129,10 +126,13 @@ def get_projects():
     return {'titles': [project.title for project in projects]}
 
 
-@app.route("/get_contents_name", methods=["POST"])
-def get_contents_name():
+@app.route("/database/contents/<project_title>", methods=["GET"])
+def get_contents_name_by_project(project_title):
+    user: User = Sess.query(User).\
+        filter(User.name == session['user']).first()
+
     project: Project = Sess.query(Project).\
-        filter(Project.title == request.json['project']).first()
+        filter(Project.user_id == user.id, Project.title == project_title).first()
 
     contents = Sess.query(Content).\
         filter(Content.project_id == project.id)
