@@ -194,3 +194,20 @@ def decode_upload_file(file):
         alpha=df['alpha'].values.tolist(),
         E0=df['E0'].values.tolist()
     )
+
+
+def update_soil_data_table(soil_data: dict):
+
+    td = {}
+    for key, value in soil_data.items():
+        data = list(map(lambda i: '<td>{}</td>'.format(i), value))
+        td[key] = data
+
+    html = ""
+    for i in range(len(td['depth'])):
+        row = "<tr>" + td['depth'][i] + td['nValue'][i] + td['soil'][i] + td['alpha'][i] + td['reductions'][i] + td['adopted_reductions'][i] + td['E0'][i] + "</tr>"
+        html += row
+
+    html = "<tr><th>深度</th><th>N値</th><th>土質</th><th>alpha</th><th>低減係数</th><th>採用</th><th>E0</th></tr>" + html
+
+    return html

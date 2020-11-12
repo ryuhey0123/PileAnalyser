@@ -3,14 +3,14 @@ import time
 from flask import session, request, render_template, json
 
 from main import app
-from main import calculations
+from main import calculations as calc
 from models import Sess, User, Content, Project, Soildata
 
 
 @app.route("/", methods=["GET"])
 def main_page():
 
-    soil_data = calculations.decode_upload_file('./sample/sample1.xlsx')
+    soil_data = calc.decode_upload_file('./sample/sample1.xlsx')
     session['soil_data'] = soil_data
 
     return render_template("main.html")
@@ -26,7 +26,7 @@ def solve():
     inputs['soil_data'] = soil_data
     inputs['div_num'] = 100
 
-    results = calculations.get_results(**inputs)
+    results = calc.get_results(**inputs)
 
     for key, value in results.items():
         results[key] = value.tolist()
@@ -43,7 +43,7 @@ def solve():
 def init_upload_ajax():
 
     soil_data = session['soil_data']
-    soil_table = update_soil_data_table(soil_data)
+    soil_table = calc.update_soil_data_table(soil_data)
 
     return soil_table
 
@@ -52,9 +52,9 @@ def init_upload_ajax():
 def upload_ajax():
 
     files = request.files
-    soil_data = calculations.decode_upload_file(files['file'])
+    soil_data = calc.decode_upload_file(files['file'])
     session['soil_data'] = soil_data
-    soil_table = update_soil_data_table(soil_data)
+    soil_table = calc.update_soil_data_table(soil_data)
 
     return soil_table
 
@@ -103,7 +103,7 @@ def load():
 
     session['soil_data'] = json.loads(soil_data.data)
 
-    soil_table = update_soil_data_table(json.loads(soil_data.data))
+    soil_table = calc.update_soil_data_table(json.loads(soil_data.data))
 
     return json.dumps({
         'input': content.input,
@@ -138,20 +138,3 @@ def get_contents_name():
         filter(Content.project_id == project.id)
 
     return {'titles': [content.title for content in contents]}
-
-
-def update_soil_data_table(soil_data: dict):
-
-    td = {}
-    for key, value in soil_data.items():
-        data = list(map(lambda i: '<td>{}</td>'.format(i), value))
-        td[key] = data
-
-    html = ""
-    for i in range(len(td['depth'])):
-        row = "<tr>" + td['depth'][i] + td['nValue'][i] + td['soil'][i] + td['alpha'][i] + td['reductions'][i] + td['adopted_reductions'][i] + td['E0'][i] + "</tr>"
-        html += row
-
-    html = "<tr><th>深度</th><th>N値</th><th>土質</th><th>alpha</th><th>低減係数</th><th>採用</th><th>E0</th></tr>" + html
-
-    return html
