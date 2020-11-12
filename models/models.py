@@ -59,8 +59,13 @@ class Soildata(Base):
 
     contents = relationship("Content", backref="soildatum")
 
-    def __init__(self, data: dict) -> None:
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship('User')
+
+    def __init__(self, data: dict, user_id: int) -> None:
         self.data = data
+        self.user_id = user_id
+
         self.timestamp = datetime.datetime.now()
 
 

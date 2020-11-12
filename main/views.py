@@ -69,7 +69,7 @@ def save():
     project: Project = Sess.query(Project).\
         filter(Project.title == inputs['contents']['project']).first()
 
-    soildata = Soildata(data=json.dumps(session['soil_data']))
+    soildata = Soildata(data=json.dumps(session['soil_data']), user_id=user.id)
     Sess.add(soildata)
     Sess.flush()
 
