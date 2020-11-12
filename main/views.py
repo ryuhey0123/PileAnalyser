@@ -26,7 +26,7 @@ def main_page():
 def login():
     inputs = request.json
     session['user'] = inputs['name']
-    return 500
+    return '500'
 
 
 @app.route("/solve", methods=["POST"])

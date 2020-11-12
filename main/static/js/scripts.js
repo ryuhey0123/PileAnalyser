@@ -20,8 +20,6 @@ const inputData = () => { return {
     "force": inputForm.force.value
 };};
 
-$("switch.ios-toggle").click((e)=>{$(e.target).toggleClass("on");});
-
 // jQuery
 
 var $body = $('body');
@@ -36,12 +34,17 @@ $('.menu-close-btn').on('click', function(){
   return false;
 });
 
+$("switch.ios-toggle").click((e) => {
+    $(e.target).toggleClass("on");
+    form_is_disable(!($(e.target).hasClass("on")));
+});
+
 // Functions
 
 window.addEventListener('DOMContentLoaded', function() {
     loading_spiner.style.display = "block";
 
-    $("switch.ios-toggle").toggleClass("on");
+    $("switch.ios-toggle").addClass("on");
 
     login();
 
@@ -59,6 +62,11 @@ window.addEventListener('DOMContentLoaded', function() {
 
     loading_spiner.style.display = "none";
 });
+
+function form_is_disable(bool) {
+    $('#inputForm').find('input, button').prop('disabled', bool);
+    $('#upload-file').find('input, button').prop('disabled', bool);
+}
 
 function add_options(select_node, titles) {
     for (let i = 0; i < titles.length; i++) {
@@ -92,6 +100,7 @@ async function update_selectable_contents(node) {
     }).done(function(data) {
         if (data.titles != '') {
             add_options(node.contents, data.titles);
+            document.getElementById('projectTitle').innerText = node.project.value;
         }
     });
 }
@@ -108,6 +117,8 @@ function login() {
         data: userData,
         contentType: 'application/json'
     });
+
+    document.getElementById('userName').innerText = 'admin';
 }
 
 function save_button() {
@@ -136,9 +147,6 @@ function load_button() {
         url: '/database/load',
         data: JSON.stringify({'content': loadForm.contents.value, 'project': loadForm.project.value}),
         contentType: 'application/json',
-        beforeSend: function() {
-            loading_spiner.style.display = "block";
-        },
     }).done(function(data) {
         const result = JSON.parse(data);
         const input = result.input;
@@ -157,9 +165,9 @@ function load_button() {
 
         solve_button();
 
-        loading_spiner.style.display = "none";
-    }).complete(function(data) {
-        loading_spiner.style.display = "none";
+        document.getElementById('contentTitle').innerText = loadForm.contents.value;
+        $("switch.ios-toggle").removeClass("on");
+        $('#inputForm').find('input').prop('disabled', true);
     });
 }
 
