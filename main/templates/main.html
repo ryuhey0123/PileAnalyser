@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" type="text/css" href="/static/css/base.css">
+  <link rel="stylesheet" type="text/css" href="/static/css/page.css">
   <link rel="stylesheet" type="text/css" href="/static/css/style.css">
   <link rel="stylesheet" type="text/css" href="/static/css/loading.css">
   <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
@@ -10,9 +12,27 @@
 
   <div id="content">
 
-    <div class="page">
+    <div style="width: 210mm; margin: 0.5em auto; text-align: right;">
+      <span><a href="#" class="menu-open-btn">Database</a></span>
+      <span>Editable: <switch class="ios-toggle"></switch></span>
+    </div>
 
-    <a href="#" class="menu-open-btn">Database</a>
+    <div class="content-detail">
+      <div class="content-detail-left" style="width: 40mm;">
+        <div class="content-inner">User: <span id="userName">Test1</span></div>
+        <div class="content-inner">ID: <span id="userID">32</span></div>
+      </div>
+      <div class="content-detail-left" style="width: 65mm;">
+        <div class="content-inner">Project: <span id="projectTitle">Test1</span></div>
+        <div class="content-inner">Date: <span id="projectDate">2020/11/02 10:34</span></div>
+      </div>
+      <div class="content-detail-left" style="width: 65mm;">
+        <div class="content-inner">Content: <span id="contentTitle">Test1</span></div>
+        <div class="content-inner">Date: <span id="contentDate">2020/11/02 10:34</span></div>
+      </div>
+    </div>
+
+    <div class="page">
 
       <div class="loading" id="loading-spiner">
         <div class="sk-chase">

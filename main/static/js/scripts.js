@@ -20,6 +20,8 @@ const inputData = () => JSON.stringify({
     "force": inputForm.force.value
 });
 
+$("switch.ios-toggle").click((e)=>{$(e.target).toggleClass("on");});
+
 // jQuery
 
 var $body = $('body');
@@ -37,6 +39,7 @@ $('.menu-close-btn').on('click', function(){
 // Functions
 
 window.addEventListener('DOMContentLoaded', function() {
+    $("switch.ios-toggle").toggleClass("on");
     login();
     (async() => {
         await update_selectable_projects(saveForm);
