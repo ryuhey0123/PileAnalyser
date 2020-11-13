@@ -2,8 +2,8 @@ import time
 
 from flask import session, request, render_template, json
 
-from main import app
-from main import calculations as calc
+from api import app
+from api import calculations as calc
 from models import Sess, User, Content, Project, Soildata
 
 
