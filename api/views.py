@@ -7,12 +7,17 @@ from api import calculations as calc
 from models import Sess, User, Content, Project, Soildata
 
 
+@app.route('/time')
+def get_current_time():
+    return {'time': time.time()}
+
+
 # Page Routing
 
-@app.route("/", methods=["GET"])
-def main_page():
-    session['user'] = 'admin'
-    return render_template("main.html")
+# @app.route("/", methods=["GET"])
+# def main_page():
+#     session['user'] = 'admin'
+#     return render_template("main.html")
 
 
 # API Routing
