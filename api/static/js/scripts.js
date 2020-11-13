@@ -46,9 +46,8 @@ window.addEventListener('DOMContentLoaded', function() {
 
     $("switch.ios-toggle").addClass("on");
 
-    login();
-
     (async() => {
+        await login();
         await update_selectable_projects(saveForm);
         await update_selectable_projects(loadForm);
         await update_selectable_contents(loadForm);
@@ -83,20 +82,24 @@ function delete_options(node) {
 }
 
 async function update_selectable_projects(node) {
-    delete_options(node.project);
     await $.ajax({
         type: 'GET',
         url: '/database/projects',
+        beforeSend: ()  => {
+            delete_options(node.project);
+        }
     }).done(function(data) {
         add_options(node.project, data.titles);
     });
 }
 
 async function update_selectable_contents(node) {
-    delete_options(node.contents);
     await $.ajax({
         type: 'GET',
         url: '/database/contents/' + node.project.value,
+        beforeSend: () => {
+            delete_options(node.contents);
+        }
     }).done(function(data) {
         if (data.titles != '') {
             add_options(node.contents, data.titles);
@@ -105,20 +108,20 @@ async function update_selectable_contents(node) {
     });
 }
 
-function login() {
-    const userData = JSON.stringify({
+async function login() {
+    const userData = {
         'name': 'admin',
         'password': 'admin'
-    });
+    };
 
-    $.ajax({
+    await $.ajax({
         type: 'POST',
         url: '/login',
-        data: userData,
+        data: JSON.stringify(userData),
         contentType: 'application/json'
     });
 
-    document.getElementById('userName').innerText = 'admin';
+    document.getElementById('userName').innerText = userData.name;
 }
 
 function save_button() {

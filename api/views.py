@@ -9,18 +9,13 @@ from models import Sess, User, Content, Project, Soildata
 
 # Page Routing
 
-
 @app.route("/", methods=["GET"])
 def main_page():
-
-    soil_data = calc.decode_upload_file('./sample/sample1.xlsx')
-    session['soil_data'] = soil_data
-
+    session['user'] = 'admin'
     return render_template("main.html")
 
 
 # API Routing
-
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -51,7 +46,7 @@ def upload():
     file = request.files.get('file')
 
     if file is None:
-        soil_data = calc.decode_upload_file('./sample/sample1.xlsx')
+        soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
     else:
         soil_data = calc.decode_upload_file(file)
 
@@ -61,7 +56,6 @@ def upload():
 
 
 # Database Routing
-
 
 @app.route("/database/save", methods=["POST"])
 def save():
