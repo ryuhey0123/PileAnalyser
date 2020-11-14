@@ -42,24 +42,25 @@ def solve():
     return json.dumps({"results": results, "time": solution_time})
 
 
-# @app.route("/upload", methods=["POST"])
-# def upload():
-#     file = request.files.get('file')
-
-#     if file is None:
-#         soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
-#     else:
-#         soil_data = calc.decode_upload_file(file)
-
-#     session['soil_data'] = soil_data
-
-#     return json.dumps(soil_data)
-
-
-@app.route("/upload", methods=["GET"])
+@app.route("/upload", methods=["POST"])
 def upload():
-    soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
+    file = request.files.get('file')
+
+    if file is None:
+        soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
+    else:
+        soil_data = calc.decode_upload_file(file)
+
+    session['soil_data'] = soil_data
+    print(soil_data)
+
     return jsonify(soil_data)
+
+
+# @app.route("/upload", methods=["GET"])
+# def upload():
+#     soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
+#     return jsonify(soil_data)
 
 # Database Routing
 

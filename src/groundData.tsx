@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Cell, Column, Table } from "@blueprintjs/table";
 
+type SoilData = {
+    depth: number[];
+    nValue: number[];
+    soil: string[];
+    reductions: number[];
+    adopted_reductions: number[];
+    alpha: number[];
+    E0: number[];
+};
 
 function GroundData() {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<SoilData | undefined>(undefined);
 
     useEffect(() => {
-        fetch("/upload").then(res => res.json()).then(data => {
-            console.log(data.depth)
-        });
+        fetch("/upload", {
+            method: "POST",
+        })
+            .then(res => res.json())
+            .then(data => setData(data))
     }, []);
 
     const cellRenderer = (rowIndex: number) => {
@@ -17,7 +28,7 @@ function GroundData() {
 
     return (
         <div>
-            {data}
+            { data?.depth }
             <Table numRows={15}>
                 <Column name="Dollars" cellRenderer={cellRenderer}/>
             </Table>
