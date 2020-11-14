@@ -2,25 +2,21 @@ import time
 
 from flask import session, request, render_template, json
 
-from api import app
-from api import calculations as calc
+from main import app
+from main import calculations as calc
 from models import Sess, User, Content, Project, Soildata
-
-
-@app.route('/time')
-def get_current_time():
-    return {'time': time.time()}
 
 
 # Page Routing
 
-# @app.route("/", methods=["GET"])
-# def main_page():
-#     session['user'] = 'admin'
-#     return render_template("main.html")
+
+@app.route("/", methods=["GET"])
+def main_page():
+    return render_template("main.html")
 
 
 # API Routing
+
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -51,7 +47,7 @@ def upload():
     file = request.files.get('file')
 
     if file is None:
-        soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
+        soil_data = calc.decode_upload_file('./sample/sample1.xlsx')
     else:
         soil_data = calc.decode_upload_file(file)
 
@@ -61,6 +57,7 @@ def upload():
 
 
 # Database Routing
+
 
 @app.route("/database/save", methods=["POST"])
 def save():
