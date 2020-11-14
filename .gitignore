@@ -260,3 +260,4 @@ Temporary Items
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/python,vscode,macos,git,flask
+node_modules

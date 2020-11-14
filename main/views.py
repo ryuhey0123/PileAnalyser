@@ -12,10 +12,7 @@ from models import Sess, User, Content, Project, Soildata
 
 @app.route("/", methods=["GET"])
 def main_page():
-
-    soil_data = calc.decode_upload_file('./sample/sample1.xlsx')
-    session['soil_data'] = soil_data
-
+    session['user'] = 'admin'
     return render_template("main.html")
 
 
