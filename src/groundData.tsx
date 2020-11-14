@@ -1,54 +1,72 @@
 import React, { useEffect, useState } from 'react';
-import { Cell, Column, Table } from "@blueprintjs/table";
+import { Cell, Column, ColumnHeaderCell, EditableCell, EditableName, Table } from "@blueprintjs/table";
+import { Intent } from '@blueprintjs/core';
 
-
-interface SoilData {
-    depth: number[],
-    nValue: number[],
-    soil: string[],
-    reductions: number[],
-    adopted_reductions: number[],
-    alpha: number[],
-    E0: number[],
-};
+interface ITableEditableExampleState {
+    columnNames: string[];
+    sparseCellData: { [key: string]: string };
+    sparseCellIntent: { [key: string]: Intent };
+    sparseColumnIntents: Intent[];
+}
 
 function GroundData() {
-    const initSoilData: SoilData = {
-        depth: [],
-        nValue: [],
-        soil: [],
-        reductions: [],
-        adopted_reductions: [],
-        alpha: [],
-        E0: []
-    }
-    const [data, setData] = useState<SoilData>(initSoilData);
 
-    useEffect(() => {
-        fetch("/upload", {
-            method: "POST",
-        })
-            .then(res => res.json())
-            .then(data => setData(data))
-    }, []);
+    const state: ITableEditableExampleState = {
+        columnNames: ["Please", "Rename", "Me"],
+        sparseCellData: {
+            "1-1": "editable",
+            "3-1": "validation 123",
+        },
+        sparseCellIntent: {
+            "3-1": Intent.DANGER,
+        },
+        sparseColumnIntents: [],
+    };
 
-    const cellRenderer = (columnData: Array<number | string>) => {
-        return (rowIndex: number) => {
-            return <Cell>{columnData[rowIndex]}</Cell>
-        }
-    }
+    const [exampleTable, setExampleTable] = useState<ITableEditableExampleState>(state);
+
+    const dataKey = (rowIndex: number, columnIndex: number) => {
+        return `${rowIndex}-${columnIndex}`;
+    };
+
+    const columns = exampleTable.columnNames.map((_: string, index: number) => {
+        return (
+            <Column key={index} cellRenderer={renderCell} columnHeaderCellRenderer={renderColumnHeader} />
+        );
+    })
+
+    const renderCell = (rowIndex: number, columnIndex: number) => {
+        const key = dataKey(rowIndex, columnIndex);
+        const value = exampleTable.sparseCellData[key];
+        return (
+            <EditableCell
+                value={value == null ? "" : value}
+                intent={exampleTable.sparseCellIntent[key]}
+                // onCancel={cellValidator(rowIndex, columnIndex)}
+                // onChange={cellValidator(rowIndex, columnIndex)}
+                // onConfirm={cellSetter(rowIndex, columnIndex)}
+            />
+        );
+    };
+
+    const renderColumnHeader = (columnIndex: number) => {
+        const nameRenderer = (name: string) => {
+            return (
+                <EditableName
+                    name={name}
+                    intent={exampleTable.sparseColumnIntents[columnIndex]}
+                    // onChange={this.nameValidator(columnIndex)}
+                    // onCancel={this.nameValidator(columnIndex)}
+                    // onConfirm={this.nameSetter(columnIndex)}
+                />
+            );
+        };
+        return <ColumnHeaderCell name={exampleTable.columnNames[columnIndex]} nameRenderer={nameRenderer} />;
+    };
 
     return (
         <div>
-            <Table numRows={data.depth.length}>
-                <Column name="深度" cellRenderer={cellRenderer(data.depth)}/>
-                <Column name="N値" cellRenderer={cellRenderer(data.nValue)}/>
-                <Column name="土質" cellRenderer={cellRenderer(data.soil)}/>
-                <Column name="低減係数" cellRenderer={cellRenderer(data.reductions)}/>
-                <Column name="採用低減係数" cellRenderer={cellRenderer(data.adopted_reductions)}/>
-                <Column name="α" cellRenderer={cellRenderer(data.alpha)}/>
-                <Column name="E0" cellRenderer={cellRenderer(data.E0)}/>
-            </Table>
+            <Table numRows={7}>{columns}</Table>
         </div>
     );
 }
