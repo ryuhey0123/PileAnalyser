@@ -1,9 +1,9 @@
 import time
 
-from flask import session, request, render_template, json
+from flask import session, request, render_template, json, jsonify
 
-from main import app
-from main import calculations as calc
+from api import app
+from api import calculations as calc
 from models import Sess, User, Content, Project, Soildata
 
 
@@ -42,19 +42,24 @@ def solve():
     return json.dumps({"results": results, "time": solution_time})
 
 
-@app.route("/upload", methods=["POST"])
+# @app.route("/upload", methods=["POST"])
+# def upload():
+#     file = request.files.get('file')
+
+#     if file is None:
+#         soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
+#     else:
+#         soil_data = calc.decode_upload_file(file)
+
+#     session['soil_data'] = soil_data
+
+#     return json.dumps(soil_data)
+
+
+@app.route("/upload", methods=["GET"])
 def upload():
-    file = request.files.get('file')
-
-    if file is None:
-        soil_data = calc.decode_upload_file('./sample/sample1.xlsx')
-    else:
-        soil_data = calc.decode_upload_file(file)
-
-    session['soil_data'] = soil_data
-
-    return calc.update_soil_data_table(soil_data)
-
+    soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
+    return jsonify(soil_data)
 
 # Database Routing
 
