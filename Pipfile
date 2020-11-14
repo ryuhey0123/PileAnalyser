@@ -1,0 +1,31 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+flake8 = "*"
+pytest = "*"
+pylint = "*"
+autopep8 = "*"
+python-dotenv = "*"
+
+[packages]
+numpy = "*"
+pandas = "*"
+flask = "*"
+plotly = "*"
+scipy = "*"
+gunicorn = "*"
+xlrd = "*"
+sqlalchemy = "*"
+psycopg2-binary = "*"
+flask-login = "*"
+
+[requires]
+python_version = "3.9"
+
+[scripts]
+start = "flask run"
+debug = "flask run --debugger --reload"
+refresh = "python database_init.py"
