@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Cell, Column, ColumnHeaderCell, EditableCell, EditableName, Table } from "@blueprintjs/table";
-import { Intent } from '@blueprintjs/core';
+import { Column, EditableCell, Table } from "@blueprintjs/table";
 
 
 function GroundData() {
