@@ -2,71 +2,48 @@ import React, { useEffect, useState } from 'react';
 import { Cell, Column, ColumnHeaderCell, EditableCell, EditableName, Table } from "@blueprintjs/table";
 import { Intent } from '@blueprintjs/core';
 
-interface ITableEditableExampleState {
-    columnNames: string[];
-    sparseCellData: { [key: string]: string };
-    sparseCellIntent: { [key: string]: Intent };
-    sparseColumnIntents: Intent[];
-}
 
 function GroundData() {
-
-    const state: ITableEditableExampleState = {
-        columnNames: ["Please", "Rename", "Me"],
-        sparseCellData: {
-            "1-1": "editable",
-            "3-1": "validation 123",
-        },
-        sparseCellIntent: {
-            "3-1": Intent.DANGER,
-        },
-        sparseColumnIntents: [],
+    interface SoilData {
+        [key: string]: any[]
     };
 
-    const [exampleTable, setExampleTable] = useState<ITableEditableExampleState>(state);
+    const columns: string[] = ["depth", "nValue", "soil", "reductions", "adopted_reductions", "alpha", "E0"];
+    const columnsJPN: string[] = ["深度", "N値", "土質", "低減係数", "採用低減係数", "α", "E0"];
 
-    const dataKey = (rowIndex: number, columnIndex: number) => {
-        return `${rowIndex}-${columnIndex}`;
-    };
+    const [data, setData] = useState<SoilData>({});
 
-    const columns = exampleTable.columnNames.map((_: string, index: number) => {
-        return (
-            <Column key={index} cellRenderer={renderCell} columnHeaderCellRenderer={renderColumnHeader} />
-        );
-    })
+    useEffect(() => {
+        fetch("/upload", {
+            method: "POST",
+        })
+        .then(res => res.json())
+        .then(data => setData(data))
+    });
 
     const renderCell = (rowIndex: number, columnIndex: number) => {
-        const key = dataKey(rowIndex, columnIndex);
-        const value = exampleTable.sparseCellData[key];
+        const column: string = columns[columnIndex];
+        const value = data[column] ? data[column][rowIndex] : "";
         return (
             <EditableCell
-                value={value == null ? "" : value}
-                intent={exampleTable.sparseCellIntent[key]}
-                // onCancel={cellValidator(rowIndex, columnIndex)}
-                // onChange={cellValidator(rowIndex, columnIndex)}
-                // onConfirm={cellSetter(rowIndex, columnIndex)}
+                value={value}
+                // intent={this.state.sparseCellIntent[dataKey]}
+                // onCancel={this.cellValidator(rowIndex, columnIndex)}
+                // onChange={this.cellValidator(rowIndex, columnIndex)}
+                // onConfirm={this.cellSetter(rowIndex, columnIndex)}
             />
         );
     };
 
-    const renderColumnHeader = (columnIndex: number) => {
-        const nameRenderer = (name: string) => {
-            return (
-                <EditableName
-                    name={name}
-                    intent={exampleTable.sparseColumnIntents[columnIndex]}
-                    // onChange={this.nameValidator(columnIndex)}
-                    // onCancel={this.nameValidator(columnIndex)}
-                    // onConfirm={this.nameSetter(columnIndex)}
-                />
-            );
-        };
-        return <ColumnHeaderCell name={exampleTable.columnNames[columnIndex]} nameRenderer={nameRenderer} />;
-    };
+    const renderColumn = columns.map((_: string, index: number) =>
+        <Column name={columnsJPN[index]} key={index} cellRenderer={renderCell} />
+    );
+
+    const numRows = data[columns[0]]?.length;
 
     return (
         <div>
-            <Table numRows={7}>{columns}</Table>
+            <Table numRows={numRows}>{renderColumn}</Table>
         </div>
     );
 }
