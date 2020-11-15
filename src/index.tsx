@@ -10,7 +10,7 @@ import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "@blueprintjs/table/lib/css/table.css";
 
 import InputForm from "./InputForm";
-import GroundData from "./groundData"
+import GroundData from "./GroundData"
 import Chart from './Chart';
 
 const App = () => (
