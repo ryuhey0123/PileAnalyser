@@ -12,23 +12,17 @@
     "@testing-library/user-event": "^12.2.2",
     "@types/jest": "^26.0.15",
     "@types/node": "^12.19.4",
-    "@types/plotly.js": "^1.54.2",
     "@types/react": "^16.9.56",
     "@types/react-dom": "^16.9.9",
     "@types/recharts": "^1.8.16",
     "@types/styled-components": "^5.1.4",
-    "plotly.js": "^1.57.1",
     "react": "^17.0.1",
-    "react-datasheet": "^1.4.8",
     "react-dom": "^17.0.1",
     "react-scripts": "4.0.0",
     "recharts": "^1.8.5",
     "styled-components": "^5.2.1",
     "typescript": "^4.0.5",
     "web-vitals": "^0.2.4"
-  },
-  "devDependencies": {
-    "style-loader": "^2.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
