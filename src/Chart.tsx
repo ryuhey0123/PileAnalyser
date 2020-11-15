@@ -40,11 +40,17 @@ function Chart() {
 
     return (
         <div>
+            <p>水平地盤反力係数(低減前)</p>
             {AreaChartBy("kh0s", "kN/m3")}
+            <p>地地盤変位による低減係数</p>
             {AreaChartBy("dec", "")}
+            <p>変位</p>
             {AreaChartBy("y", "mm")}
+            <p>変形角</p>
             {AreaChartBy("t", "rad")}
+            <p>曲げモーメント</p>
             {AreaChartBy("m", "kNm")}
+            <p>剪断力</p>
             {AreaChartBy("q", "kN")}
         </div>
     );
