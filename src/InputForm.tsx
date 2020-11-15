@@ -1,13 +1,21 @@
 import React, { useState } from 'react';
 import { Button, Label, NumericInput, Radio, RadioGroup } from '@blueprintjs/core';
 
+import Chart from './Chart';
 
 function InputForm() {
     interface Inputs {
         [key: string]: any
     };
 
-    const [inputValues, setInputValues] = useState<Inputs>({});
+    const [inputValues, setInputValues] = useState<Inputs>({
+        condition: 1.0,
+        diameter: 1300,
+        length: 17.5,
+        level: -2.5,
+        force: 500,
+    });
+    const [outputValues, setOutputValues] = useState();
 
     const [modeValue, setModeValue] = useState("non_liner_multi");
     const [btmConditionValue, setBtmConditionValue] = useState("pin");
@@ -28,7 +36,18 @@ function InputForm() {
         inputValues["mode"] = modeValue;
         inputValues["bottom_condition"] = btmConditionValue;
         inputValues["material"] = materialValue;
+        inputValues["div_num"] = 100;
+
+        fetch("/solve", {
+            method: "POST",
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(inputValues)
+        })
+        .then(res => res.json())
+        .then(data => setOutputValues(data.results))
+
         console.log(inputValues);
+        console.log(outputValues);
     }
 
     return (
@@ -48,27 +67,29 @@ function InputForm() {
             </RadioGroup>
 
             <Label>杭頭固定度
-                <NumericInput id="condition" defaultValue={1.0}
+                <NumericInput id="condition" defaultValue={inputValues["condition"]}
                     max={1.0} min={0.0} stepSize={0.001} minorStepSize={0.001} majorStepSize={0.1} onValueChange={onValueChange} />
             </Label>
             <Label>杭径(mm)
-                <NumericInput id="diameter" defaultValue={1300}
+                <NumericInput id="diameter" defaultValue={inputValues["diameter"]}
                     min={0.0} stepSize={10} minorStepSize={10} majorStepSize={100} onValueChange={onValueChange} />
             </Label>
             <Label>杭長(m)
-                <NumericInput id="length" defaultValue={17.5}
+                <NumericInput id="length" defaultValue={inputValues["length"]}
                     min={0.0} stepSize={0.1} minorStepSize={0.1} majorStepSize={1} onValueChange={onValueChange} />
             </Label>
             <Label>杭天端(m)
-                <NumericInput id="level" defaultValue={-2.5}
+                <NumericInput id="level" defaultValue={inputValues["level"]}
                     stepSize={0.1} minorStepSize={0.1} majorStepSize={1} onValueChange={onValueChange} />
             </Label>
             <Label>入力水平力(kN)
-                <NumericInput id="force" defaultValue={500}
+                <NumericInput id="force" defaultValue={inputValues["force"]}
                     min={0.0} stepSize={10} minorStepSize={10} majorStepSize={100} onValueChange={onValueChange} />
             </Label>
 
             <Button intent="primary" icon="tick" text="Solve" onClick={onClick} />
+
+            <Chart output={outputValues}/>
         </div>
     );
 }

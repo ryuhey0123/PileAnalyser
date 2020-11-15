@@ -11,14 +11,12 @@ import "@blueprintjs/table/lib/css/table.css";
 
 import InputForm from "./InputForm";
 import GroundData from "./GroundData"
-import Chart from './Chart';
 
 const App = () => (
   <div>
     <h1>多層地盤中の杭の非線形解析</h1>
     <InputForm />
     <GroundData />
-    <Chart />
   </div>
 );
 
