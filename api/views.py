@@ -34,8 +34,8 @@ def solve():
 
     results = calc.get_results(**inputs)
 
-    for key, value in results.items():
-        results[key] = value.tolist()
+    # for key, value in results.items():
+    #     results[key] = value.tolist()
 
     solution_time = "time : {:.3f} sec".format(time.time() - start)
 
@@ -52,7 +52,6 @@ def upload():
         soil_data = calc.decode_upload_file(file)
 
     session['soil_data'] = soil_data
-    print(soil_data)
 
     return jsonify(soil_data)
 

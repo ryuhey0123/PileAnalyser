@@ -42,15 +42,30 @@ def get_results(mode, condition, bottom_condition, material, diameter, length, l
     q = np.gradient(m, div_size)  # solve shear
     q[2] = -force
 
-    return dict(
-        x=x / 1e3,        # m
-        dec=dec,
-        kh0s=kh0s * 1e6,  # kN/m3 (低減前の地盤反力係数)
-        y=y[2:-2],        # mm
-        t=t[2:-2] * 1e3,  # x10^3 rad
-        m=m[2:-2] / 1e6,  # kNm
-        q=q[2:-2] / 1e3   # kN
-    )
+    format_for_chart = []
+    for (x, dec, kh0s, y, t, m, q) in zip(x, dec, kh0s, y[2:-2], t[2:-2], m[2:-2], q[2:-2]):
+        format_for_chart.append({"x": x / 1e3, "dec": dec, "kh0s": kh0s * 1e6, "y": y, "t": t * 1e3, "m": m / 1e6, "q": q / 1e3})
+
+    # format_for_chart = list(map(lambda x, dec, kh0s, y, t, m, q: {
+    #     "x": x / 1e3,
+    #     "dec": dec,
+    #     "kh0s": kh0s * 1e6,
+    #     "y": y,
+    #     "t": t * 1e3,
+    #     "m": m / 1e6,
+    #     "q": q / 1e3}, zip(x, dec, kh0s, y[2:-2], t[2:-2], m[2:-2], q[2:-2])))
+
+    # return dict(
+    #     x=x / 1e3,        # m
+    #     dec=dec,
+    #     kh0s=kh0s * 1e6,  # kN/m3 (低減前の地盤反力係数)
+    #     y=y[2:-2],        # mm
+    #     t=t[2:-2] * 1e3,  # x10^3 rad
+    #     m=m[2:-2] / 1e6,  # kNm
+    #     q=q[2:-2] / 1e3   # kN
+    # )
+
+    return format_for_chart
 
 
 def kh_by_soil_data(diameter: float, x: np.ndarray, soil_data: dict):

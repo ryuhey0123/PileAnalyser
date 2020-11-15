@@ -11,6 +11,7 @@ function GroundData() {
     const columnsJPN: string[] = ["深度", "N値", "土質", "低減係数", "採用低減係数", "α", "E0"];
 
     const [data, setData] = useState<SoilData>({});
+    const [hook] = useState();
 
     useEffect(() => {
         fetch("/upload", {
@@ -18,7 +19,7 @@ function GroundData() {
         })
         .then(res => res.json())
         .then(data => setData(data))
-    });
+    }, [hook]);
 
     const renderCell = (rowIndex: number, columnIndex: number) => {
         const column: string = columns[columnIndex];
