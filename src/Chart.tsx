@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import {LineChart, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip} from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from 'recharts';
 
 function Chart() {
-    const [data, setData] = useState([
-        {x: 0, dec: 0, kh0s: 0, y: 0, t: 0, m: 0, q: 0}
-    ]);
+    const [data, setData] = useState([{}]);
 
     const [inputData] = useState({
         mode: 'non_liner',
@@ -28,24 +26,26 @@ function Chart() {
         .then(data => setData(data.results))
     }, [inputData]);
 
-    const AreaChartBy= (dataKey: string, stroke='#8884b8', fill='#8884d8') => (
-        <AreaChart width={600} height={200} data={data} syncId="anyId" margin={{top: 10, right: 30, left: 0, bottom: 0}}>
-            <CartesianGrid strokeDasharray="3 3"/>
-            <XAxis dataKey="x"/>
-            <YAxis/>
-            <Tooltip/>
-            <Area type='monotone' dataKey={dataKey} stroke={stroke} fill={fill} />
-        </AreaChart>
+    const AreaChartBy = (dataKey: string, unit: string, stroke='#8884b8', fill='#8884d8') => (
+        <ResponsiveContainer width='80%' height={200}>
+            <AreaChart data={data} syncId="anyId">
+                <CartesianGrid strokeDasharray="3 3"/>
+                <XAxis dataKey="x"/>
+                <YAxis/>
+                <Tooltip/>
+                <Area type='linear' unit={unit} dataKey={dataKey} stroke={stroke} fill={fill} />
+            </AreaChart>
+        </ResponsiveContainer>
     )
 
     return (
         <div>
-            {AreaChartBy("dec")}
-            {AreaChartBy("kh0s")}
-            {AreaChartBy("y")}
-            {AreaChartBy("t")}
-            {AreaChartBy("m")}
-            {AreaChartBy("q")}
+            {AreaChartBy("kh0s", "kN/m3")}
+            {AreaChartBy("dec", "")}
+            {AreaChartBy("y", "mm")}
+            {AreaChartBy("t", "rad")}
+            {AreaChartBy("m", "kNm")}
+            {AreaChartBy("q", "kN")}
         </div>
     );
 };

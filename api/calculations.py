@@ -40,7 +40,9 @@ def get_results(mode, condition, bottom_condition, material, diameter, length, l
     t = np.gradient(y, div_size)  # solve degree
     m = -np.gradient(t, div_size) * stiffness  # solve moment
     q = np.gradient(m, div_size)  # solve shear
+
     q[2] = -force
+    q[-3] = q[-4]
 
     format_for_chart = []
     for (x, dec, kh0s, y, t, m, q) in zip(x, dec, kh0s, y[2:-2], t[2:-2], m[2:-2], q[2:-2]):
