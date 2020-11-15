@@ -9,12 +9,12 @@ export interface GridElement extends ReactDataSheet.Cell<GridElement, number> {
 class MyReactDataSheet extends ReactDataSheet<GridElement, number> { }
 
 const cellRenderer: ReactDataSheet.CellRenderer<GridElement, number> = (props) => {
-    const TableCell = styled.td`
-        &.data-grid-container .data-grid .cell.read-only {
+    // const TableCell = styled.td`
+        /* &.data-grid-container .data-grid .cell.read-only {
             background: black !important;
-        }
-        width: 100px;
-        padding: 0;
+        } */
+        // width: 100px;
+        /* padding: 0;
         border: 1px solid black;
         & > span {
             display: block;
@@ -36,16 +36,14 @@ const cellRenderer: ReactDataSheet.CellRenderer<GridElement, number> = (props) =
             &:focus {
                 box-shadow: 0 0 5px 0 rgba(206, 40, 40, 0.5);
             }
-        }
-    `;
-
+        } */
+    // `;
     return (
-        <TableCell onMouseDown={props.onMouseDown} onMouseOver={props.onMouseOver} onDoubleClick={props.onDoubleClick}>
+        <td className="cell" style={{width: "100px"}} onMouseDown={props.onMouseDown} onMouseOver={props.onMouseOver} onDoubleClick={props.onDoubleClick}>
             {props.children}
-        </TableCell>
+        </td>
     )
 }
-
 
 interface AppState {
     grid: GridElement[][];
