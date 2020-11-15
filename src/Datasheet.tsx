@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactDataSheet from 'react-datasheet';
+import styled from 'styled-components';
 
 export interface GridElement extends ReactDataSheet.Cell<GridElement, number> {
     value: string | number | null;
@@ -7,14 +8,44 @@ export interface GridElement extends ReactDataSheet.Cell<GridElement, number> {
 
 class MyReactDataSheet extends ReactDataSheet<GridElement, number> { }
 
-let cellRenderer: ReactDataSheet.CellRenderer<GridElement, number> = (props) => {
-    const backgroundStyle = props.cell.value && props.cell.value < 0 ? {color: 'red'} : undefined;
+const cellRenderer: ReactDataSheet.CellRenderer<GridElement, number> = (props) => {
+    const TableCell = styled.td`
+        &.data-grid-container .data-grid .cell.read-only {
+            background: black !important;
+        }
+        width: 100px;
+        padding: 0;
+        border: 1px solid black;
+        & > span {
+            display: block;
+            border: 1px solid transparent;
+        }
+        &.selected {
+            & > span {
+                    display: block;
+                    border: 1px solid green;
+                    &:focus {
+                        box-shadow: 0 0 5px 0 rgba(206, 40, 40, 0.5);
+                }
+            }
+        }
+        & > input {
+            width: 100px;
+            outline: none;
+            border: none;
+            &:focus {
+                box-shadow: 0 0 5px 0 rgba(206, 40, 40, 0.5);
+            }
+        }
+    `;
+
     return (
-        <td style={backgroundStyle} onMouseDown={props.onMouseDown} onMouseOver={props.onMouseOver} onDoubleClick={props.onDoubleClick}  className="cell">
+        <TableCell onMouseDown={props.onMouseDown} onMouseOver={props.onMouseOver} onDoubleClick={props.onDoubleClick}>
             {props.children}
-        </td>
+        </TableCell>
     )
 }
+
 
 interface AppState {
     grid: GridElement[][];
@@ -73,12 +104,14 @@ function Datasheet() {
 
 
     return (
+      <div className="sheet-container">
         <MyReactDataSheet
             data={state.grid}
             valueRenderer={valueRenderer}
             onCellsChanged={onCellsChanged}
             cellRenderer={cellRenderer}
         />
+      </div>
     );
 };
 
