@@ -11,12 +11,14 @@ import "@blueprintjs/table/lib/css/table.css";
 
 import InputForm from "./InputForm";
 import GroundData from "./GroundData"
+import { TableEditableExample } from "./tableEditableExample"
 
 const App = () => (
   <div>
     <h1>多層地盤中の杭の非線形解析</h1>
     <InputForm />
-    <GroundData />
+    <TableEditableExample id="test_table" />
+    {/* <GroundData /> */}
   </div>
 );
 

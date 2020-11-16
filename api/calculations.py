@@ -212,15 +212,20 @@ def deformation_analysis_by_non_liner_single_FDM(bottom_condition, div_num: int,
 
 def decode_upload_file(file):
     df = pd.read_excel(file)
-    return dict(
-        depth=df[ExcelColumns.depth].values.tolist(),
-        nValue=df[ExcelColumns.nValue].values.tolist(),
-        soil=df[ExcelColumns.soil].values.tolist(),
-        reductions=df[ExcelColumns.reductions].fillna(1.0).values.tolist(),
-        adopted_reductions=df[ExcelColumns.adopted_reductions].fillna(1.0).values.tolist(),
-        alpha=df[ExcelColumns.alpha].values.tolist(),
-        E0=df[ExcelColumns.E0].values.tolist()
-    )
+    formated_data = {}
+    for i, column in enumerate(df):
+        for j, row in enumerate(column):
+            formated_data["{}-{}".format(j, i)] = row
+    return formated_data
+    # return dict(
+    #     depth=df[ExcelColumns.depth].values.tolist(),
+    #     nValue=df[ExcelColumns.nValue].values.tolist(),
+    #     soil=df[ExcelColumns.soil].values.tolist(),
+    #     reductions=df[ExcelColumns.reductions].fillna(1.0).values.tolist(),
+    #     adopted_reductions=df[ExcelColumns.adopted_reductions].fillna(1.0).values.tolist(),
+    #     alpha=df[ExcelColumns.alpha].values.tolist(),
+    #     E0=df[ExcelColumns.E0].values.tolist()
+    # )
 
 
 def update_soil_data_table(soil_data: dict):

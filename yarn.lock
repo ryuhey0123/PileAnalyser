@@ -1053,6 +1053,18 @@
     resize-observer-polyfill "^1.5.1"
     tslib "~1.13.0"
 
+"@blueprintjs/docs-theme@^3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@blueprintjs/docs-theme/-/docs-theme-3.8.1.tgz#b68bc309a1711f8890559d5f10eaaee39498de02"
+  integrity sha512-9dIsnPN4umNNEOKV5rF3AXG09mULpgTuPKkjQj1frXoKNJwrQF3Cr+iG8XBGsEaJmIGRRqS8VzVXIdfNwh95Vw==
+  dependencies:
+    "@blueprintjs/core" "^3.34.0"
+    "@blueprintjs/select" "^3.14.3"
+    "@documentalist/client" "~3.0.0"
+    classnames "^2.2"
+    fuzzaldrin-plus "^0.6.0"
+    tslib "~1.13.0"
+
 "@blueprintjs/icons@^3.22.0":
   version "3.22.0"
   resolved "https://registry.yarnpkg.com/@blueprintjs/icons/-/icons-3.22.0.tgz#6a7c177e9aa96f0ed10bc93d88f7c6687db336ad"
@@ -1098,6 +1110,11 @@
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-10.1.0.tgz#f0950bba18819512d42f7197e56c518aa491cf18"
   integrity sha512-ij4wRiunFfaJxjB0BdrYHIH8FxBJpOwNPhhAcunlmPdXudL1WQV1qoP9un6JsEBAgQH+7UXyyjh0g7jTxXK6tg==
+
+"@documentalist/client@~3.0.0":
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/@documentalist/client/-/client-3.0.0.tgz#48e51c824946fd4b4e0356fed176bbe80fc7b5b5"
+  integrity sha512-iweBlSjkvqM67Bg7FCX9PC0s32IjRhOplzGlF++B7bd9PlWjmQxKFWi/NlFMLds7du+H8F4J0ExSuT6DblidEg==
 
 "@emotion/is-prop-valid@^0.8.8":
   version "0.8.8"
@@ -5363,6 +5380,11 @@ functional-red-black-tree@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz#1b0ab3bd553b2a0d6399d29c0e3ea0b252078327"
   integrity sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc=
+
+fuzzaldrin-plus@^0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/fuzzaldrin-plus/-/fuzzaldrin-plus-0.6.0.tgz#832f6489fbe876769459599c914a670ec22947ee"
+  integrity sha1-gy9kifvodnaUWVmckUpnDsIpR+4=
 
 gensync@^1.0.0-beta.1:
   version "1.0.0-beta.2"

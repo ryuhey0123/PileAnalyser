@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@blueprintjs/core": "^3.35.0",
+    "@blueprintjs/docs-theme": "^3.8.1",
     "@blueprintjs/icons": "^3.22.0",
     "@blueprintjs/select": "^3.14.3",
     "@blueprintjs/table": "^3.8.17",
