@@ -214,9 +214,9 @@ def decode_upload_file(file):
     df = pd.read_excel(file)
     formated_data = {}
     for i, column in enumerate(df):
-        for j, row in enumerate(column):
-            formated_data["{}-{}".format(j, i)] = row
-    return formated_data
+        for j, row in enumerate(df[column]):
+            formated_data["{}-{}".format(j, i)] = str(row)
+    return {"data": formated_data, "row_num": len(df[ExcelColumns.depth])}
     # return dict(
     #     depth=df[ExcelColumns.depth].values.tolist(),
     #     nValue=df[ExcelColumns.nValue].values.tolist(),

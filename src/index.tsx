@@ -10,7 +10,7 @@ import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "@blueprintjs/table/lib/css/table.css";
 
 import InputForm from "./InputForm";
-import GroundData from "./GroundData"
+// import GroundData from "./GroundData"
 import { TableEditableExample } from "./tableEditableExample"
 
 const App = () => (

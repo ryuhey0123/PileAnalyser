@@ -22,6 +22,7 @@ import { Column, ColumnHeaderCell, EditableCell, EditableName, Table } from "@bl
 
 export interface ITableEditableExampleState {
     columnNames?: string[];
+    rowNum?: number;
     sparseCellData?: { [key: string]: string };
     sparseCellIntent?: { [key: string]: Intent };
     sparseColumnIntents?: Intent[];
@@ -34,22 +35,16 @@ export class TableEditableExample extends React.PureComponent<IExampleProps, ITa
 
     public state: ITableEditableExampleState = {
         columnNames: ["深度", "N値", "土質", "低減係数", "採用低減係数", "α", "E0"],
-        sparseCellData: {
-            // "1-1": "editable",
-            // "3-1": "validation 123",
-        },
-        sparseCellIntent: {
-            "3-1": Intent.DANGER,
-        },
+        rowNum: 1,
+        sparseCellData: {},
+        sparseCellIntent: {},
         sparseColumnIntents: [],
     };
 
-    public componentDidMount() {
-        fetch("/upload", {
-            method: "POST",
-        })
-        .then(res => res.json())
-        .then(data => this.setState({sparseCellData: data}))
+    public async componentDidMount() {
+        const res = await fetch("/upload", { method: "POST" });
+        const data = await res.json();
+        return this.setState({ rowNum: data.row_num, sparseCellData: data.data });
     };
 
     public render() {
@@ -60,7 +55,7 @@ export class TableEditableExample extends React.PureComponent<IExampleProps, ITa
         });
         return (
             <Example options={false} showOptionsBelowExample={true} {...this.props}>
-                <Table numRows={7}>{columns}</Table>
+                <Table numRows={this.state.rowNum}>{columns}</Table>
             </Example>
         );
     }
@@ -95,8 +90,12 @@ export class TableEditableExample extends React.PureComponent<IExampleProps, ITa
     };
 
     private isValidValue(value: string) {
-        return /^[a-zA-Z]*$/.test(value);
+        return /^[0-9]*$/.test(value);
     }
+
+    // private isValidValue(value: string) {
+    //     return /^[a-zA-Z]*$/.test(value);
+    // }
 
     private nameValidator = (index: number) => {
         return (name: string) => {
