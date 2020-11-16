@@ -89,7 +89,7 @@ function InputForm() {
 
             <Button intent="primary" icon="tick" text="Solve" onClick={onClick} />
 
-            <Chart output={outputValues}/>
+            {/* <Chart output={outputValues}/> */}
         </div>
     );
 }

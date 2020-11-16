@@ -1,58 +1,82 @@
 import React, { useEffect, useState } from 'react';
 import { Column, EditableCell, Table } from "@blueprintjs/table";
+import { Intent } from '@blueprintjs/core';
 
 interface SoilData {
     [key: string]: any[]
 };
 
-function GroundData() {
+interface SparseCellIntent {
+    [key: string]: Intent;
+}
 
+function GroundData() {
 
     const columns: string[] = ["depth", "nValue", "soil", "reductions", "adopted_reductions", "alpha", "E0"];
     const columnsJPN: string[] = ["深度", "N値", "土質", "低減係数", "採用低減係数", "α", "E0"];
 
-    const [data, setData] = useState<SoilData>({});
-    const [hook] = useState();
+    const [soilData, setSoilData] = useState<SoilData>({});
+    const [sparseCellIntent, setSparseCellIntent] = useState<SparseCellIntent>({});
 
     useEffect(() => {
         fetch("/upload", {
             method: "POST",
         })
         .then(res => res.json())
-        .then(data => setData(data))
-    }, [hook]);
+        .then(data => setSoilData(data))
+    }, []);
+
+    const dataKey = (rowIndex: number, columnIndex: number) => {
+        return `${rowIndex}-${columnIndex}`;
+    };
 
     const renderCell = (rowIndex: number, columnIndex: number) => {
+        const key = dataKey(rowIndex, columnIndex);
         const column: string = columns[columnIndex];
-        const value = data[column] ? data[column][rowIndex] : "";
+        const value = soilData[column][rowIndex];
         return (
             <EditableCell
                 value={value}
-                // intent={this.state.sparseCellIntent[dataKey]}
-                // onCancel={this.cellValidator(rowIndex, columnIndex)}
-                // onChange={this.cellValidator(rowIndex, columnIndex)}
+                intent={sparseCellIntent[key]}
+                onCancel={cellValidator(rowIndex, columnIndex)}
+                onChange={cellValidator(rowIndex, columnIndex)}
                 onConfirm={onConfirmHandle(rowIndex, columnIndex)}
             />
         );
     };
 
-    const cellValudator = (rowIndex: number, columnIndex: number) => {
-        return (value: string) => {
+    function isValidValue(value: string) {
+        return /^[0-9]*$/.test(value);
+    }
 
-        };
-    };
-
-    const onConfirmHandle = (rowIndex: number, columnIndex: number) => {
+    const cellValidator = (rowIndex: number, columnIndex: number) => {
+        const key = dataKey(rowIndex, columnIndex)
         return (value: string) => {
-            const column: string = columns[columnIndex];
-            setData( () => {
-                data[column].splice(rowIndex, 1, value)
-                return data
+            const intent = isValidValue(value) ? Intent.NONE : Intent.DANGER;
+            setSparseCellIntent( () => {
+                sparseCellIntent[key] = intent;
+                return sparseCellIntent
             })
         };
     };
 
-    const numRows = data[columns[0]]?.length;
+    const onConfirmHandle = (rowIndex: number, columnIndex: number) => {
+        const key = dataKey(rowIndex, columnIndex)
+        return (value: string) => {
+            const intent = isValidValue(value) ? Intent.NONE : Intent.DANGER;
+            setSparseCellIntent( () => {
+                sparseCellIntent[key] = intent;
+                return sparseCellIntent
+            })
+            const column: string = columns[columnIndex];
+            setSoilData( () => {
+                soilData[column].splice(rowIndex, 1, value)
+                return soilData
+            })
+        };
+    };
+
+    const numRows = soilData[columns[0]]?.length;
     const renderColumn = columns.map((_: string, index: number) =>
         <Column name={columnsJPN[index]} key={index} cellRenderer={renderCell} />
     );
