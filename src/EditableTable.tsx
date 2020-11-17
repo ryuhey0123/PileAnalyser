@@ -1,14 +1,14 @@
 import * as React from "react";
 
 import { Intent } from "@blueprintjs/core";
-import { Column, EditableCell, Table } from "@blueprintjs/table";
+import { Column, EditableCell, Table, TableLoadingOption } from "@blueprintjs/table";
 
 export interface IEditableTableState {
     columnNames?: string[];
-    rowNum?: number;
     sparseCellData?: { [key: string]: string };
     sparseCellIntent?: { [key: string]: Intent };
     sparseColumnIntents?: Intent[];
+    cellsLoading?: boolean;
 }
 
 export class EditableTable extends React.PureComponent<IEditableTableState> {
@@ -18,16 +18,16 @@ export class EditableTable extends React.PureComponent<IEditableTableState> {
 
     public state: IEditableTableState = {
         columnNames: ["深度", "N値", "土質", "低減係数", "採用低減係数", "α", "E0"],
-        rowNum: 1,
         sparseCellData: {},
         sparseCellIntent: {},
         sparseColumnIntents: [],
+        cellsLoading: true,
     };
 
     public async componentDidMount() {
         const res = await fetch("/upload", { method: "POST" });
         const data = await res.json();
-        return this.setState({ rowNum: data.row_num, sparseCellData: data.data });
+        return this.setState({ sparseCellData: data.data, cellsLoading: false });
     };
 
     public render() {
@@ -37,7 +37,15 @@ export class EditableTable extends React.PureComponent<IEditableTableState> {
             );
         });
         return (
-                <Table numRows={this.state.rowNum}>{columns}</Table>
+                <Table
+                    enableColumnResizing={false}
+                    enableRowResizing={false}
+                    defaultColumnWidth={75}
+                    numRows={32}
+                    loadingOptions={this.getLoadingOptions()}
+                >
+                {columns}
+                </Table>
         );
     }
 
@@ -87,5 +95,13 @@ export class EditableTable extends React.PureComponent<IEditableTableState> {
         const stateData = (this.state as any)[stateKey] as { [key: string]: T };
         const values = { ...stateData, [dataKey]: value };
         this.setState({ [stateKey]: values });
+    }
+
+    private getLoadingOptions() {
+        const loadingOptions: TableLoadingOption[] = [];
+        if (this.state.cellsLoading) {
+            loadingOptions.push(TableLoadingOption.CELLS);
+        }
+        return loadingOptions;
     }
 }

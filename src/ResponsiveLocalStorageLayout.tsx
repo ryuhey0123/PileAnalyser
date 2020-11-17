@@ -1,6 +1,5 @@
 // import { type } from "os";
 import React, { useState } from "react";
-import _ from "lodash";
 import { WidthProvider, Responsive, Layout } from "react-grid-layout";
 
 import InputForm from "./InputForm";
