@@ -18,7 +18,7 @@ function GroundData() {
         })
         .then(res => res.json())
         .then(data => setData(data))
-    });
+    }, [data]);
 
     const renderCell = (rowIndex: number, columnIndex: number) => {
         const column: string = columns[columnIndex];

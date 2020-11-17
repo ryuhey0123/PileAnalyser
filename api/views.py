@@ -52,7 +52,6 @@ def upload():
         soil_data = calc.decode_upload_file(file)
 
     session['soil_data'] = soil_data
-    print(soil_data)
 
     return jsonify(soil_data)
 
