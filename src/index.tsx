@@ -13,6 +13,7 @@ import "./index.scss"
 
 import InputForm from "./InputForm";
 import { EditableTable } from "./EditableTable"
+// import InputToChart from './InputToChart';
 
 const App = () => (
   <div className="main">
@@ -24,6 +25,9 @@ const App = () => (
       <section className="col-2">
         <EditableTable />
       </section>
+    </div>
+    <div className="chart-contents">
+      {/* <InputToChart props={""}/> */}
     </div>
   </div>
 );

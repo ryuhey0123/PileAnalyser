@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Label, NumericInput, Radio, RadioGroup } from '@blueprintjs/core';
 
-import Chart from './Chart';
+// import Chart from './Chart';
 
 function InputForm() {
     interface Inputs {

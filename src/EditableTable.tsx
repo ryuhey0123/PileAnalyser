@@ -40,7 +40,7 @@ export class EditableTable extends React.PureComponent<IEditableTableState> {
                 <Table
                     enableColumnResizing={false}
                     enableRowResizing={false}
-                    defaultColumnWidth={75}
+                    defaultColumnWidth={80}
                     numRows={32}
                     loadingOptions={this.getLoadingOptions()}
                 >
