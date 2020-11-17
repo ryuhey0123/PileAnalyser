@@ -9,14 +9,20 @@ import "@blueprintjs/icons/lib/css/blueprint-icons.css";
 import "@blueprintjs/select/lib/css/blueprint-select.css";
 import "@blueprintjs/table/lib/css/table.css";
 
+import "react-grid-layout/css/styles.css"
+import "react-resizable/css/styles.css"
+
 import InputForm from "./InputForm";
 import { EditableTable } from "./EditableTable"
+import ResponsiveLocalStorageLayout from "./ResponsiveLocalStorageLayout"
 
 const App = () => (
   <div>
     <h1>多層地盤中の杭の非線形解析</h1>
-    <InputForm />
-    <EditableTable />
+    <ResponsiveLocalStorageLayout props="" />
+    {/* <InputForm /> */}
+    {/* <EditableTable /> */}
+    {/* <GroundData /> */}
   </div>
 );
 
