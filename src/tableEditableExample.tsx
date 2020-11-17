@@ -17,8 +17,7 @@
 import * as React from "react";
 
 import { Intent } from "@blueprintjs/core";
-import { Example, IExampleProps } from "@blueprintjs/docs-theme";
-import { Column, ColumnHeaderCell, EditableCell, EditableName, Table } from "@blueprintjs/table";
+import { Column, EditableCell, Table } from "@blueprintjs/table";
 
 export interface ITableEditableExampleState {
     columnNames?: string[];
@@ -28,7 +27,7 @@ export interface ITableEditableExampleState {
     sparseColumnIntents?: Intent[];
 }
 
-export class TableEditableExample extends React.PureComponent<IExampleProps, ITableEditableExampleState> {
+export class TableEditableExample extends React.PureComponent<ITableEditableExampleState> {
     public static dataKey = (rowIndex: number, columnIndex: number) => {
         return `${rowIndex}-${columnIndex}`;
     };
@@ -50,13 +49,11 @@ export class TableEditableExample extends React.PureComponent<IExampleProps, ITa
     public render() {
         const columns = this.state.columnNames!.map((_: string, index: number) => {
             return (
-                <Column key={index} cellRenderer={this.renderCell} columnHeaderCellRenderer={this.renderColumnHeader} />
+                <Column key={index} name={this.state.columnNames![index]} cellRenderer={this.renderCell} />
             );
         });
         return (
-            <Example options={false} showOptionsBelowExample={true} {...this.props}>
                 <Table numRows={this.state.rowNum}>{columns}</Table>
-            </Example>
         );
     }
 
@@ -74,47 +71,20 @@ export class TableEditableExample extends React.PureComponent<IExampleProps, ITa
         );
     };
 
-    public renderColumnHeader = (columnIndex: number) => {
-        const nameRenderer = (name: string) => {
-            return (
-                <EditableName
-                    name={name}
-                    intent={this.state.sparseColumnIntents![columnIndex]}
-                    onChange={this.nameValidator(columnIndex)}
-                    onCancel={this.nameValidator(columnIndex)}
-                    onConfirm={this.nameSetter(columnIndex)}
-                />
-            );
-        };
-        return <ColumnHeaderCell name={this.state.columnNames![columnIndex]} nameRenderer={nameRenderer} />;
-    };
-
-    private isValidValue(value: string) {
-        return /^[0-9]*$/.test(value);
+    private isValidValue(value: string, columnIndex: number) {
+        if (columnIndex === 2) {
+            return /^(S|C)$/.test(value);
+        } if (columnIndex === 5) {
+            return /^(8|6)0$/.test(value);
+        } else {
+            return /^[0-9.]*$/.test(value);
+        }
     }
-
-    // private isValidValue(value: string) {
-    //     return /^[a-zA-Z]*$/.test(value);
-    // }
-
-    private nameValidator = (index: number) => {
-        return (name: string) => {
-            const intent = this.isValidValue(name) ? null : Intent.DANGER;
-            this.setArrayState("sparseColumnIntents", index, intent);
-            this.setArrayState("columnNames", index, name);
-        };
-    };
-
-    private nameSetter = (index: number) => {
-        return (name: string) => {
-            this.setArrayState("columnNames", index, name);
-        };
-    };
 
     private cellValidator = (rowIndex: number, columnIndex: number) => {
         const dataKey = TableEditableExample.dataKey(rowIndex, columnIndex);
         return (value: string) => {
-            const intent = this.isValidValue(value) ? null : Intent.DANGER;
+            const intent = this.isValidValue(value, columnIndex) ? null : Intent.DANGER;
             this.setSparseState("sparseCellIntent", dataKey, intent);
             this.setSparseState("sparseCellData", dataKey, value);
         };
@@ -123,17 +93,11 @@ export class TableEditableExample extends React.PureComponent<IExampleProps, ITa
     private cellSetter = (rowIndex: number, columnIndex: number) => {
         const dataKey = TableEditableExample.dataKey(rowIndex, columnIndex);
         return (value: string) => {
-            const intent = this.isValidValue(value) ? null : Intent.DANGER;
+            const intent = this.isValidValue(value, columnIndex) ? null : Intent.DANGER;
             this.setSparseState("sparseCellData", dataKey, value);
             this.setSparseState("sparseCellIntent", dataKey, intent);
         };
     };
-
-    private setArrayState<T>(key: string, index: number, value: T) {
-        const values = (this.state as any)[key].slice() as T[];
-        values[index] = value;
-        this.setState({ [key]: values });
-    }
 
     private setSparseState<T>(stateKey: string, dataKey: string, value: T) {
         const stateData = (this.state as any)[stateKey] as { [key: string]: T };

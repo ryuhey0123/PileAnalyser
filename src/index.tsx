@@ -17,7 +17,7 @@ const App = () => (
   <div>
     <h1>多層地盤中の杭の非線形解析</h1>
     <InputForm />
-    <TableEditableExample id="test_table" />
+    <TableEditableExample />
     {/* <GroundData /> */}
   </div>
 );
