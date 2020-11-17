@@ -11,8 +11,8 @@ import "@blueprintjs/table/lib/css/table.css";
 
 import "./index.scss"
 
-import InputForm from "./InputForm";
-import { EditableTable } from "./EditableTable"
+import InputForm from "./components/InputForm";
+import { EditableTable } from "./components/EditableTable"
 // import InputToChart from './InputToChart';
 
 const App = () => (
