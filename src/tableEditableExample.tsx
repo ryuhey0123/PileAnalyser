@@ -72,9 +72,9 @@ export class TableEditableExample extends React.PureComponent<ITableEditableExam
     };
 
     private isValidValue(value: string, columnIndex: number) {
-        if (columnIndex === 2) {
+        if (columnIndex === 2) {  // 土質
             return /^(S|C)$/.test(value);
-        } if (columnIndex === 5) {
+        } if (columnIndex === 5) {  // alpha
             return /^(8|6)0$/.test(value);
         } else {
             return /^[0-9.]*$/.test(value);
