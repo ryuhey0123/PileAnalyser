@@ -1,9 +1,9 @@
 // dispatchにactionを入れ込む
 // そのactionはreducerでstateに変換される
 
-import { IResult } from "../reducers/SolveReducer";
+import { IResults } from "../reducers/SolveReducer";
 
-export async function solve(inputValues: any, modeValue: string, btmConditionValue: string, materialValue: string, dispatch: ((arg0: IResult[]) => void)) {
+export async function solve(inputValues: any, modeValue: string, btmConditionValue: string, materialValue: string, dispatch: ((arg0: IResults) => void)) {
 
     inputValues["mode"] = modeValue;
     inputValues["bottom_condition"] = btmConditionValue;

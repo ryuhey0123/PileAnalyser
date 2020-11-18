@@ -1,9 +1,9 @@
 import { createContext, Dispatch } from "react";
-import { IResult, IState } from "./reducers/SolveReducer";
+import { IResults, IState } from "./reducers/SolveReducer";
 
 interface IContextProps {
     state: IState,
-    dispatch: Dispatch<IResult[]>;
+    dispatch: Dispatch<IResults>;
 }
 
 const Context = createContext({} as IContextProps);

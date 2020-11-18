@@ -3,16 +3,14 @@ export interface IInputs {
     [key: string]: number | string
 }
 
-export interface IResult {
-    [key: string]: number
+export interface IResults {
+    results: {[key: string]: number}[]
+    time: string
 }
 
 export interface IState {
     inputs: IInputs,
-    outputs: {
-        results: IResult[]
-        time: string
-    }
+    outputs: IResults
 }
 
 export const initialState: IState = {
@@ -23,13 +21,10 @@ export const initialState: IState = {
     },
 }
 
-export function AppReducer(preState: IState, action: {[key: string]: number}[]) {
+export function AppReducer(preState: IState, action: IResults) {
     const state: IState = {
         inputs: preState.inputs,
-        outputs: {
-            results: action,
-            time: ""
-        }
+        outputs: action
     }
     return state
 }

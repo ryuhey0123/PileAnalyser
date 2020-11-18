@@ -13,7 +13,7 @@ const Root = () => {
         <div>
             <InputForm/>
             <GroundData/>
-            <Chart output={state.outputs}/>
+            <Chart output={state.outputs.results}/>
         </div>
     );
 };
