@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Label, NumericInput, Radio, RadioGroup } from '@blueprintjs/core';
-
-// import Chart from './Chart';
+import { solve } from '../actions/ActionCreator';
+import Context from '../Context';
 
 function InputForm() {
     interface Inputs {
@@ -15,7 +15,8 @@ function InputForm() {
         level: -2.5,
         force: 500,
     });
-    const [outputValues, setOutputValues] = useState();
+
+    const { dispatch } = useContext(Context)
 
     const [modeValue, setModeValue] = useState("non_liner_multi");
     const [btmConditionValue, setBtmConditionValue] = useState("pin");
@@ -31,24 +32,6 @@ function InputForm() {
             setInputValues(appendValue(inputElement.id, valueAsNumber))
         };
     };
-
-    const onClick = (e: React.MouseEvent<HTMLElement>) => {
-        inputValues["mode"] = modeValue;
-        inputValues["bottom_condition"] = btmConditionValue;
-        inputValues["material"] = materialValue;
-        inputValues["div_num"] = 100;
-
-        fetch("/solve", {
-            method: "POST",
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(inputValues)
-        })
-        .then(res => res.json())
-        .then(data => setOutputValues(data.results))
-
-        console.log(inputValues);
-        console.log(outputValues);
-    }
 
     return (
         <div>
@@ -87,9 +70,8 @@ function InputForm() {
                     min={0.0} stepSize={10} minorStepSize={10} majorStepSize={100} onValueChange={onValueChange} />
             </Label>
 
-            <Button intent="primary" icon="tick" text="Solve" onClick={onClick} />
-
-            {/* <Chart output={outputValues}/> */}
+            <Button intent="primary" icon="tick" text="Solve"
+                onClick={() => solve(inputValues, modeValue, btmConditionValue, materialValue, dispatch)} />
         </div>
     );
 }

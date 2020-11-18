@@ -1,17 +1,18 @@
 import React, { useReducer } from 'react';
-import { AppContext } from './contexts/Context';
-import { AppReducer } from './reducers/Reducer';
+import Root from './components/Root';
+import Context from './Context';
+import { AppReducer, initialState } from './reducers/SolveReducer';
 
-function App() {
-    const initialState = {
-        isState: Array(10).fill(false)
-    }
+const App = () => {
+
     const [state, dispatch] = useReducer(AppReducer, initialState);
+    const value = { state, dispatch };
 
     return (
         <div className="App">
-            <AppContext.Provider value={{state, dispatch}}>
-            </AppContext.Provider>
+            <Context.Provider value={value}>
+                <Root/>
+            </Context.Provider>
         </div>
     )
 }
