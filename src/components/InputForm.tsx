@@ -2,13 +2,11 @@ import React, { useContext, useState } from 'react';
 import { Button, Label, NumericInput, Radio, RadioGroup } from '@blueprintjs/core';
 import { solve } from '../actions/ActionCreator';
 import Context from '../Context';
+import { IInputs } from '../reducers/SolveReducer';
 
 function InputForm() {
-    interface Inputs {
-        [key: string]: any
-    };
 
-    const [inputValues, setInputValues] = useState<Inputs>({
+    const [inputValues, setInputValues] = useState<IInputs>({
         condition: 1.0,
         diameter: 1300,
         length: 17.5,

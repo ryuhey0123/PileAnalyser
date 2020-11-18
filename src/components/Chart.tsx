@@ -3,9 +3,11 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 
 const Chart: React.FunctionComponent<{output: any}> = ({ output }) => {
 
+    console.log(output)
+
     const AreaChartBy = (dataKey: string, unit: string, stroke='#8884b8', fill='#8884d8') => (
         <ResponsiveContainer width='80%' height={200}>
-            <AreaChart data={output} syncId="anyId">
+            <AreaChart data={output.results.results} syncId="anyId">
                 <CartesianGrid strokeDasharray="3 3"/>
                 <XAxis dataKey="x"/>
                 <YAxis/>

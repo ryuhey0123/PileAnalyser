@@ -9,14 +9,14 @@ from models import Sess, User, Content, Project, Soildata
 
 # Page Routing
 
-
 @app.route("/", methods=["GET"])
 def main_page():
+    # soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
+    # session['soil_data'] = soil_data
     return render_template("main.html")
 
 
 # API Routing
-
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -33,9 +33,6 @@ def solve():
     inputs['soil_data'] = session['soil_data']
 
     results = calc.get_results(**inputs)
-
-    # for key, value in results.items():
-    #     results[key] = value.tolist()
 
     solution_time = "time : {:.3f} sec".format(time.time() - start)
 
@@ -56,13 +53,7 @@ def upload():
     return jsonify(soil_data)
 
 
-# @app.route("/upload", methods=["GET"])
-# def upload():
-#     soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
-#     return jsonify(soil_data)
-
 # Database Routing
-
 
 @app.route("/database/save", methods=["POST"])
 def save():

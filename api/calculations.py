@@ -48,25 +48,6 @@ def get_results(mode, condition, bottom_condition, material, diameter, length, l
     for (x, dec, kh0s, y, t, m, q) in zip(x, dec, kh0s, y[2:-2], t[2:-2], m[2:-2], q[2:-2]):
         format_for_chart.append({"x": x / 1e3, "dec": dec, "kh0s": kh0s * 1e6, "y": y, "t": t * 1e3, "m": m / 1e6, "q": q / 1e3})
 
-    # format_for_chart = list(map(lambda x, dec, kh0s, y, t, m, q: {
-    #     "x": x / 1e3,
-    #     "dec": dec,
-    #     "kh0s": kh0s * 1e6,
-    #     "y": y,
-    #     "t": t * 1e3,
-    #     "m": m / 1e6,
-    #     "q": q / 1e3}, zip(x, dec, kh0s, y[2:-2], t[2:-2], m[2:-2], q[2:-2])))
-
-    # return dict(
-    #     x=x / 1e3,        # m
-    #     dec=dec,
-    #     kh0s=kh0s * 1e6,  # kN/m3 (低減前の地盤反力係数)
-    #     y=y[2:-2],        # mm
-    #     t=t[2:-2] * 1e3,  # x10^3 rad
-    #     m=m[2:-2] / 1e6,  # kNm
-    #     q=q[2:-2] / 1e3   # kN
-    # )
-
     return format_for_chart
 
 
@@ -128,7 +109,7 @@ def pile_stiffness(diameter: float, thickness: float, thickness_margin: float, m
 def solve_y(mode, bottom_condition, div_num, div_size, stiffness, diameter, kh0s, k0, force):
     if mode == 'liner':
         y, dec = deformation_analysis_by_FDM(bottom_condition, div_num, div_size, stiffness, diameter, kh0s, k0, force)
-    elif mode == 'non_liner':
+    elif mode == 'non_liner_multi':
         y, dec = deformation_analysis_by_non_liner_FDM(bottom_condition, div_num, div_size, stiffness, diameter, kh0s, k0, force)
     elif mode == 'non_liner_single':
         y, dec = deformation_analysis_by_non_liner_single_FDM(bottom_condition, div_num, div_size, stiffness, diameter, kh0s, k0, force)
@@ -212,38 +193,21 @@ def deformation_analysis_by_non_liner_single_FDM(bottom_condition, div_num: int,
 
 def decode_upload_file(file):
     df = pd.read_excel(file)
-    df[ExcelColumns.reductions] = df[ExcelColumns.reductions].fillna(1.0)
-    df[ExcelColumns.adopted_reductions] = df[ExcelColumns.adopted_reductions].fillna(1.0)
+    # df[ExcelColumns.reductions] = df[ExcelColumns.reductions].fillna(1.0)
+    # df[ExcelColumns.adopted_reductions] = df[ExcelColumns.adopted_reductions].fillna(1.0)
 
-    formated_data = {}
-    for i, column in enumerate(df):
-        for j, row in enumerate(df[column]):
-            formated_data["{}-{}".format(j, i)] = str(row)
-    return {"data": formated_data, "row_num": len(df[ExcelColumns.depth])}
+    # formated_data = {}
+    # for i, column in enumerate(df):
+    #     for j, row in enumerate(df[column]):
+    #         formated_data["{}-{}".format(j, i)] = str(row)
+    # return {"data": formated_data, "row_num": len(df[ExcelColumns.depth])}
 
-    # return dict(
-    #     depth=df[ExcelColumns.depth].values.tolist(),
-    #     nValue=df[ExcelColumns.nValue].values.tolist(),
-    #     soil=df[ExcelColumns.soil].values.tolist(),
-    #     reductions=df[ExcelColumns.reductions].fillna(1.0).values.tolist(),
-    #     adopted_reductions=df[ExcelColumns.adopted_reductions].fillna(1.0).values.tolist(),
-    #     alpha=df[ExcelColumns.alpha].values.tolist(),
-    #     E0=df[ExcelColumns.E0].values.tolist()
-    # )
-
-
-def update_soil_data_table(soil_data: dict):
-
-    td = {}
-    for key, value in soil_data.items():
-        data = list(map(lambda i: '<td>{}</td>'.format(i), value))
-        td[key] = data
-
-    html = ""
-    for i in range(len(td['depth'])):
-        row = "<tr>" + td['depth'][i] + td['nValue'][i] + td['soil'][i] + td['alpha'][i] + td['reductions'][i] + td['adopted_reductions'][i] + td['E0'][i] + "</tr>"
-        html += row
-
-    html = "<tr><th>深度</th><th>N値</th><th>土質</th><th>alpha</th><th>低減係数</th><th>採用</th><th>E0</th></tr>" + html
-
-    return html
+    return dict(
+        depth=df[ExcelColumns.depth].values.tolist(),
+        nValue=df[ExcelColumns.nValue].values.tolist(),
+        soil=df[ExcelColumns.soil].values.tolist(),
+        reductions=df[ExcelColumns.reductions].fillna(1.0).values.tolist(),
+        adopted_reductions=df[ExcelColumns.adopted_reductions].fillna(1.0).values.tolist(),
+        alpha=df[ExcelColumns.alpha].values.tolist(),
+        E0=df[ExcelColumns.E0].values.tolist()
+    )

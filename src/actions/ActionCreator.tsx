@@ -1,9 +1,9 @@
 // dispatchにactionを入れ込む
 // そのactionはreducerでstateに変換される
 
-import { IOutput } from "../reducers/SolveReducer";
+import { IResult } from "../reducers/SolveReducer";
 
-export async function solve(inputValues: any, modeValue: string, btmConditionValue: string, materialValue: string, dispatch: ((arg0: IOutput[]) => void)) {
+export async function solve(inputValues: any, modeValue: string, btmConditionValue: string, materialValue: string, dispatch: ((arg0: IResult[]) => void)) {
 
     inputValues["mode"] = modeValue;
     inputValues["bottom_condition"] = btmConditionValue;
@@ -17,10 +17,6 @@ export async function solve(inputValues: any, modeValue: string, btmConditionVal
     })
     .then((res) => res.json())
     .then((action) => {
-        console.log(inputValues);
-        console.log(action);
         dispatch(action);
     })
 }
-
-// TODO: これが変！！！！
