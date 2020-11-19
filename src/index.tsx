@@ -12,26 +12,6 @@ import "@blueprintjs/table/lib/css/table.css";
 import "./index.scss"
 
 import App from "./App"
-// import InputForm from "./components/InputForm";
-// import { EditableTable } from "./components/EditableTable"
-// import InputToChart from './InputToChart';
-
-// const App = () => (
-//   <div className="main">
-//     <h1>多層地盤中の杭の非線形解析</h1>
-//     <div className="contents">
-//       <section className="col-1">
-//         <InputForm />
-//       </section>
-//       <section className="col-2">
-//         <EditableTable />
-//       </section>
-//     </div>
-//     <div className="chart-contents">
-//       {/* <InputToChart props={""}/> */}
-//     </div>
-//   </div>
-// );
 
 ReactDOM.render(<App />, document.getElementById("root"));
 
