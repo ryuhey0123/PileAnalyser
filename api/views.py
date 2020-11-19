@@ -1,3 +1,4 @@
+from api.calculations import format_soil_data
 import time
 
 from flask import session, request, render_template, json, jsonify
@@ -11,8 +12,6 @@ from models import Sess, User, Content, Project, Soildata
 
 @app.route("/", methods=["GET"])
 def main_page():
-    # soil_data = calc.decode_upload_file('./assets/sample/sample1.xlsx')
-    # session['soil_data'] = soil_data
     return render_template("main.html")
 
 
@@ -49,8 +48,9 @@ def upload():
         soil_data = calc.decode_upload_file(file)
 
     session['soil_data'] = soil_data
+    format_data = format_soil_data(soil_data)
 
-    return jsonify(soil_data)
+    return jsonify(format_data)
 
 
 # Database Routing

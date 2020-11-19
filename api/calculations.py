@@ -193,15 +193,6 @@ def deformation_analysis_by_non_liner_single_FDM(bottom_condition, div_num: int,
 
 def decode_upload_file(file):
     df = pd.read_excel(file)
-    # df[ExcelColumns.reductions] = df[ExcelColumns.reductions].fillna(1.0)
-    # df[ExcelColumns.adopted_reductions] = df[ExcelColumns.adopted_reductions].fillna(1.0)
-
-    # formated_data = {}
-    # for i, column in enumerate(df):
-    #     for j, row in enumerate(df[column]):
-    #         formated_data["{}-{}".format(j, i)] = str(row)
-    # return {"data": formated_data, "row_num": len(df[ExcelColumns.depth])}
-
     return dict(
         depth=df[ExcelColumns.depth].values.tolist(),
         nValue=df[ExcelColumns.nValue].values.tolist(),
@@ -211,3 +202,12 @@ def decode_upload_file(file):
         alpha=df[ExcelColumns.alpha].values.tolist(),
         E0=df[ExcelColumns.E0].values.tolist()
     )
+
+
+def format_soil_data(soil_data: dict):
+    format_data = {}
+    key_value = ['depth', 'nValue', 'soil', 'reductions', 'adopted_reductions', 'alpha', 'E0']
+    for i, key in enumerate(key_value):
+        for j, row in enumerate(soil_data[key]):
+            format_data["{}-{}".format(j, i)] = str(row)
+    return {"data": format_data, "row_num": len(soil_data["depth"])}
