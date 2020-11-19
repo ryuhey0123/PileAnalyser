@@ -1,6 +1,8 @@
 // actionをstateに変換
 // イコールDispatch
 
+import { Intent } from "@blueprintjs/core";
+
 export interface IInputs {
     [key: string]: number | string
 }
@@ -10,14 +12,26 @@ export interface IOutputs {
     time: string
 }
 
+export interface ISoilData {
+    [key: string]: any,
+    // columnNames: string[];
+    // sparseCellData: { [key: string]: string };
+    // sparseCellIntent: { [key: string]: Intent };
+    // sparseColumnIntents: Intent[];
+    // cellsLoading: boolean;
+}
+
 export interface IState {
     inputs: IInputs,
-    outputs: IOutputs
+    outputs: IOutputs,
+    soildata: ISoilData,
 }
 
 export interface IAction {
-    type: "input" | "output",
-    results: IState
+    type: "input" | "output" | "setTable",
+    inputs?: IInputs,
+    outputs?: IOutputs,
+    soildata?: ISoilData,
 }
 
 export const initialState: IState = {
@@ -35,6 +49,13 @@ export const initialState: IState = {
         results: [{}],
         time: ""
     },
+    soildata: {
+        columnNames: [],
+        sparseCellData: {},
+        sparseCellIntent: {},
+        sparseColumnIntents: [],
+        cellsLoading: true
+    }
 }
 
 export function Reducer(preState: IState, action: IAction) {
@@ -43,19 +64,31 @@ export function Reducer(preState: IState, action: IAction) {
         case "output":
             const newOutState: IState = {
                 inputs: preState.inputs,
-                outputs: action.results.outputs
+                outputs: action.outputs!,
+                soildata: preState.soildata
             }
             return newOutState
 
         case "input":
             const newInState: IState = {
                 inputs: preState.inputs,
-                outputs: preState.outputs
+                outputs: preState.outputs,
+                soildata: preState.soildata
             }
-            for (const key in action.results.inputs) {
-                newInState.inputs[key] = action.results.inputs[key];
+            for (const key in action.inputs) {
+                newInState.inputs[key] = action.inputs[key];
             };
-            console.log(newInState)
             return newInState
+
+        case "setTable":
+            const newTableState: IState = {
+                inputs: preState.inputs,
+                outputs: preState.outputs,
+                soildata: preState.soildata
+            }
+            for (const key in action.soildata) {
+                newTableState.soildata[key] = action.soildata[key];
+            };
+            return preState
     }
 }

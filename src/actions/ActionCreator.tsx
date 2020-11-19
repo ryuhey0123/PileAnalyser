@@ -14,10 +14,7 @@ export async function solve(state: IState, dispatch: ((arg: IAction) => void)) {
     .then((data) => {
         const action: IAction = {
             type: "output",
-            results: {
-                inputs: {},
-                outputs: data
-            }
+            outputs: data
         }
         dispatch(action);
     })
@@ -26,13 +23,7 @@ export async function solve(state: IState, dispatch: ((arg: IAction) => void)) {
 export function inputValueChange(key: string, value: number | string, dispatch: ((arg: IAction) => void)) {
     const action: IAction = {
         type: "input",
-        results: {
-            inputs: {[key]: value},
-            outputs: {
-                results: [{}],
-                time: ""
-            }
-        }
+        inputs: {[key]: value},
     }
     dispatch(action)
 }
