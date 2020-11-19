@@ -1,11 +1,11 @@
 import React, { useReducer } from 'react';
 import Root from './components/Root';
 import Context from './Context';
-import { AppReducer, initialState } from './reducers/SolveReducer';
+import { Reducer, initialState } from './reducers/Reducer';
 
 const App = () => {
 
-    const [state, dispatch] = useReducer(AppReducer, initialState);
+    const [state, dispatch] = useReducer(Reducer, initialState);
     const value = { state, dispatch };
 
     return (

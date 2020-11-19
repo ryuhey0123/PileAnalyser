@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from 'recharts';
+import Context from '../Context';
 
-const Chart: React.FunctionComponent<{output: any}> = ({ output: results }) => {
+const Chart = () => {
 
-    console.log(results)
+    const { state } = useContext(Context)
 
     const AreaChartBy = (dataKey: string, unit: string, stroke='#8884b8', fill='#8884d8') => (
         <ResponsiveContainer width='80%' height={200}>
-            <AreaChart data={results} syncId="anyId">
+            <AreaChart data={state.outputs.results} syncId="anyId">
                 <CartesianGrid strokeDasharray="3 3"/>
                 <XAxis dataKey="x"/>
                 <YAxis/>

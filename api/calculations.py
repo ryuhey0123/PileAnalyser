@@ -20,7 +20,7 @@ class ExcelColumns:
     E0 = 'E0'
 
 
-def get_results(mode, condition, bottom_condition, material, diameter, length, level, force, soil_data, div_num) -> dict:
+def get_results(mode, condition, bottom_condition, material, diameter, length, level, force, soil_data, div_num=100) -> dict:
 
     diameter = float(diameter)  # mm
     length = float(length) * 1e3  # to mm
