@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
-import Root from './components/Root';
-import Context from './Context';
-import { Reducer, initialState } from './reducers/Reducer';
+import Root from './components/root';
+import Context from './context';
+import { Reducer, initialState } from './reducers/reducer';
 
 const App = () => {
 

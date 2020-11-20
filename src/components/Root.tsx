@@ -1,8 +1,8 @@
 import React from 'react';
-import Chart from './Chart';
+import Chart from './chart';
 
-import InputForm from './InputForm';
-import SoildataTable from './SoilTable';
+import InputForm from './inputForm';
+import SoildataTable from './soilTable';
 
 const Root = () => {
 

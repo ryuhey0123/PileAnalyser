@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from "react";
 import { Column, EditableCell, Table, TableLoadingOption } from "@blueprintjs/table";
 
-import Context from "../Context";
-import { cellLoading, cellSetter, cellValidator } from "../actions/ActionCreator";
+import Context from "../context";
+import { cellLoading, cellSetter, cellValidator } from "../actions/actionCreator";
 
 const SoildataTable = () => {
     const dataKey = (rowIndex: number, columnIndex: number) => {

@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Button, Label, NumericInput, Radio, RadioGroup } from '@blueprintjs/core';
-import { inputValueChange, solve } from '../actions/ActionCreator';
-import Context from '../Context';
-import { initialState } from '../reducers/Reducer';
+import { inputValueChange, solve } from '../actions/actionCreator';
+import Context from '../context';
+import { initialState } from '../reducers/reducer';
 
 const InputForm = () => {
 

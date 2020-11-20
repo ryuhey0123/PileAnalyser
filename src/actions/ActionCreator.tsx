@@ -2,7 +2,7 @@
 // そのactionはreducerでstateに変換される
 
 import { Intent } from "@blueprintjs/core";
-import { IAction, IState } from "../reducers/Reducer";
+import { IAction, IState } from "../reducers/reducer";
 
 export function solve(state: IState, dispatch: ((arg: IAction) => void)) {
 

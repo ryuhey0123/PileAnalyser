@@ -1,5 +1,5 @@
 import { createContext, Dispatch } from "react";
-import { IAction, IState } from "./reducers/Reducer";
+import { IAction, IState } from "./reducers/reducer";
 
 interface IContextProps {
     state: IState,
