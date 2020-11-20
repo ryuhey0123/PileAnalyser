@@ -8,7 +8,7 @@ const InputForm = () => {
 
     const { state, dispatch } = useContext(Context)
 
-    const onValueChange = (valueAsNumber: number, valueAsString: string, inputElement: HTMLInputElement | null) => {
+    const onValueChange = (valueAsNumber: number, _: string, inputElement: HTMLInputElement | null) => {
         if (inputElement != null) {
             inputValueChange(inputElement.id, valueAsNumber, dispatch);
         };

@@ -14,10 +14,12 @@ const Root = () => {
                     <InputForm/>
                 </section>
                 <section className="col-2">
-                    <SoildataTable/>
+                    <Chart/>
                 </section>
             </div>
-            <Chart/>
+            <div className="contents">
+                <SoildataTable/>
+            </div>
         </div>
     );
 };

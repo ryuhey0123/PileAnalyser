@@ -7,7 +7,7 @@ const Chart = () => {
     const { state } = useContext(Context)
 
     const AreaChartBy = (dataKey: string, unit: string, stroke='#8884b8', fill='#8884d8') => (
-        <ResponsiveContainer width='80%' height={200}>
+        <ResponsiveContainer height={150}>
             <AreaChart data={state.outputs.results} syncId="anyId">
                 <CartesianGrid strokeDasharray="3 3"/>
                 <XAxis dataKey="x"/>
@@ -20,18 +20,18 @@ const Chart = () => {
 
     return (
         <div>
-            <p>水平地盤反力係数(低減前)</p>
-            {AreaChartBy("kh0s", "kN/m3")}
-            <p>地地盤変位による低減係数</p>
-            {AreaChartBy("dec", "")}
-            <p>変位</p>
-            {AreaChartBy("y", "mm")}
-            <p>変形角</p>
-            {AreaChartBy("t", "rad")}
-            <p>曲げモーメント</p>
-            {AreaChartBy("m", "kNm")}
-            <p>剪断力</p>
-            {AreaChartBy("q", "kN")}
+            {/* <label>水平地盤反力係数(低減前)</label>
+            {AreaChartBy("kh0s", "kN/m3")} */}
+            <label>地地盤変位による低減係数</label>
+            {AreaChartBy("dec", "", '#ED9D39', '#ED9D39')}
+            <label>変位</label>
+            {AreaChartBy("y", "mm", '#225098', '#225098')}
+            {/* <p>変形角</p> */}
+            {/* {AreaChartBy("t", "rad")} */}
+            <label>曲げモーメント</label>
+            {AreaChartBy("m", "kNm", '#D32E44', '#D32E44')}
+            <label>剪断力</label>
+            {AreaChartBy("q", "kN", '#408A55', '#408A55')}
         </div>
     );
 };

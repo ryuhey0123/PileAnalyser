@@ -1,8 +1,7 @@
 // actionをstateに変換
-
+// イコールDispatch
 import { Intent } from "@blueprintjs/core";
 
-// イコールDispatch
 export interface IInputs {
     [key: string]: number | string
 }
