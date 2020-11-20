@@ -33,6 +33,20 @@ export interface IAction {
   soildata?: ISoilData,
 }
 
+enum ActionType {
+  SOLVE,
+  REFRESH_INPUT,
+  REFRESH_SOIL_TABLE_DATA,
+  REFRESH_SOIL_TABLE_INTENT,
+}
+
+interface Action {
+  type: ActionType,
+  payload: any,
+  meta?: any,
+  error?: any,
+}
+
 export const initialState: IState = {
   inputs: {
     mode: "non_liner_multi",
