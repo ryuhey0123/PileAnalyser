@@ -2,7 +2,7 @@ import React from 'react';
 import Chart from './Chart';
 
 import InputForm from './InputForm';
-import SoildataTable from './EditableTable';
+import SoildataTable from './SoilTable';
 
 const Root = () => {
 
