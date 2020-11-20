@@ -4,7 +4,7 @@
 import { Intent } from "@blueprintjs/core";
 import { IAction, IState } from "../reducers/Reducer";
 
-export async function solve(state: IState, dispatch: ((arg: IAction) => void)) {
+export function solve(state: IState, dispatch: ((arg: IAction) => void)) {
 
     fetch("/solve", {
         method: "POST",
