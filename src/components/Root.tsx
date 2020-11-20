@@ -2,7 +2,7 @@ import React from 'react';
 import Chart from './Chart';
 
 import InputForm from './InputForm';
-import { EditableTable } from './EditableTable';
+import SoildataTable from './EditableTable';
 
 const Root = () => {
 
@@ -14,7 +14,7 @@ const Root = () => {
                     <InputForm/>
                 </section>
                 <section className="col-2">
-                    <EditableTable/>
+                    <SoildataTable/>
                 </section>
             </div>
             <Chart/>

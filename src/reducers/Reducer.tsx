@@ -1,8 +1,8 @@
 // actionをstateに変換
-// イコールDispatch
 
 import { Intent } from "@blueprintjs/core";
 
+// イコールDispatch
 export interface IInputs {
     [key: string]: number | string
 }
@@ -14,11 +14,11 @@ export interface IOutputs {
 
 export interface ISoilData {
     [key: string]: any,
-    // columnNames: string[];
-    // sparseCellData: { [key: string]: string };
-    // sparseCellIntent: { [key: string]: Intent };
-    // sparseColumnIntents: Intent[];
-    // cellsLoading: boolean;
+    columnNames?: string[];
+    sparseCellData?: { [key: string]: string };
+    sparseCellIntent?: { [key: string]: Intent };
+    sparseColumnIntents?: Intent[];
+    cellsLoading?: boolean;
 }
 
 export interface IState {
@@ -50,7 +50,7 @@ export const initialState: IState = {
         time: ""
     },
     soildata: {
-        columnNames: [],
+        columnNames: ["深度", "N値", "土質", "低減係数", "採用低減係数", "α", "E0"],
         sparseCellData: {},
         sparseCellIntent: {},
         sparseColumnIntents: [],
@@ -86,9 +86,22 @@ export function Reducer(preState: IState, action: IAction) {
                 outputs: preState.outputs,
                 soildata: preState.soildata
             }
-            for (const key in action.soildata) {
-                newTableState.soildata[key] = action.soildata[key];
-            };
-            return preState
+            if (action.soildata?.sparseCellData) {
+                for (const dataKey in action.soildata.sparseCellData) {
+                    newTableState.soildata.sparseCellData![dataKey] = action.soildata.sparseCellData![dataKey];
+                    newTableState.soildata.cellsLoading = false;
+                }
+            }
+            if (action.soildata?.sparseCellIntent) {
+                for (const dataKey in action.soildata.sparseCellIntent) {
+                    newTableState.soildata.sparseCellIntent![dataKey] = action.soildata.sparseCellIntent![dataKey];
+                }
+            }
+            else {
+                for (const key in action.soildata) {
+                    newTableState.soildata[key] = action.soildata[key];
+                }
+            }
+            return newTableState
     }
 }
