@@ -10,7 +10,7 @@ const InputForm = () => {
 
   const onValueChange = (valueAsNumber: number, _: string, inputElement: HTMLInputElement | null) => {
     if (inputElement != null) {
-      inputValueChange(inputElement.id, valueAsNumber, dispatch);
+      dispatch(inputValueChange(inputElement.id, valueAsNumber));
     };
   };
 
@@ -18,7 +18,7 @@ const InputForm = () => {
     <div>
       <RadioGroup
         label="解析モード"
-        onChange={e => inputValueChange("mode", e.currentTarget.value, dispatch)}
+        onChange={e => dispatch(inputValueChange("mode", e.currentTarget.value))}
         selectedValue={state.inputs.mode}
       >
         <Radio label="非線形(多層地盤)" value="non_liner_multi" />
@@ -27,7 +27,7 @@ const InputForm = () => {
       </RadioGroup>
       <RadioGroup
         label="杭脚条件"
-        onChange={e => inputValueChange("bottom_condition", e.currentTarget.value, dispatch)}
+        onChange={e => dispatch(inputValueChange("bottom_condition", e.currentTarget.value))}
         selectedValue={state.inputs.bottom_condition}
       >
         <Radio label="ピン" value="pin" />
@@ -35,7 +35,7 @@ const InputForm = () => {
       </RadioGroup>
       <RadioGroup
         label="材質"
-        onChange={e => inputValueChange("material", e.currentTarget.value, dispatch)}
+        onChange={e => dispatch(inputValueChange("material", e.currentTarget.value))}
         selectedValue={state.inputs.material}>
         <Radio label="コンクリート" value="concrete" />
         <Radio label="鋼材" value="steel" />

@@ -21,27 +21,10 @@ export function solve(state: IState, dispatch: ((arg: IAction) => void)) {
     })
 }
 
-export function inputValueChange(key: string, value: number | string, dispatch: ((arg: IAction) => void)) {
-  const action: IAction = {
+export const inputValueChange = (key: string, value: number | string): IAction => ({
     type: "input",
     inputs: { [key]: value },
-  }
-  dispatch(action)
-}
-
-const dataKey = (rowIndex: number, columnIndex: number) => {
-  return `${rowIndex}-${columnIndex}`;
-};
-
-function isValidValue(value: string, columnIndex: number) {
-  if (columnIndex === 2) {  // 土質
-    return /^(S|C)$/.test(value);
-  } if (columnIndex === 5) {  // alpha
-    return /^(8|6)0$/.test(value);
-  } else {
-    return /^[0-9.]*$/.test(value);
-  }
-}
+})
 
 export function cellValidator(rowIndex: number, columnIndex: number, dispatch: ((arg: IAction) => void)) {
   const key = dataKey(rowIndex, columnIndex);
@@ -82,4 +65,18 @@ export function cellLoading(data: { [key: string]: string }, cellsLoadingIs: boo
     }
   };
   dispatch(action);
+}
+
+const dataKey = (rowIndex: number, columnIndex: number) => {
+  return `${rowIndex}-${columnIndex}`;
+};
+
+function isValidValue(value: string, columnIndex: number) {
+  if (columnIndex === 2) {  // 土質
+    return /^(S|C)$/.test(value);
+  } if (columnIndex === 5) {  // alpha
+    return /^(8|6)0$/.test(value);
+  } else {
+    return /^[0-9.]*$/.test(value);
+  }
 }
