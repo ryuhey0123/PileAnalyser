@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import Context from '../context';
 
+
 const Chart = () => {
 
   const { state } = useContext(Context)

@@ -211,3 +211,11 @@ def format_soil_data(soil_data: dict):
         for j, row in enumerate(soil_data[key]):
             format_data["{}-{}".format(j, i)] = str(row)
     return {"data": format_data, "row_num": len(soil_data["depth"])}
+
+
+# def format_soil_data(soil_data: dict):
+#     format_data = []
+#     key_value = ['depth', 'nValue', 'soil', 'reductions', 'adopted_reductions', 'alpha', 'E0']
+#     for key in key_value:
+#         format_data.append(soil_data[key])
+#     return {"data": format_data, "row_num": len(soil_data["depth"])}

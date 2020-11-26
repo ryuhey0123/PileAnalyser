@@ -2,7 +2,7 @@ import React from 'react';
 import Chart from './chart';
 
 import InputForm from './inputForm';
-import SoildataTable from './soilTable';
+import SoilTableModal from './soilTableModal';
 
 const Root = () => {
 
@@ -18,7 +18,7 @@ const Root = () => {
         </section>
       </div>
       <div className="contents">
-        <SoildataTable />
+        <SoilTableModal/>
       </div>
     </div>
   );

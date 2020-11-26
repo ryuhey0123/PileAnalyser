@@ -8,3 +8,4 @@ interface IContextProps {
 
 const Context = createContext({} as IContextProps);
 export default Context;
+

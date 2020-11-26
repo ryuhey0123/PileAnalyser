@@ -62,8 +62,12 @@ const InputForm = () => {
           min={0.0} stepSize={10} minorStepSize={10} majorStepSize={100} onValueChange={onValueChange} />
       </Label>
 
+      <Button intent="none" icon="grid" text="Soil data"
+        onClick={() => {}} />
+
       <Button intent="primary" icon="tick" text="Solve"
         onClick={() => solve(state, dispatch)} />
+
     </div>
   );
 }
