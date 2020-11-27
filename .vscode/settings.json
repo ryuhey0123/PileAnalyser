@@ -12,5 +12,6 @@
         "soildata",
         "spiner",
         "tolist"
-    ]
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }
