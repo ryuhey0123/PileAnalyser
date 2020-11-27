@@ -26,27 +26,27 @@ const SoilTableModal = () => {
       })
   }, [dispatch]);
 
-  // const overlayState = {
-  //   autoFocus: true,
-  //   canEscapeKeyClose: true,
-  //   canOutsideClickClose: true,
-  //   enforceFocus: true,
-  //   hasBackdrop: true,
-  //   usePortal: true,
-  //   useTallContent: false,
-  // }
+  const overlayState = {
+    autoFocus: true,
+    canEscapeKeyClose: true,
+    canOutsideClickClose: true,
+    enforceFocus: true,
+    hasBackdrop: true,
+    usePortal: true,
+    useTallContent: false,
+  }
 
   return (
     <div>
       <Button onClick={handleOpen} />
-      {/* <Overlay onClose={handleClose} isOpen={isOpen} transitionDuration={0} {...overlayState}> */}
+      <Overlay onClose={handleClose} isOpen={isOpen} transitionDuration={0} {...overlayState}>
         <div className={Classes.CARD}>
           <div className="contents">
             <div className="col-1">
-              <SoilTable columnWidth={80} numRows={32}/>
+              <SoilTableGraph columnIndex={1} rowSize={23} />
             </div>
             <div className="col-2">
-              <SoilTableGraph />
+              <SoilTable columnWidth={80} numRows={32}/>
             </div>
           </div>
           <div>
@@ -55,7 +55,7 @@ const SoilTableModal = () => {
             </Button>
           </div>
         </div>
-      {/* </Overlay> */}
+      </Overlay>
     </div>
   );
 };
