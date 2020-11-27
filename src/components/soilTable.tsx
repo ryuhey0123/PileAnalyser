@@ -34,7 +34,7 @@ const SoilTable = (props: {columnWidth: number, numRows: number}) => {
         sparseCellIntent[key] = isValidValue(value, columnIndex) ? "none" : Intent.DANGER;
         return sparseCellIntent
       });
-      dispatch(setCells({[key]: value}));
+      // dispatch(setCells({[key]: value}));
     };
   };
 
