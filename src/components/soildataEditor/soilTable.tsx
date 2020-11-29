@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import { Column, EditableCell, Table, TableLoadingOption } from "@blueprintjs/table";
 
-import EditableTableContext from "../editableTableContext";
+import EditableTableContext from "../../editableTableContext";
 import { Intent } from "@blueprintjs/core";
-import { setCells } from "../actions/editableTableAction";
+import { setCells } from "../../actions/editableTableAction";
 
 const DEFAULT_COLUMN_NAME = ["深度", "N値", "土質", "低減係数", "採用低減係数", "α", "E0"]
 

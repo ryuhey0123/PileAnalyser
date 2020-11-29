@@ -2,7 +2,7 @@ import React from 'react';
 import Chart from './chart';
 
 import InputForm from './inputForm';
-import SoilTableModal from './soilTableModal';
+import SoilTableModal from './soildataEditor/soilTableModal';
 
 const Root = () => {
 

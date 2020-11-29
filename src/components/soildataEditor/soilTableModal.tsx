@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Classes, Intent, Overlay } from '@blueprintjs/core';
 
-import { setCells, setCellsLoadingState } from '../actions/editableTableAction';
-import EditableTableContext from '../editableTableContext';
+import { setCells, setCellsLoadingState } from '../../actions/editableTableAction';
+import EditableTableContext from '../../editableTableContext';
 
 import SoilTable from './soilTable';
 import SoilTableGraph from './soilTableGraph';

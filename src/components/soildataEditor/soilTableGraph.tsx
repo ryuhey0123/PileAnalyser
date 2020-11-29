@@ -1,15 +1,15 @@
 import React, { useContext } from 'react';
 import { CartesianGrid, Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 
-import EditableTableContext from '../editableTableContext';
+import EditableTableContext from '../../editableTableContext';
 
 
 const SoilTableGraph = (props: { columnIndex: number, rowSize: number }) => {
 
+  const depthIndex = 0;
   const { state } = useContext(EditableTableContext)
 
   const chartData = (columnIndex: number, rowSize: number) => {
-    const depthIndex = 0;
     const result = [...Array(rowSize)].map((_, i) => {
       if (state.tableData.sparseCellData) {
         return {
