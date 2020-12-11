@@ -5,7 +5,7 @@ import EditableTableContext from "../../editableTableContext";
 import { Intent } from "@blueprintjs/core";
 import { setCells } from "../../actions/editableTableAction";
 
-const DEFAULT_COLUMN_NAME = ["深度", "N値", "土質", "低減係数", "採用低減係数", "α", "E0"]
+const DEFAULT_COLUMN_NAME = ["深度", "N値", "土質", "低減係数", "α", "E0"]
 
 
 const SoilTable = (props: {columnWidth: number, numRows: number}) => {

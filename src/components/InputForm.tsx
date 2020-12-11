@@ -63,7 +63,7 @@ const InputForm = () => {
       </Label>
 
       <Button intent="none" icon="grid" text="Soil data"
-        onClick={() => {}} />
+        onClick={()=>{}} />
 
       <Button intent="primary" icon="tick" text="Solve"
         onClick={() => solve(state, dispatch)} />

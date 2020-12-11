@@ -35,16 +35,6 @@ div.contents {
   }
 }
 
-div.table-modal {
-  text-align: center;
-  margin: auto;
-  // box-sizing: border-box;
-}
-
-div.chart-contents {
-  box-sizing: border-box;
-}
-
 @media screen and (max-width: 960px) {
   div.contents {
     flex-direction: column;
@@ -54,5 +44,27 @@ div.chart-contents {
 @media screen and (max-width: 560px) {
   div.contents {
     flex-direction: column;
+  }
+}
+
+div.modal-contents {
+  display: flex;
+  // width: 90%;
+  margin: auto;
+  justify-content: center;
+  border: solid 1px;
+  border-radius: 5px;
+  padding: 1em;
+  section {
+    &.graph {
+      text-align: left;
+      // margin: 0px 20px 0px 0px;
+    }
+    &.table {
+      width: 510px;
+      height: 670px;
+      text-align: left;
+      box-sizing: border-box;
+    }
   }
 }

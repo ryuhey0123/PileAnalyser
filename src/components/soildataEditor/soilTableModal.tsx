@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Button, Classes, Intent, Overlay } from '@blueprintjs/core';
+import { Button, Intent, Overlay } from '@blueprintjs/core';
 
 import { setCells, setCellsLoadingState } from '../../actions/editableTableAction';
 import EditableTableContext from '../../editableTableContext';
@@ -39,23 +39,21 @@ const SoilTableModal = () => {
   return (
     <div>
       <Button onClick={handleOpen} />
-      <Overlay onClose={handleClose} isOpen={isOpen} transitionDuration={0} {...overlayState}>
-        <div className={Classes.CARD}>
-          <div className="contents">
-            <div className="col-1">
-              <SoilTableGraph columnIndex={1} rowSize={23} />
-            </div>
-            <div className="col-2">
-              <SoilTable columnWidth={80} numRows={32}/>
-            </div>
-          </div>
-          <div>
-            <Button intent={Intent.DANGER} onClick={handleClose} style={{ margin: "" }}>
-              Close
-            </Button>
-          </div>
+      {/* <Overlay onClose={handleClose} isOpen={isOpen} transitionDuration={0} {...overlayState}> */}
+        <div className="modal-contents">
+          <section className="graph">
+            <SoilTableGraph columnIndex={1} rowSize={23} />
+          </section>
+          <section className="table">
+            <SoilTable columnWidth={80} numRows={32}/>
+          </section>
         </div>
-      </Overlay>
+        <div>
+          <Button intent={Intent.DANGER} onClick={handleClose} style={{ margin: "" }}>
+            Close
+          </Button>
+        </div>
+      {/* </Overlay> */}
     </div>
   );
 };

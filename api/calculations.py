@@ -206,7 +206,7 @@ def decode_upload_file(file):
 
 def format_soil_data(soil_data: dict):
     format_data = {}
-    key_value = ['depth', 'nValue', 'soil', 'reductions', 'adopted_reductions', 'alpha', 'E0']
+    key_value = ['depth', 'nValue', 'soil', 'adopted_reductions', 'alpha', 'E0']
     for i, key in enumerate(key_value):
         for j, row in enumerate(soil_data[key]):
             format_data["{}-{}".format(j, i)] = str(row)
