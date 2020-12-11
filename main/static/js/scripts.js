@@ -16,7 +16,7 @@ function init() {
         document.getElementById("loading-spiner").style.display = "none";
 
     }).complete(function(data) {
-        document.getElementById("loading-spiner").style.display = "none"; 
+        document.getElementById("loading-spiner").style.display = "none";
     });
 }
 
@@ -70,7 +70,7 @@ function file_upload() {
 
     }).done(function(data) {
         $("#soil-table").html(data)
-        document.getElementById("soil-data-details").open = true; 
+        document.getElementById("soil-data-details").open = true;
 
     }).complete(function(data) {
         document.getElementById("loading-spiner").style.display = "none";
@@ -153,7 +153,7 @@ function plot_glaph(results) {
         plot_bgcolor: "#FFFFFF",
 
         hovermode: 'closest',
-        
+
         annotations: [
             {
                 text: "Decrease",
